@@ -45,7 +45,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Defaults[.hasCompletedOnboarding] = true
             openSettings()
         } else if !Defaults[.hasCompletedOnboarding] {
-            onboardingController.showWindow()
+            DispatchQueue.main.async {
+                self.onboardingController.showWindow()
+            }
         } else {
             openSettings()
         }
