@@ -54,7 +54,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // showSettingsWindow: is a private AppKit selector; monitor compatibility on macOS upgrades.
         DispatchQueue.main.async {
             NSApp.activate(ignoringOtherApps: true)
-            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            if !NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) {
+                NSLog("[MoePeek] showSettingsWindow: selector failed — macOS version may have removed it")
+            }
         }
     }
 

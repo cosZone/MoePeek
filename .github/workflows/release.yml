@@ -17,12 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install tools
-        run: |
-          brew install create-dmg
-          brew tap tuist/tuist
-          brew install --formula tuist
-          tuist version
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Install Tuist via mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
 
       - name: Write unsigned Signing.xcconfig
         run: |

@@ -32,8 +32,10 @@ struct SourceInputView: View {
                     .foregroundStyle(.quaternary)
             }
         }
-        .task {
-            try? await Task.sleep(for: .milliseconds(100))
+        // SwiftUI requires at least one layout pass before @FocusState can take effect;
+        // a short yield lets the hosting view finish its initial layout.
+        .task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(50))
             isFocused = true
         }
     }

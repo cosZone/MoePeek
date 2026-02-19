@@ -250,7 +250,7 @@ final class TranslationCoordinator {
     }
 
     /// Build language hints (BCP 47 codes) based on user's target/source language preferences.
-    /// TODO: Expand coverage beyond zh↔en to other common language pairs (ja, ko, fr, de, etc.)
+    /// Likely source languages are inferred from the target language for common translation pairs.
     private func buildLanguageHints() -> [String: Double]? {
         let target = Defaults[.targetLanguage]
         let source = Defaults[.sourceLanguage]
@@ -263,13 +263,42 @@ final class TranslationCoordinator {
         }
 
         // Infer likely source languages from target language
-        if target.hasPrefix("zh") {
+        switch target {
+        case let t where t.hasPrefix("zh"):
             hints["en", default: 0] += 0.2
             hints["ja", default: 0] += 0.1
-        } else if target == "en" {
+            hints["ko", default: 0] += 0.05
+        case "en":
             hints["zh-Hans", default: 0] += 0.2
             hints["ja", default: 0] += 0.1
+            hints["ko", default: 0] += 0.05
+            hints["fr", default: 0] += 0.05
+            hints["de", default: 0] += 0.05
+            hints["es", default: 0] += 0.05
+        case "ja":
+            hints["en", default: 0] += 0.2
+            hints["zh-Hans", default: 0] += 0.1
+        case "ko":
+            hints["en", default: 0] += 0.2
+            hints["zh-Hans", default: 0] += 0.1
+            hints["ja", default: 0] += 0.05
+        case "fr", "de", "es", "it", "pt-BR":
+            hints["en", default: 0] += 0.2
+            hints["fr", default: 0] += 0.05
+            hints["de", default: 0] += 0.05
+            hints["es", default: 0] += 0.05
+            hints["it", default: 0] += 0.05
+            hints["pt-BR", default: 0] += 0.05
+        case "ru":
+            hints["en", default: 0] += 0.2
+        case "ar":
+            hints["en", default: 0] += 0.2
+        default:
+            break
         }
+
+        // Don't hint the target language itself as a source
+        hints.removeValue(forKey: target)
 
         return hints.isEmpty ? nil : hints
     }

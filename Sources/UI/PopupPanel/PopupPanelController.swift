@@ -28,6 +28,7 @@ final class PopupPanelController {
             screen: screen
         )
         panel.setFrame(frame, display: true)
+        // Non-activating: don't steal focus from the user's active app.
         panel.orderFront(nil)
 
         startDismissMonitor()
@@ -45,6 +46,7 @@ final class PopupPanelController {
             y: visibleFrame.midY - initialSize.height / 2
         )
         panel.setFrame(NSRect(origin: origin, size: initialSize), display: true)
+        // Input mode needs key window status so the TextEditor receives keyboard focus.
         panel.makeKeyAndOrderFront(nil)
 
         startDismissMonitor()
@@ -55,6 +57,8 @@ final class PopupPanelController {
         dismissMonitor = nil
         panel?.contentView = nil
         panel?.orderOut(nil)
+        // Recreate panel on next show to ensure a fresh SwiftUI view tree,
+        // avoiding stale @Observable state from previous translation sessions.
         panel = nil
         coordinator.dismiss()
         onDismiss?()

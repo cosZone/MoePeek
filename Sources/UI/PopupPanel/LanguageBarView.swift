@@ -41,10 +41,11 @@ struct LanguageBarView: View {
         .padding(.vertical, 2)
     }
 
-    /// Display-level threshold: shows a "?" marker when confidence is low but still above
-    /// the detection threshold (which controls whether a language is returned at all).
-    /// This is intentionally higher than `detectionConfidenceThreshold` (default 0.3).
-    private let uncertainDisplayThreshold = 0.6
+    /// Shows a "?" when confidence is above the detection threshold (so a language is returned)
+    /// but below this display threshold. Derived from the user's detection threshold to stay in sync.
+    private var uncertainDisplayThreshold: Double {
+        min(Defaults[.detectionConfidenceThreshold] + 0.3, 0.8)
+    }
 
     private var sourceDisplayName: String {
         if let lang = detectedLanguage {
