@@ -91,19 +91,43 @@ The app requires **Accessibility** (for AX text grabbing) and **Screen Recording
 
 ## Versioning & Release
 
-- 遵循 [语义化版本（SemVer）](https://semver.org)，tag 格式 `v<MAJOR>.<MINOR>.<PATCH>`
-- **MAJOR**：不兼容的破坏性变更；**MINOR**：新增功能（向后兼容）；**PATCH**：Bug 修复
-- `0.x.x` 阶段每次新功能递增 MINOR（`v0.1.0` → `v0.2.0`）
-- 推送 `v*` tag 触发 CI 自动构建发布，详见 `docs/RELEASING.md`
+- Follow [Semantic Versioning (SemVer)](https://semver.org), tag format `v<MAJOR>.<MINOR>.<PATCH>`
+- **MAJOR**: incompatible breaking changes; **MINOR**: new features (backward-compatible); **PATCH**: bug fixes
+- During the `0.x.x` phase, bump MINOR for each new feature (`v0.1.0` → `v0.2.0`)
+- Pushing a `v*` tag triggers CI auto-build and release; see `docs/RELEASING.md`
 
 ## Code Review
 
-审查代码变更时，使用以下专项 skill：
+Use the following specialized skills when reviewing code changes:
 
-- **swift-concurrency** — async/await、Actor、Sendable、Swift 6 严格并发
-- **swiftui-expert-skill** — SwiftUI 状态管理、视图组合、现代 API 用法
-- **swiftui-performance-audit** — 渲染性能、过度视图更新、内存/CPU 问题
-- **swiftui-view-refactor** — 视图结构、依赖注入、@Observable 使用模式
-- **swiftui-ui-patterns** — UI 模式设计、页面结构、组件组合
+- **swift-concurrency** — async/await, Actor, Sendable, Swift 6 strict concurrency
+- **swiftui-expert-skill** — SwiftUI state management, view composition, modern API usage
+- **swiftui-performance-audit** — rendering performance, excessive view updates, memory/CPU issues
+- **swiftui-view-refactor** — view structure, dependency injection, @Observable usage patterns
+- **swiftui-ui-patterns** — UI pattern design, page structure, component composition
 
-注意本项目是 SwiftUI + AppKit 混合架构：SwiftUI 负责视图内容（Settings、Onboarding、PopupView），AppKit NSPanel/NSWindow 负责窗口管理和非激活浮动面板。审查时需兼顾两者的交互边界。
+Note this project uses a SwiftUI + AppKit hybrid architecture: SwiftUI handles view content (Settings, Onboarding, PopupView), while AppKit NSPanel/NSWindow manages window lifecycle and non-activating floating panels. Reviews must consider the interaction boundary between both.
+
+### Memory Leak Prevention
+
+This is a long-running menu bar app — memory leaks accumulate over time. All code changes must be checked against these patterns:
+
+**Closure Captures**
+- Stored closures (callback properties, completion handlers) **must** use `[weak self]` with `guard let self` unwrapping
+- SwiftUI `.onChange` / `Button` action closures are lifecycle-managed by the framework and do **not** need `[weak self]`
+- System API callbacks like `KeyboardShortcuts.onKeyUp`, `Timer.scheduledTimer`, `NSEvent.addGlobalMonitorForEvents` **must** use `[weak self]`
+
+**NSPanel / NSWindow Lifecycle**
+- Windows with `isReleasedWhenClosed = false` must be manually cleaned up on dismiss: `panel.contentView = nil` → `panel = nil`
+- Prevent NSHostingView's SwiftUI views from holding strong references back to window controllers
+
+**Timer / Event Monitor Cleanup**
+- All `Timer` instances must be `invalidate()`d and set to `nil` in the corresponding stop/dismiss method
+- All monitors from `NSEvent.addGlobalMonitorForEvents` must be removed in both `stop()` and `deinit`
+- `PermissionManager`'s polling timer must call `stopPolling()` once all permissions are granted
+
+**AsyncThrowingStream**
+- `continuation.onTermination` must cancel the associated `Task` to prevent task leaks when the stream is discarded
+
+**Inter-Controller Callback Chains**
+- The closure chain in `AppDelegate.setupSelectionMonitor()` (SelectionMonitor → TriggerIconController → TranslationCoordinator → PopupPanelController) uses `[weak self]` throughout; new callbacks must follow this pattern

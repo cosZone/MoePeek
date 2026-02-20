@@ -23,6 +23,22 @@ enum SupportedLanguages {
     static let codeSet: Set<String> = Set(codes)
 }
 
+// MARK: - App Language
+
+enum AppLanguage: String, CaseIterable, Defaults.Serializable {
+    case system = ""
+    case english = "en"
+    case simplifiedChinese = "zh-Hans"
+
+    var displayName: String {
+        switch self {
+        case .system: String(localized: "System Default")
+        case .english: "English"
+        case .simplifiedChinese: "简体中文"
+        }
+    }
+}
+
 // MARK: - Settings Tab
 
 enum SettingsTab: String, Defaults.Serializable {
@@ -71,4 +87,7 @@ extension Defaults.Keys {
 
     // Settings tab selection
     static let selectedSettingsTab = Key<SettingsTab>("selectedSettingsTab", default: .general)
+
+    // App language override
+    static let appLanguage = Key<AppLanguage>("appLanguage", default: .system)
 }

@@ -12,8 +12,10 @@ struct GeneralSettingsView: View {
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.isLanguageDetectionEnabled) private var isLanguageDetectionEnabled
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
+    @Default(.appLanguage) private var appLanguage
 
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
+    @State private var showRestartAlert = false
 
     var body: some View {
         Form {
@@ -25,6 +27,21 @@ struct GeneralSettingsView: View {
             }
 
             Section("General") {
+                Picker("App Language:", selection: $appLanguage) {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Text(language.displayName).tag(language)
+                    }
+                }
+                .onChange(of: appLanguage) { _, newValue in
+                    if newValue == .system {
+                        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+                    } else {
+                        UserDefaults.standard.set([newValue.rawValue], forKey: "AppleLanguages")
+                    }
+                    UserDefaults.standard.synchronize()
+                    showRestartAlert = true
+                }
+
                 Picker("Target Language:", selection: $targetLanguage) {
                     ForEach(SupportedLanguages.all, id: \.code) { code, name in
                         Text(name).tag(code)
@@ -112,5 +129,11 @@ struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
+        .alert("App Language", isPresented: $showRestartAlert) {
+            Button("Restart Now") { AppRelaunch.relaunch() }
+            Button("Later", role: .cancel) { }
+        } message: {
+            Text("Changing language requires restarting the app.")
+        }
     }
 }

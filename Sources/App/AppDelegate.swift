@@ -17,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var updaterController = UpdaterController()
 
     func applicationDidFinishLaunching(_: Notification) {
+        applyLanguageOverride()
+
         // Migrate old settings to new namespaced keys (one-time)
         migrateDefaults()
 
@@ -44,6 +46,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if !permissionManager.allPermissionsGranted {
             permissionManager.startPolling()
+        }
+    }
+
+    // MARK: - Language Override
+
+    private func applyLanguageOverride() {
+        let language = Defaults[.appLanguage]
+        if language == .system {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.set([language.rawValue], forKey: "AppleLanguages")
         }
     }
 
