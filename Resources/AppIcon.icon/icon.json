@@ -6,16 +6,15 @@
     {
       "layers" : [
         {
-          "blend-mode" : "normal",
-          "fill" : "none",
           "glass" : false,
+          "hidden" : false,
           "image-name" : "MoePeek.png",
           "name" : "MoePeek",
           "position" : {
-            "scale" : 1.35,
+            "scale" : 0.7,
             "translation-in-points" : [
-              -10.050675380462604,
-              18.831316732733313
+              -4.8828125,
+              0.140625
             ]
           }
         }

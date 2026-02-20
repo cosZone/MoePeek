@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AboutSettingsView: View {
+    let updaterController: UpdaterController?
+
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
@@ -31,11 +33,32 @@ struct AboutSettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
+            if let updaterController {
+                @Bindable var updater = updaterController
+
+                Divider()
+                    .padding(.horizontal, 40)
+
+                HStack(spacing: 16) {
+                    Button("Check for Updates...") {
+                        updater.checkForUpdates()
+                    }
+                    .disabled(!updater.canCheckForUpdates)
+
+                    Toggle("Automatically check for updates", isOn: $updater.automaticallyChecksForUpdates)
+                }
+            }
+
             Spacer()
 
-            HStack {
-                Link(destination: URL(string: "https://discord.gg/placeholder")!) {
-                    Label("Discord Feedback", systemImage: "bubble.left.and.bubble.right")
+            HStack(spacing: 16) {
+                Link(destination: URL(string: "https://github.com/yusixian/MoePeek/issues")!) {
+                    Label("Issue Feedback", systemImage: "ladybug")
+                }
+                .buttonStyle(.link)
+
+                Link(destination: URL(string: "https://github.com/yusixian/MoePeek/discussions")!) {
+                    Label("Community Discussions", systemImage: "bubble.left.and.bubble.right")
                 }
                 .buttonStyle(.link)
             }

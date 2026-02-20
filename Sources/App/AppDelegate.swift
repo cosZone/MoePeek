@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var onboardingController: OnboardingWindowController!
     var selectionMonitor: SelectionMonitor!
     var triggerIconController: TriggerIconController!
+    lazy var updaterController = UpdaterController()
 
     func applicationDidFinishLaunching(_: Notification) {
         // Migrate old settings to new namespaced keys (one-time)
@@ -25,7 +26,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         onboardingController = OnboardingWindowController(permissionManager: permissionManager, registry: registry)
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()
-
         // Apply dock visibility — only switch to .regular when needed;
         // LSUIElement=YES already provides .accessory by default.
         if Defaults[.showInDock] {

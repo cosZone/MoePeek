@@ -1,30 +1,16 @@
 import Defaults
 import SwiftUI
 
-/// Settings view for an OpenAI-compatible provider. Reads keys from the provider instance.
+/// Settings view for an OpenAI-compatible provider with model fetching and connection testing.
 struct OpenAICompatibleSettingsView: View {
     let provider: OpenAICompatibleProvider
 
-    @State private var apiKey: String = ""
+    @State private var apiKey = ""
 
     var body: some View {
         Form {
             Section("API Configuration") {
-                TextField("Base URL:", text: Defaults.binding(provider.baseURLKey))
-                    .textFieldStyle(.roundedBorder)
-
-                TextField("Model:", text: Defaults.binding(provider.modelKey))
-                    .textFieldStyle(.roundedBorder)
-
-                SecureField("API Key:", text: $apiKey)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: apiKey) { _, newValue in
-                        if newValue.isEmpty {
-                            KeychainHelper.delete(key: provider.keychainKey)
-                        } else {
-                            KeychainHelper.save(key: provider.keychainKey, value: newValue)
-                        }
-                    }
+                OpenAIConfigFields(provider: provider, apiKey: $apiKey)
             }
 
             Section("System Prompt") {
@@ -37,9 +23,6 @@ struct OpenAICompatibleSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .onAppear {
-            apiKey = KeychainHelper.load(key: provider.keychainKey) ?? ""
-        }
     }
 }
 

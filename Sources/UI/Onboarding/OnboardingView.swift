@@ -15,6 +15,10 @@ struct OnboardingView: View {
     @State private var currentPageIndex = 0
     @State private var apiKey: String = ""
 
+    private var openaiProvider: OpenAICompatibleProvider? {
+        registry.providers.first { $0.id == "openai" } as? OpenAICompatibleProvider
+    }
+
     private enum Page: Equatable {
         case welcome, accessibility, screenRecording
         case providerSelection, openaiSetup, appleTranslation
@@ -22,7 +26,7 @@ struct OnboardingView: View {
 
     private var pages: [Page] {
         var result: [Page] = [.welcome, .accessibility, .screenRecording, .providerSelection]
-        if enabledProviders.contains("openai") {
+        if enabledProviders.contains("openai"), openaiProvider != nil {
             result.append(.openaiSetup)
         }
         #if canImport(Translation)
@@ -308,33 +312,18 @@ struct OnboardingView: View {
             Text("Configure OpenAI API")
                 .font(.title2.bold())
 
-            Text("Enter your API Key to use the OpenAI translation service.\nYou can also configure this later in Settings.")
+            Text("Enter your API configuration to use the OpenAI translation service.\nYou can also configure this later in Settings.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("API Key")
-                    .font(.subheadline.bold())
-
-                SecureField("sk-...", text: $apiKey)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: apiKey) { _, newValue in
-                        let keychainKey = "provider.openai.apiKey"
-                        if newValue.isEmpty {
-                            KeychainHelper.delete(key: keychainKey)
-                        } else {
-                            KeychainHelper.save(key: keychainKey, value: newValue)
-                        }
-                    }
+            if let provider = openaiProvider {
+                OpenAIConfigFields(provider: provider, apiKey: $apiKey)
+                    .padding(.horizontal, 32)
             }
-            .padding(.horizontal, 32)
 
             Spacer()
-        }
-        .onAppear {
-            apiKey = KeychainHelper.load(key: "provider.openai.apiKey") ?? ""
         }
     }
 

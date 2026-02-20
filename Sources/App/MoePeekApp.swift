@@ -12,7 +12,7 @@ struct MoePeekApp: App {
 
         // Settings window
         Settings {
-            SettingsView(registry: appDelegate.registry)
+            SettingsView(registry: appDelegate.registry, updaterController: appDelegate.updaterController)
         }
     }
 }

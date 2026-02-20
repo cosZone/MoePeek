@@ -5,3 +5,7 @@
 MOEPEEK_CODE_SIGN_STYLE = Manual
 MOEPEEK_CODE_SIGN_IDENTITY = Apple Development: YOUR_NAME (YOUR_TEAM_ID)
 MOEPEEK_DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// Sparkle EdDSA public key for auto-update verification (optional for development)
+// Generate with: ./bin/generate_keys (from Sparkle distribution)
+// SPARKLE_ED_PUBLIC_KEY =

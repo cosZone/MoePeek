@@ -288,10 +288,10 @@
         }
       }
     },
-    "Enter your API Key to use the OpenAI translation service.\nYou can also configure this later in Settings.": {
+    "Enter your API configuration to use the OpenAI translation service.\nYou can also configure this later in Settings.": {
       "localizations": {
         "zh-Hans": {
-          "stringUnit": { "state": "translated", "value": "输入你的 API Key 以使用 OpenAI 翻译服务。\n你也可以稍后在设置中配置。" }
+          "stringUnit": { "state": "translated", "value": "输入 API 配置以使用 OpenAI 翻译服务。\n你也可以稍后在设置中配置。" }
         }
       }
     },
@@ -547,10 +547,31 @@
         }
       }
     },
-    "Discord Feedback": {
+    "Check for Updates...": {
       "localizations": {
         "zh-Hans": {
-          "stringUnit": { "state": "translated", "value": "Discord 反馈" }
+          "stringUnit": { "state": "translated", "value": "检查更新..." }
+        }
+      }
+    },
+    "Automatically check for updates": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "自动检查更新" }
+        }
+      }
+    },
+    "Issue Feedback": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "问题反馈" }
+        }
+      }
+    },
+    "Community Discussions": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "社区讨论" }
         }
       }
     },
@@ -670,6 +691,76 @@
       "localizations": {
         "zh-Hans": {
           "stringUnit": { "state": "translated", "value": "目标语言：" }
+        }
+      }
+    },
+    "Please enter a valid Base URL (starting with http:// or https://) and API Key": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "请填写有效的 Base URL（需以 http:// 或 https:// 开头）和 API Key" }
+        }
+      }
+    },
+    "Invalid response": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "无效的响应" }
+        }
+      }
+    },
+    "Request failed (%lld)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "请求失败 (%lld)" }
+        }
+      }
+    },
+    "Invalid response format": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "响应格式不正确" }
+        }
+      }
+    },
+    "Network error: %@": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "网络错误：%@" }
+        }
+      }
+    },
+    "Please fill in the complete configuration (URL must start with http:// or https://)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "请填写完整的配置信息（URL 需以 http:// 或 https:// 开头）" }
+        }
+      }
+    },
+    "Request build failed": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "请求构建失败" }
+        }
+      }
+    },
+    "Fetch available models": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "获取可用模型列表" }
+        }
+      }
+    },
+    "Test Connection": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "测试连接" }
+        }
+      }
+    },
+    "Connection successful (%lldms)": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": { "state": "translated", "value": "连接成功 (%lldms)" }
         }
       }
     }
