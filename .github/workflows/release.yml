@@ -120,9 +120,9 @@ jobs:
           mkdir -p build/release
           cp "MoePeek-v${{ steps.version.outputs.version }}-macOS.zip" build/release/
 
-          # Download existing appcast to preserve history (404 on first release is fine)
-          curl -sL "https://github.com/yusixian/MoePeek/releases/latest/download/appcast.xml" \
-            -o appcast.xml || true
+          # Download existing appcast to preserve history (skip if first release or invalid)
+          curl -sfL "https://github.com/yusixian/MoePeek/releases/latest/download/appcast.xml" \
+            -o appcast.xml || rm -f appcast.xml
 
           DOWNLOAD_URL="https://github.com/yusixian/MoePeek/releases/download/v${{ steps.version.outputs.version }}"
           /tmp/sparkle/bin/generate_appcast \
