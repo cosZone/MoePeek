@@ -79,6 +79,13 @@ The app requires **Accessibility** (for AX text grabbing) and **Screen Recording
 2. Add selection option in `TranslationCoordinator.resolveService()`
 3. Add UI controls in `ServiceSettingsView`
 
+## Versioning & Release
+
+- 遵循 [语义化版本（SemVer）](https://semver.org)，tag 格式 `v<MAJOR>.<MINOR>.<PATCH>`
+- **MAJOR**：不兼容的破坏性变更；**MINOR**：新增功能（向后兼容）；**PATCH**：Bug 修复
+- `0.x.x` 阶段每次新功能递增 MINOR（`v0.1.0` → `v0.2.0`）
+- 推送 `v*` tag 触发 CI 自动构建发布，详见 `docs/RELEASING.md`
+
 ## Code Review
 
 审查代码变更时，使用以下专项 skill：
