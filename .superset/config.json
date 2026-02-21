@@ -1,6 +1,6 @@
 {
   "setup": [
-    "cp \"$SUPERSET_ROOT_PATH/Configurations/Signing.xcconfig\" Configurations/Signing.xcconfig\ntuist install\ntuist generate"
+    "cp \"$SUPERSET_ROOT_PATH/Configurations/Signing.xcconfig\" Configurations/Signing.xcconfig"
   ],
   "teardown": []
 }
