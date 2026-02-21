@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "[Bing Translate: text truncated to 1000 characters]" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Bing 翻译：文本已截断至 1000 字符]"
+          }
+        }
+      }
+    },
     "↵ Translate · ⇧↵ Newline" : {
       "localizations" : {
         "zh-Hans" : {

@@ -150,12 +150,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func migrateV3RemovedProviders() {
         let removedIDs: Set<String> = ["groq", "github-models"]
         var enabled = Defaults[.enabledProviders]
-        guard !enabled.isDisjoint(with: removedIDs) else { return }
-        enabled.subtract(removedIDs)
-        if enabled.isEmpty {
-            enabled = ["google"]
+        let needsMigration = !enabled.isDisjoint(with: removedIDs)
+        if needsMigration {
+            enabled.subtract(removedIDs)
+            if enabled.isEmpty {
+                enabled = ["google"]
+            }
+            Defaults[.enabledProviders] = enabled
         }
-        Defaults[.enabledProviders] = enabled
+
+        // Clean up orphaned Defaults keys for removed providers
+        let suffixes = ["baseURL", "model", "systemPrompt", "apiKey"]
+        for id in removedIDs {
+            for suffix in suffixes {
+                UserDefaults.standard.removeObject(forKey: "provider_\(id)_\(suffix)")
+            }
+        }
     }
 
     // MARK: - Shortcuts

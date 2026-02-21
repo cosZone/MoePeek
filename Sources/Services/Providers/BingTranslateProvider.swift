@@ -33,6 +33,7 @@ struct BingTranslateProvider: TranslationProvider {
         let tl = LanguageCodeMapping.resolveTarget(targetLang, using: LanguageCodeMapping.bing)
 
         // Bing limits single requests to ~1000 characters
+        let isTruncated = text.count > 1000
         let truncated = String(text.prefix(1000))
 
         let credentials = try await BingTokenManager.shared.getCredentials()
@@ -91,6 +92,9 @@ struct BingTranslateProvider: TranslationProvider {
         let decoded = try JSONDecoder().decode([BingTranslateResponse].self, from: data)
         guard let translated = decoded.first?.translations.first?.text, !translated.isEmpty else {
             throw TranslationError.emptyResult
+        }
+        if isTruncated {
+            return translated + "\n\n" + String(localized: "[Bing Translate: text truncated to 1000 characters]")
         }
         return translated
     }
