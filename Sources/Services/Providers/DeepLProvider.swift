@@ -122,9 +122,10 @@ private struct DeepLSettingsView: View {
             }
 
             Section {
-                Text("Get a free API key at deepl.com/pro-api")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Link(destination: URL(string: "https://www.deepl.com/pro-api")!) {
+                    Label("Get a free API key at deepl.com", systemImage: "arrow.up.right.square")
+                }
+                .font(.caption)
             }
         }
         .formStyle(.grouped)

@@ -4,10 +4,11 @@ import SwiftUI
 // MARK: - Provider Category
 
 enum ProviderCategory: String, CaseIterable {
-    case llm, traditional, system
+    case freeTranslation, traditional, llm, system
 
     var displayName: String {
         switch self {
+        case .freeTranslation: String(localized: "Free Translation")
         case .llm: String(localized: "LLM Services")
         case .traditional: String(localized: "Translation APIs")
         case .system: String(localized: "System")

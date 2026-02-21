@@ -19,6 +19,15 @@ struct OpenAICompatibleSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            if let urlString = provider.guideURL, let url = URL(string: urlString) {
+                Section {
+                    Link(destination: url) {
+                        Label("Get API Key from \(provider.displayName)", systemImage: "arrow.up.right.square")
+                    }
+                    .font(.caption)
+                }
+            }
         }
         .formStyle(.grouped)
     }

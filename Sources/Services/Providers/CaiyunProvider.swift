@@ -117,9 +117,10 @@ private struct CaiyunSettingsView: View {
             }
 
             Section {
-                Text("Get a token at platform.caiyunapp.com")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Link(destination: URL(string: "https://platform.caiyunapp.com")!) {
+                    Label("Get a token at platform.caiyunapp.com", systemImage: "arrow.up.right.square")
+                }
+                .font(.caption)
             }
         }
         .formStyle(.grouped)

@@ -2,7 +2,7 @@ import Defaults
 import Foundation
 import SwiftUI
 
-/// A parameterized provider for any OpenAI-compatible API (OpenAI, DeepSeek, Groq, etc.).
+/// A parameterized provider for any OpenAI-compatible API (OpenAI, DeepSeek, etc.).
 struct OpenAICompatibleProvider: TranslationProvider {
     let id: String
     let displayName: String
@@ -15,13 +15,15 @@ struct OpenAICompatibleProvider: TranslationProvider {
     let modelKey: Defaults.Key<String>
     let systemPromptKey: Defaults.Key<String>
     let apiKeyKey: Defaults.Key<String>
+    let guideURL: String?
 
     init(
         id: String,
         displayName: String,
         iconSystemName: String = "globe",
         defaultBaseURL: String,
-        defaultModel: String
+        defaultModel: String,
+        guideURL: String? = nil
     ) {
         self.id = id
         self.displayName = displayName
@@ -33,6 +35,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
             default: "Translate the following text to {targetLang}. Only output the translation, nothing else."
         )
         self.apiKeyKey = .init("provider_\(id)_apiKey", default: "")
+        self.guideURL = guideURL
     }
 
     @MainActor

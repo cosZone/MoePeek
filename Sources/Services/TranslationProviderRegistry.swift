@@ -35,50 +35,42 @@ final class TranslationProviderRegistry {
     /// Factory method returning the built-in provider set.
     static func builtIn() -> TranslationProviderRegistry {
         var allProviders: [any TranslationProvider] = [
+            // Free Translation
+            GoogleTranslateProvider(),
+            BingTranslateProvider(),
+
+            // Translation APIs
+            DeepLProvider(),
+            BaiduTranslateProvider(),
+            NiuTransProvider(),
+            CaiyunProvider(),
+
             // LLM Services
             OpenAICompatibleProvider(
                 id: "openai",
                 displayName: "OpenAI",
                 iconSystemName: "brain",
                 defaultBaseURL: "https://api.openai.com/v1",
-                defaultModel: "gpt-4o-mini"
+                defaultModel: "gpt-4o-mini",
+                guideURL: "https://platform.openai.com/api-keys"
             ),
             OpenAICompatibleProvider(
                 id: "deepseek",
                 displayName: "DeepSeek",
                 iconSystemName: "brain.head.profile",
                 defaultBaseURL: "https://api.deepseek.com/v1",
-                defaultModel: "deepseek-chat"
-            ),
-            OpenAICompatibleProvider(
-                id: "groq",
-                displayName: "Groq",
-                iconSystemName: "bolt.fill",
-                defaultBaseURL: "https://api.groq.com/openai/v1",
-                defaultModel: "llama-3.3-70b-versatile"
+                defaultModel: "deepseek-chat",
+                guideURL: "https://platform.deepseek.com/api_keys"
             ),
             OpenAICompatibleProvider(
                 id: "zhipu",
                 displayName: "智谱 GLM",
                 iconSystemName: "sparkles",
                 defaultBaseURL: "https://open.bigmodel.cn/api/paas/v4",
-                defaultModel: "glm-4-flash"
-            ),
-            OpenAICompatibleProvider(
-                id: "github-models",
-                displayName: "GitHub Models",
-                iconSystemName: "cat.fill",
-                defaultBaseURL: "https://models.github.ai/inference",
-                defaultModel: "gpt-4o-mini"
+                defaultModel: "glm-4-flash",
+                guideURL: "https://open.bigmodel.cn/usercenter/apikeys"
             ),
             OllamaProvider(),
-
-            // Traditional Translation APIs
-            GoogleTranslateProvider(),
-            DeepLProvider(),
-            BaiduTranslateProvider(),
-            NiuTransProvider(),
-            CaiyunProvider(),
         ]
 
         // System

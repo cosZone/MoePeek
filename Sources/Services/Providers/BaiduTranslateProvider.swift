@@ -140,9 +140,10 @@ private struct BaiduSettingsView: View {
             }
 
             Section {
-                Text("Get credentials at api.fanyi.baidu.com")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Link(destination: URL(string: "https://api.fanyi.baidu.com")!) {
+                    Label("Get credentials at api.fanyi.baidu.com", systemImage: "arrow.up.right.square")
+                }
+                .font(.caption)
             }
         }
         .formStyle(.grouped)

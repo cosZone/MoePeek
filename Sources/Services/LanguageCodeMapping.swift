@@ -38,6 +38,13 @@ enum LanguageCodeMapping {
         "zh-Hans": "zh", "zh-Hant": "cht",
     ]
 
+    // MARK: - Bing
+
+    /// Bing natively uses BCP 47 for most codes; only map where they differ.
+    static let bing: [String: String] = [
+        "pt-BR": "pt",
+    ]
+
     // MARK: - Caiyun
 
     static let caiyun: [String: String] = [

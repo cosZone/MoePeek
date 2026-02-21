@@ -196,6 +196,13 @@ private struct OllamaSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Section {
+                Link(destination: URL(string: "https://ollama.com")!) {
+                    Label("Download Ollama", systemImage: "arrow.up.right.square")
+                }
+                .font(.caption)
+            }
         }
         .formStyle(.grouped)
         .onAppear { Task { await checkServer() } }

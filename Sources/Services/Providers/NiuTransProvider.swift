@@ -111,9 +111,10 @@ private struct NiuTransSettingsView: View {
             }
 
             Section {
-                Text("Get an API key at niutrans.com")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Link(destination: URL(string: "https://niutrans.com/cloud")!) {
+                    Label("Get an API key at niutrans.com", systemImage: "arrow.up.right.square")
+                }
+                .font(.caption)
             }
         }
         .formStyle(.grouped)

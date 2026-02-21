@@ -411,6 +411,17 @@
         }
       }
     },
+    "Download Ollama" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载 Ollama"
+          }
+        }
+      }
+    },
     "Empty text" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -449,6 +460,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "获取可用模型列表"
+          }
+        }
+      }
+    },
+    "Free Translation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "免费翻译"
           }
         }
       }
@@ -497,17 +519,19 @@
         }
       }
     },
-    "Get a free API key at deepl.com/pro-api" : {
+    "Get a free API key at deepl.com" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 deepl.com/pro-api 获取免费 API Key"
+            "value" : "在 deepl.com 获取免费 API Key"
           }
         }
       }
     },
     "Get a token at platform.caiyunapp.com" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -518,6 +542,7 @@
       }
     },
     "Get an API key at niutrans.com" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -527,7 +552,19 @@
         }
       }
     },
+    "Get API Key from %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从 %@ 获取 API Key"
+          }
+        }
+      }
+    },
     "Get credentials at api.fanyi.baidu.com" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1101,6 +1138,17 @@
         }
       }
     },
+    "Rate limited by Bing. Please try again later." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被 Bing 限速，请稍后重试。"
+          }
+        }
+      }
+    },
     "Request build failed" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1577,6 +1625,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用 {targetLang} 作为目标语言的占位符。"
+          }
+        }
+      }
+    },
+    "Uses Bing Translator, may be rate-limited." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 Bing 翻译，可能会受到速率限制。"
           }
         }
       }
