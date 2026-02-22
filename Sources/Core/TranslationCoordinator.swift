@@ -28,6 +28,9 @@ final class TranslationCoordinator {
     private(set) var providerStates: [String: ProviderState] = [:]
     private(set) var globalError: String?
     private(set) var detectionResult: DetectionResult?
+    /// Snapshot of expanded provider slots for the current translation session.
+    /// PopupView reads this instead of `registry.enabledSlots` to avoid recomputation during streaming.
+    private(set) var activeSlots: [any TranslationProvider] = []
 
     let registry: TranslationProviderRegistry
     private let permissionManager: PermissionManager
@@ -98,6 +101,7 @@ final class TranslationCoordinator {
         targetLanguage = Defaults[.targetLanguage]
         providerStates = [:]
         detectionResult = nil
+        activeSlots = []
         phase = .active
     }
 
@@ -139,7 +143,8 @@ final class TranslationCoordinator {
         targetLanguage = resolveTargetLanguage(detected: detectedLanguage)
         phase = .active
 
-        let providers = registry.enabledProviders
+        let providers = registry.enabledSlots
+        activeSlots = providers
         guard !providers.isEmpty else {
             globalError = String(localized: "No providers enabled. Enable at least one in Settings.")
             return
@@ -183,6 +188,7 @@ final class TranslationCoordinator {
         providerStates = [:]
         globalError = nil
         detectionResult = nil
+        activeSlots = []
     }
 
     // MARK: - Computed Helpers

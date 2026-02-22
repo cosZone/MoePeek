@@ -23,10 +23,12 @@ final class OpenAIConnectionManager {
 
     // MARK: - Actions
 
-    func fetchModels(baseURL: String, apiKey: String) async {
+    func fetchModels(baseURL: String, apiKey: String, silent: Bool = false) async {
         guard !isFetchingModels else { return }
         guard let url = validatedURL(base: baseURL, path: "/models", apiKey: apiKey) else {
-            modelFetchError = String(localized: "Please enter a valid Base URL (starting with http:// or https://) and API Key")
+            if !silent {
+                modelFetchError = String(localized: "Please enter a valid Base URL (starting with http:// or https://) and API Key")
+            }
             return
         }
 
@@ -41,19 +43,19 @@ final class OpenAIConnectionManager {
         do {
             let (data, response) = try await translationURLSession.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
-                modelFetchError = String(localized: "Invalid response")
+                if !silent { modelFetchError = String(localized: "Invalid response") }
                 return
             }
             guard httpResponse.statusCode == 200 else {
-                modelFetchError = String(localized: "Request failed (\(httpResponse.statusCode))")
+                if !silent { modelFetchError = String(localized: "Request failed (\(httpResponse.statusCode))") }
                 return
             }
             let decoded = try JSONDecoder().decode(ModelsResponse.self, from: data)
             fetchedModels = decoded.data.map(\.id).sorted()
         } catch is DecodingError {
-            modelFetchError = String(localized: "Invalid response format")
+            if !silent { modelFetchError = String(localized: "Invalid response format") }
         } catch {
-            modelFetchError = String(localized: "Network error: \(error.localizedDescription)")
+            if !silent { modelFetchError = String(localized: "Network error: \(error.localizedDescription)") }
         }
     }
 

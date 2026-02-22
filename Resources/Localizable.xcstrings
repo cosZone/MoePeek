@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "(unknown)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（未知）"
+          }
+        }
+      }
+    },
     "[Bing Translate: text truncated to 1000 characters]" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8,6 +18,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Bing 翻译：文本已截断至 1000 字符]"
+          }
+        }
+      }
+    },
+    "%@ model(s) enabled — will run in parallel during translation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已启用 %@ 个模型 - 翻译时将并行运行。"
           }
         }
       }
@@ -396,6 +416,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认高度：%lld"
+          }
+        }
+      }
+    },
+    "Default Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认模型"
           }
         }
       }
@@ -804,9 +834,6 @@
         }
       }
     },
-    "Model" : {
-
-    },
     "Model name" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1042,6 +1069,16 @@
         }
       }
     },
+    "Parallel Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行模型"
+          }
+        }
+      }
+    },
     "Permissions Need Re-Authorization" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1237,6 +1274,16 @@
         }
       }
     },
+    "Running multiple local models in parallel requires sufficient VRAM. Ollama may swap models causing increased latency." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行运行多个本地模型需要足够的显存。Ollama 可能会换入换出模型，导致延迟增加。"
+          }
+        }
+      }
+    },
     "Screen capture was cancelled" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1312,6 +1359,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择翻译服务"
+          }
+        }
+      }
+    },
+    "Select models to run in parallel during translation (max 5)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择翻译时并行运行的模型（最多 5 个）。"
           }
         }
       }
@@ -1636,6 +1693,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用 {targetLang} 作为目标语言的占位符。"
+          }
+        }
+      }
+    },
+    "Used when no models are selected below." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择下方模型时使用此模型。"
           }
         }
       }

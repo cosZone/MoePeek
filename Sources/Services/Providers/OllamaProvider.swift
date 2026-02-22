@@ -14,10 +14,17 @@ struct OllamaProvider: TranslationProvider {
 
     let baseURLKey = Defaults.Key<String>("provider_ollama_baseURL", default: "http://localhost:11434")
     let modelKey = Defaults.Key<String>("provider_ollama_model", default: "")
+    let enabledModelsKey = Defaults.Key<Set<String>>("provider_ollama_enabledModels", default: [])
     let systemPromptKey = Defaults.Key<String>(
         "provider_ollama_systemPrompt",
         default: "Translate the following text to {targetLang}. Only output the translation, nothing else."
     )
+
+    /// Models explicitly enabled for parallel translation. Empty means use default single model.
+    var activeModels: [String] {
+        let enabled = Defaults[enabledModelsKey]
+        return enabled.isEmpty ? [] : enabled.sorted()
+    }
 
     var resolvedBaseURL: String {
         Defaults[baseURLKey].trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -31,11 +38,19 @@ struct OllamaProvider: TranslationProvider {
         from sourceLang: String?,
         to targetLang: String
     ) -> AsyncThrowingStream<String, Error> {
+        translateStream(text, from: sourceLang, to: targetLang, model: Defaults[modelKey])
+    }
+
+    func translateStream(
+        _ text: String,
+        from sourceLang: String?,
+        to targetLang: String,
+        model: String
+    ) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 let baseURL = resolvedBaseURL
                 do {
-                    let model = Defaults[modelKey]
                     guard !model.isEmpty else {
                         throw TranslationError.apiError(
                             statusCode: 0,
@@ -134,6 +149,12 @@ private struct OllamaSettingsView: View {
     private var baseURL: Binding<String> { Defaults.binding(provider.baseURLKey) }
     private var model: Binding<String> { Defaults.binding(provider.modelKey) }
     private var systemPrompt: Binding<String> { Defaults.binding(provider.systemPromptKey) }
+    private var enabledModels: Binding<Set<String>> {
+        Binding(
+            get: { Defaults[provider.enabledModelsKey] },
+            set: { Defaults[provider.enabledModelsKey] = $0 }
+        )
+    }
 
     private enum ServerStatus {
         case unknown, checking, running, notDetected
@@ -159,7 +180,7 @@ private struct OllamaSettingsView: View {
                 }
             }
 
-            Section("Model") {
+            Section("Default Model") {
                 HStack(spacing: 4) {
                     if availableModels.isEmpty {
                         TextField("Model name", text: model)
@@ -186,6 +207,61 @@ private struct OllamaSettingsView: View {
                     }
                     .disabled(isFetchingModels)
                 }
+
+                if !availableModels.isEmpty {
+                    if enabledModels.wrappedValue.isEmpty {
+                        Text("Used when no models are selected below.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            Section("Parallel Models") {
+                Text("Select models to run in parallel during translation (max 5).")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                let persistedUnknown = enabledModels.wrappedValue.subtracting(Set(availableModels)).sorted()
+                let allDisplayModels = availableModels + persistedUnknown
+
+                if allDisplayModels.isEmpty {
+                    Text("Click the refresh button above to fetch available models.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, 4)
+                } else {
+                    ForEach(availableModels, id: \.self) { modelID in
+                        ModelCheckboxRow(
+                            modelID: modelID,
+                            isEnabled: enabledModels.wrappedValue.contains(modelID),
+                            isUnknown: false,
+                            isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= 5,
+                            onToggle: { toggleModel(modelID) }
+                        )
+                    }
+
+                    ForEach(persistedUnknown, id: \.self) { modelID in
+                        ModelCheckboxRow(
+                            modelID: modelID,
+                            isEnabled: true,
+                            isUnknown: true,
+                            isDisabled: false,
+                            onToggle: { toggleModel(modelID) }
+                        )
+                    }
+                }
+
+                let count = enabledModels.wrappedValue.count
+                if count > 0 {
+                    Text("\(count) model(s) enabled — will run in parallel during translation.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    Text("Running multiple local models in parallel requires sufficient VRAM. Ollama may swap models causing increased latency.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
             }
 
             Section("System Prompt") {
@@ -205,7 +281,12 @@ private struct OllamaSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .onAppear { Task { await checkServer() } }
+        .task {
+            await checkServer()
+            if serverStatus == .running, availableModels.isEmpty {
+                await fetchModels(silent: true)
+            }
+        }
         .onChange(of: baseURL.wrappedValue) { _, _ in
             serverStatus = .unknown
             availableModels = []
@@ -258,7 +339,7 @@ private struct OllamaSettingsView: View {
     }
 
     @MainActor
-    private func fetchModels() async {
+    private func fetchModels(silent: Bool = false) async {
         isFetchingModels = true
         defer { isFetchingModels = false }
         do {
@@ -268,7 +349,18 @@ private struct OllamaSettingsView: View {
             }
             serverStatus = .running
         } catch {
-            serverStatus = .notDetected
+            if !silent { serverStatus = .notDetected }
         }
+    }
+
+    private func toggleModel(_ modelID: String) {
+        var current = enabledModels.wrappedValue
+        if current.contains(modelID) {
+            current.remove(modelID)
+        } else {
+            guard current.count < 5 else { return }
+            current.insert(modelID)
+        }
+        enabledModels.wrappedValue = current
     }
 }

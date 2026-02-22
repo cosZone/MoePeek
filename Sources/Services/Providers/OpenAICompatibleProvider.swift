@@ -13,9 +13,16 @@ struct OpenAICompatibleProvider: TranslationProvider {
     // Namespaced Defaults keys
     let baseURLKey: Defaults.Key<String>
     let modelKey: Defaults.Key<String>
+    let enabledModelsKey: Defaults.Key<Set<String>>
     let systemPromptKey: Defaults.Key<String>
     let apiKeyKey: Defaults.Key<String>
     let guideURL: String?
+
+    /// Models explicitly enabled for parallel translation. Empty means use default single model.
+    var activeModels: [String] {
+        let enabled = Defaults[enabledModelsKey]
+        return enabled.isEmpty ? [] : enabled.sorted()
+    }
 
     init(
         id: String,
@@ -30,6 +37,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
         self.iconSystemName = iconSystemName
         self.baseURLKey = .init("provider_\(id)_baseURL", default: defaultBaseURL)
         self.modelKey = .init("provider_\(id)_model", default: defaultModel)
+        self.enabledModelsKey = .init("provider_\(id)_enabledModels", default: [])
         self.systemPromptKey = .init(
             "provider_\(id)_systemPrompt",
             default: "Translate the following text to {targetLang}. Only output the translation, nothing else."
@@ -48,10 +56,19 @@ struct OpenAICompatibleProvider: TranslationProvider {
         from sourceLang: String?,
         to targetLang: String
     ) -> AsyncThrowingStream<String, Error> {
+        translateStream(text, from: sourceLang, to: targetLang, model: Defaults[modelKey])
+    }
+
+    func translateStream(
+        _ text: String,
+        from sourceLang: String?,
+        to targetLang: String,
+        model: String
+    ) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
-                    let request = try buildRequest(text: text, sourceLang: sourceLang, targetLang: targetLang)
+                    let request = try buildRequest(text: text, sourceLang: sourceLang, targetLang: targetLang, model: model)
                     let (bytes, response) = try await translationURLSession.bytes(for: request)
                     try await streamOpenAISSE(bytes, response: response, to: continuation)
                     continuation.finish()
@@ -70,7 +87,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
 
     // MARK: - Private
 
-    private func buildRequest(text: String, sourceLang: String?, targetLang: String) throws -> URLRequest {
+    private func buildRequest(text: String, sourceLang: String?, targetLang: String, model: String) throws -> URLRequest {
         let baseURL = Defaults[baseURLKey].trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         guard let url = URL(string: "\(baseURL)/chat/completions") else {
             throw TranslationError.invalidURL
@@ -84,7 +101,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
         let systemPrompt = promptTemplate.replacingOccurrences(of: "{targetLang}", with: targetLang)
 
         let body: [String: Any] = [
-            "model": Defaults[modelKey],
+            "model": model,
             "stream": true,
             "messages": [
                 ["role": "system", "content": systemPrompt],

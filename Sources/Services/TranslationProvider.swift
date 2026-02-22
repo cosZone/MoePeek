@@ -34,11 +34,22 @@ protocol TranslationProvider: Sendable {
     /// Whether the provider has been configured (e.g. API key set).
     @MainActor var isConfigured: Bool { get }
 
+    /// Models explicitly enabled for parallel translation. Empty means single-model (use default).
+    var activeModels: [String] { get }
+
     /// Stream translation results. Non-streaming providers yield the full result at once.
     func translateStream(
         _ text: String,
         from sourceLang: String?,
         to targetLang: String
+    ) -> AsyncThrowingStream<String, Error>
+
+    /// Stream translation using a specific model override.
+    func translateStream(
+        _ text: String,
+        from sourceLang: String?,
+        to targetLang: String,
+        model: String
     ) -> AsyncThrowingStream<String, Error>
 
     /// Return a settings view for this provider.
@@ -49,6 +60,43 @@ protocol TranslationProvider: Sendable {
 
 extension TranslationProvider {
     var category: ProviderCategory { .llm }
+    var activeModels: [String] { [] }
+
+    func translateStream(
+        _ text: String,
+        from sourceLang: String?,
+        to targetLang: String,
+        model: String
+    ) -> AsyncThrowingStream<String, Error> {
+        translateStream(text, from: sourceLang, to: targetLang)
+    }
+}
+
+// MARK: - ModelSlotProvider
+
+/// Wraps a provider to run a specific model. Conforms to `TranslationProvider`,
+/// so downstream code (Coordinator, PopupView, ResultCard) needs zero changes.
+struct ModelSlotProvider: TranslationProvider {
+    let inner: any TranslationProvider
+    let modelOverride: String
+
+    var id: String { "\(inner.id):\(modelOverride)" }
+    var displayName: String { "\(inner.displayName) · \(modelOverride)" }
+    var iconSystemName: String { inner.iconSystemName }
+    var category: ProviderCategory { inner.category }
+    var supportsStreaming: Bool { inner.supportsStreaming }
+    var isAvailable: Bool { inner.isAvailable }
+    @MainActor var isConfigured: Bool { inner.isConfigured }
+
+    func translateStream(
+        _ text: String,
+        from sourceLang: String?,
+        to targetLang: String
+    ) -> AsyncThrowingStream<String, Error> {
+        inner.translateStream(text, from: sourceLang, to: targetLang, model: modelOverride)
+    }
+
+    @MainActor func makeSettingsView() -> AnyView { inner.makeSettingsView() }
 }
 
 // MARK: - Shared URLSession (zero-cache)

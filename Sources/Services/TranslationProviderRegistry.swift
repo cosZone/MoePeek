@@ -16,6 +16,25 @@ final class TranslationProviderRegistry {
         return providers.filter { ids.contains($0.id) }
     }
 
+    /// Enabled providers expanded into per-model slots.
+    /// Multi-model providers yield one `ModelSlotProvider` per active model;
+    /// single-model providers pass through unchanged (preserving their original id).
+    var enabledSlots: [any TranslationProvider] {
+        let ids = Defaults[.enabledProviders]
+        var result: [any TranslationProvider] = []
+        for provider in providers where ids.contains(provider.id) {
+            let models = provider.activeModels
+            if models.isEmpty {
+                result.append(provider)
+            } else {
+                for model in models.prefix(5) {
+                    result.append(ModelSlotProvider(inner: provider, modelOverride: model))
+                }
+            }
+        }
+        return result
+    }
+
     func provider(withID id: String) -> (any TranslationProvider)? {
         providers.first { $0.id == id }
     }
