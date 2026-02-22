@@ -79,8 +79,13 @@ final class PopupPanelController {
 
         if panel == nil {
             let newPanel = PopupPanel(contentRect: NSRect(origin: .zero, size: initialSize))
-            let contentView = PopupView(coordinator: coordinator)
-                .environment(\.popupPanel, newPanel)
+            let contentView = PopupView(
+                coordinator: coordinator,
+                onOpenSettings: { [weak self] in
+                    self?.dismiss()
+                }
+            )
+            .environment(\.popupPanel, newPanel)
             let hostingView = NSHostingView(rootView: contentView)
             // Prevent NSHostingView from auto-resizing the window on content changes,
             // which causes an infinite constraint update loop during streaming.

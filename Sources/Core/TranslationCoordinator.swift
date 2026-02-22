@@ -117,12 +117,11 @@ final class TranslationCoordinator {
 
         sourceText = trimmed
 
-        // Language detection: respect user settings
-        let isDetectionEnabled = Defaults[.isLanguageDetectionEnabled]
+        // Language detection: check sourceLanguage setting
         let forcedSource = Defaults[.sourceLanguage]
 
-        if !isDetectionEnabled, forcedSource != "auto" {
-            // User disabled auto-detection and specified a source language
+        if forcedSource != "auto" {
+            // User specified a source language in the panel or settings
             detectedLanguage = forcedSource
             detectionResult = nil
         } else {

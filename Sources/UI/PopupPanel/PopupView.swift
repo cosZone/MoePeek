@@ -4,10 +4,11 @@ import SwiftUI
 /// The SwiftUI content displayed inside the popup translation panel.
 struct PopupView: View {
     let coordinator: TranslationCoordinator
-
+    var onOpenSettings: (() -> Void)?
     @Environment(\.openSettings) private var openSettings
     @State private var editableText: String = ""
     @State private var expandedProviders: Set<String> = []
+    @State private var sourceLang: String = Defaults[.sourceLanguage]
     @State private var targetLang: String = Defaults[.targetLanguage]
     @State private var inputHeight: CGFloat = CGFloat(Defaults[.popupInputHeight])
     @State private var containerHeight: CGFloat = CGFloat(Defaults[.popupDefaultHeight])
@@ -64,6 +65,7 @@ struct PopupView: View {
         }
         .onAppear {
             editableText = coordinator.sourceText
+            sourceLang = Defaults[.sourceLanguage]
             targetLang = coordinator.targetLanguage
             expandedProviders = Set(coordinator.registry.enabledProviders.map(\.id))
         }
@@ -104,19 +106,26 @@ struct PopupView: View {
                 // Language bar + settings button
                 HStack(spacing: 4) {
                     LanguageBarView(
+                        sourceLanguage: $sourceLang,
                         detectedLanguage: coordinator.detectedLanguage,
                         detectionConfidence: coordinator.detectionResult?.confidence,
                         targetLanguage: $targetLang,
                         onSwap: {
-                            if let detected = coordinator.detectedLanguage {
-                                targetLang = detected
-                            }
+                            let effectiveSource = sourceLang == "auto"
+                                ? (coordinator.detectedLanguage ?? targetLang)
+                                : sourceLang
+                            sourceLang = targetLang
+                            targetLang = effectiveSource
                         }
                     )
 
                     Button {
+                        let settings = openSettings
+                        onOpenSettings?()
                         NSApp.activate(ignoringOtherApps: true)
-                        openSettings()
+                        DispatchQueue.main.async {
+                            settings()
+                        }
                     } label: {
                         Image(systemName: "gearshape")
                             .font(.caption)
@@ -124,6 +133,7 @@ struct PopupView: View {
                     }
                     .buttonStyle(.plain)
                     .help("Open Settings")
+                    .background { InteractiveMarker() }
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -131,6 +141,13 @@ struct PopupView: View {
                     Defaults[.targetLanguage] = newValue
                     // Skip retranslation when this change came from coordinator sync
                     guard newValue != coordinator.targetLanguage else { return }
+                    if !editableText.isEmpty {
+                        coordinator.translate(editableText)
+                    }
+                }
+                .onChange(of: sourceLang) { _, newValue in
+                    Defaults[.sourceLanguage] = newValue
+                    Defaults[.isLanguageDetectionEnabled] = (newValue == "auto")
                     if !editableText.isEmpty {
                         coordinator.translate(editableText)
                     }

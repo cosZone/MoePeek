@@ -77,7 +77,9 @@ struct GeneralSettingsView: View {
             Section("Language Detection") {
                 Toggle("Auto-detect source language", isOn: $isLanguageDetectionEnabled)
                     .onChange(of: isLanguageDetectionEnabled) { _, newValue in
-                        if !newValue, sourceLanguage == "auto" {
+                        if newValue {
+                            sourceLanguage = "auto"
+                        } else if sourceLanguage == "auto" {
                             sourceLanguage = Defaults[.targetLanguage].hasPrefix("zh") ? "en" : "zh-Hans"
                         }
                     }
