@@ -169,7 +169,6 @@
       }
     },
     "Auto Detect" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -912,6 +911,7 @@
       }
     },
     "No Preference" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

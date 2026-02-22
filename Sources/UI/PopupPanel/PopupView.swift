@@ -114,7 +114,8 @@ struct PopupView: View {
                             let effectiveSource = sourceLang == "auto"
                                 ? (coordinator.detectedLanguage ?? targetLang)
                                 : sourceLang
-                            // Avoid swapping into identical source/target
+                            // When auto-detect has no result yet, effectiveSource falls back
+                            // to targetLang and swap becomes a no-op
                             guard effectiveSource != targetLang else { return }
                             sourceLang = targetLang
                             targetLang = effectiveSource
@@ -146,7 +147,6 @@ struct PopupView: View {
                 }
                 .onChange(of: sourceLang) { _, newValue in
                     Defaults[.sourceLanguage] = newValue
-                    Defaults[.isLanguageDetectionEnabled] = (newValue == "auto")
                     if !editableText.isEmpty {
                         coordinator.translate(editableText)
                     }
