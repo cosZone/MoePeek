@@ -4,13 +4,14 @@ import SwiftUI
 // MARK: - Provider Category
 
 enum ProviderCategory: String, CaseIterable {
-    case freeTranslation, traditional, llm, system
+    case freeTranslation, traditional, llm, custom, system
 
     var displayName: String {
         switch self {
         case .freeTranslation: String(localized: "Free Translation")
         case .llm: String(localized: "LLM Services")
         case .traditional: String(localized: "Translation APIs")
+        case .custom: String(localized: "Custom")
         case .system: String(localized: "System")
         }
     }
@@ -33,6 +34,8 @@ protocol TranslationProvider: Sendable {
     var isAvailable: Bool { get }
     /// Whether the provider has been configured (e.g. API key set).
     @MainActor var isConfigured: Bool { get }
+    /// Whether the provider can be deleted by the user (e.g. custom providers).
+    var isDeletable: Bool { get }
 
     /// Models explicitly enabled for parallel translation. Empty means single-model (use default).
     var activeModels: [String] { get }
@@ -58,8 +61,12 @@ protocol TranslationProvider: Sendable {
 
 // MARK: - Default Implementation
 
+/// Maximum number of models that can be enabled for parallel translation per provider.
+let maxParallelModels = 20
+
 extension TranslationProvider {
     var category: ProviderCategory { .llm }
+    var isDeletable: Bool { false }
     var activeModels: [String] { [] }
 
     func translateStream(
@@ -87,6 +94,8 @@ struct ModelSlotProvider: TranslationProvider {
     var supportsStreaming: Bool { inner.supportsStreaming }
     var isAvailable: Bool { inner.isAvailable }
     @MainActor var isConfigured: Bool { inner.isConfigured }
+    // activeModels is intentionally `[]` via the protocol default —
+    // a ModelSlotProvider is already a single-model leaf; nesting is not supported.
 
     func translateStream(
         _ text: String,

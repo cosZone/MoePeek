@@ -145,7 +145,7 @@ struct OpenAIConfigFields: View {
                                         modelID: modelID,
                                         isEnabled: enabledModels.wrappedValue.contains(modelID),
                                         isUnknown: !filteredModels.contains(modelID),
-                                        isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= 20,
+                                        isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
                                         metaMatch: metaService.meta(for: modelID),
                                         onToggle: { toggleModel(modelID) }
                                     )
@@ -167,7 +167,7 @@ struct OpenAIConfigFields: View {
                             Image(systemName: "plus.circle")
                         }
                         .buttonStyle(.borderless)
-                        .disabled(customModelInput.trimmingCharacters(in: .whitespaces).isEmpty || enabledModels.wrappedValue.count >= 20)
+                        .disabled(customModelInput.trimmingCharacters(in: .whitespaces).isEmpty || enabledModels.wrappedValue.count >= maxParallelModels)
                     }
 
                     let count = enabledModels.wrappedValue.count
@@ -227,7 +227,7 @@ struct OpenAIConfigFields: View {
         if current.contains(modelID) {
             current.remove(modelID)
         } else {
-            guard current.count < 20 else { return }
+            guard current.count < maxParallelModels else { return }
             current.insert(modelID)
         }
         enabledModels.wrappedValue = current
@@ -235,7 +235,7 @@ struct OpenAIConfigFields: View {
 
     private func addCustomModel() {
         let trimmed = customModelInput.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty, enabledModels.wrappedValue.count < 20 else { return }
+        guard !trimmed.isEmpty, enabledModels.wrappedValue.count < maxParallelModels else { return }
         enabledModels.wrappedValue.insert(trimmed)
         customModelInput = ""
     }

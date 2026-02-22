@@ -86,6 +86,16 @@
         }
       }
     },
+    "Add Custom Provider" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加自定义服务"
+          }
+        }
+      }
+    },
     "After updating, macOS may revoke previously granted permissions. Please re-authorize below." : {
       "localizations" : {
         "zh-Hans" : {
@@ -173,6 +183,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple Translation 需要下载语言包才能离线翻译。\n选择常用语言对并下载，或稍后在设置中下载。"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete \"%@\"? This will remove all its settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除「%@」吗？这将移除其所有设置。"
           }
         }
       }
@@ -438,6 +458,17 @@
     "Copyright © 2025-2026 MoePeek. All rights reserved." : {
 
     },
+    "Custom" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        }
+      }
+    },
     "Default Height: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -466,6 +497,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认宽度：%lld"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        }
+      }
+    },
+    "Delete Provider" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除服务"
           }
         }
       }
@@ -1393,12 +1446,12 @@
         }
       }
     },
-    "Select models to run in parallel during translation (max 5)." : {
+    "Select models to run in parallel during translation (max %@)." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择翻译时并行运行的模型（最多 5 个）。"
+            "value" : "选择翻译时并行运行的模型（最多 %@ 个）。"
           }
         }
       }

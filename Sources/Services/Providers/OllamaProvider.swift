@@ -218,7 +218,7 @@ private struct OllamaSettingsView: View {
             }
 
             Section("Parallel Models") {
-                Text("Select models to run in parallel during translation (max 5).")
+                Text("Select models to run in parallel during translation (max \(maxParallelModels)).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -236,7 +236,7 @@ private struct OllamaSettingsView: View {
                             modelID: modelID,
                             isEnabled: enabledModels.wrappedValue.contains(modelID),
                             isUnknown: false,
-                            isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= 5,
+                            isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
                             onToggle: { toggleModel(modelID) }
                         )
                     }
@@ -358,7 +358,7 @@ private struct OllamaSettingsView: View {
         if current.contains(modelID) {
             current.remove(modelID)
         } else {
-            guard current.count < 5 else { return }
+            guard current.count < maxParallelModels else { return }
             current.insert(modelID)
         }
         enabledModels.wrappedValue = current

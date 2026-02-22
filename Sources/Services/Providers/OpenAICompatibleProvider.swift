@@ -7,8 +7,12 @@ struct OpenAICompatibleProvider: TranslationProvider {
     let id: String
     let displayName: String
     let iconSystemName: String
+    let isCustom: Bool
     let supportsStreaming = true
     let isAvailable = true
+
+    var category: ProviderCategory { isCustom ? .custom : .llm }
+    var isDeletable: Bool { isCustom }
 
     // Namespaced Defaults keys
     let baseURLKey: Defaults.Key<String>
@@ -24,17 +28,31 @@ struct OpenAICompatibleProvider: TranslationProvider {
         return enabled.isEmpty ? [] : enabled.sorted()
     }
 
+    /// All UserDefaults suffixes used by this provider type.
+    private static let defaultsSuffixes = ["baseURL", "apiKey", "model", "enabledModels", "systemPrompt"]
+
+    /// Remove all UserDefaults keys associated with the given provider id.
+    /// Uses `UserDefaults.standard` directly because the Defaults library
+    /// does not expose an API for removing keys by name.
+    static func cleanupDefaults(for id: String) {
+        for suffix in defaultsSuffixes {
+            UserDefaults.standard.removeObject(forKey: "provider_\(id)_\(suffix)")
+        }
+    }
+
     init(
         id: String,
         displayName: String,
         iconSystemName: String = "globe",
         defaultBaseURL: String,
         defaultModel: String,
-        guideURL: String? = nil
+        guideURL: String? = nil,
+        isCustom: Bool = false
     ) {
         self.id = id
         self.displayName = displayName
         self.iconSystemName = iconSystemName
+        self.isCustom = isCustom
         self.baseURLKey = .init("provider_\(id)_baseURL", default: defaultBaseURL)
         self.modelKey = .init("provider_\(id)_model", default: defaultModel)
         self.enabledModelsKey = .init("provider_\(id)_enabledModels", default: [])
@@ -44,6 +62,17 @@ struct OpenAICompatibleProvider: TranslationProvider {
         )
         self.apiKeyKey = .init("provider_\(id)_apiKey", default: "")
         self.guideURL = guideURL
+    }
+
+    init(definition: CustomProviderDefinition) {
+        self.init(
+            id: definition.id,
+            displayName: definition.name,
+            iconSystemName: "server.rack",
+            defaultBaseURL: definition.defaultBaseURL,
+            defaultModel: definition.defaultModel,
+            isCustom: true
+        )
     }
 
     @MainActor

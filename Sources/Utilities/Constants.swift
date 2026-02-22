@@ -88,6 +88,9 @@ extension Defaults.Keys {
     // Settings tab selection
     static let selectedSettingsTab = Key<SettingsTab>("selectedSettingsTab", default: .general)
 
+    // Custom providers
+    static let customProviders = Key<[CustomProviderDefinition]>("customProviders", default: [])
+
     // App language override
     static let appLanguage = Key<AppLanguage>("appLanguage", default: .system)
 }

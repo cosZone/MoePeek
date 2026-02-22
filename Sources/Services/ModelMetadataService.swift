@@ -40,7 +40,7 @@ final class ModelMetadataService {
         }
 
         guard let url = URL(string: "https://models.dev/api.json") else { return }
-        guard let (data, response) = try? await URLSession.shared.data(from: url),
+        guard let (data, response) = try? await translationURLSession.data(from: url),
               (response as? HTTPURLResponse)?.statusCode == 200 else { return }
 
         // Parse and build indexes off the main thread to avoid blocking UI.
@@ -104,7 +104,7 @@ final class ModelMetadataService {
         var bestLength = 0
 
         for key in shortIndex.keys {
-            guard query.contains(key) else { continue }
+            guard query.contains(key) || key.contains(query) else { continue }
             if key.count > bestLength {
                 bestLength = key.count
                 bestKey = key

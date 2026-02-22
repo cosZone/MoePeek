@@ -1,10 +1,12 @@
 import Defaults
+import Foundation
+import Observation
 
 /// Container for all registered translation providers.
-@MainActor
+@MainActor @Observable
 final class TranslationProviderRegistry {
     /// All providers available on this system (filtered by `isAvailable`).
-    let providers: [any TranslationProvider]
+    private(set) var providers: [any TranslationProvider]
 
     init(providers: [any TranslationProvider]) {
         self.providers = providers.filter { $0.isAvailable }
@@ -27,7 +29,7 @@ final class TranslationProviderRegistry {
             if models.isEmpty {
                 result.append(provider)
             } else {
-                for model in models.prefix(5) {
+                for model in models.prefix(maxParallelModels) {
                     result.append(ModelSlotProvider(inner: provider, modelOverride: model))
                 }
             }
@@ -49,6 +51,28 @@ final class TranslationProviderRegistry {
             guard let list = grouped[category], !list.isEmpty else { return nil }
             return (category: category, providers: list)
         }
+    }
+
+    // MARK: - Custom Provider Management
+
+    func addCustomProvider(_ def: CustomProviderDefinition) {
+        var defs = Defaults[.customProviders]
+        defs.append(def)
+        Defaults[.customProviders] = defs
+        providers.append(OpenAICompatibleProvider(definition: def))
+    }
+
+    func removeCustomProvider(id: String) {
+        // Persist removal to Defaults before mutating `providers`,
+        // because @Observable triggers immediate UI refresh.
+        var defs = Defaults[.customProviders]
+        defs.removeAll { $0.id == id }
+        Defaults[.customProviders] = defs
+        var enabled = Defaults[.enabledProviders]
+        enabled.remove(id)
+        Defaults[.enabledProviders] = enabled
+        OpenAICompatibleProvider.cleanupDefaults(for: id)
+        providers.removeAll { $0.id == id }
     }
 
     /// Factory method returning the built-in provider set.
@@ -99,6 +123,11 @@ final class TranslationProviderRegistry {
             allProviders.append(AppleTranslationProvider())
         }
         #endif
+
+        // Custom providers
+        for def in Defaults[.customProviders] {
+            allProviders.append(OpenAICompatibleProvider(definition: def))
+        }
 
         return TranslationProviderRegistry(providers: allProviders)
     }
