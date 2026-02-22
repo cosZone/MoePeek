@@ -114,18 +114,17 @@ struct PopupView: View {
                             let effectiveSource = sourceLang == "auto"
                                 ? (coordinator.detectedLanguage ?? targetLang)
                                 : sourceLang
+                            // Avoid swapping into identical source/target
+                            guard effectiveSource != targetLang else { return }
                             sourceLang = targetLang
                             targetLang = effectiveSource
                         }
                     )
 
                     Button {
-                        let settings = openSettings
-                        onOpenSettings?()
                         NSApp.activate(ignoringOtherApps: true)
-                        DispatchQueue.main.async {
-                            settings()
-                        }
+                        openSettings()
+                        onOpenSettings?()
                     } label: {
                         Image(systemName: "gearshape")
                             .font(.caption)
