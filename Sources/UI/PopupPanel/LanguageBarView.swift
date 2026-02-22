@@ -1,8 +1,9 @@
 import Defaults
 import SwiftUI
 
-/// Language selection bar with source (auto-detect) + swap + target picker.
+/// Language selection bar with source picker + swap + target picker.
 struct LanguageBarView: View {
+    @Binding var sourceLanguage: String
     let detectedLanguage: String?
     var detectionConfidence: Double?
     @Binding var targetLanguage: String
@@ -10,15 +11,14 @@ struct LanguageBarView: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // Source language display
-            HStack(spacing: 4) {
-                Image(systemName: "text.magnifyingglass")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(sourceDisplayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Source language picker
+            Picker("", selection: $sourceLanguage) {
+                Text(autoDetectDisplayName).tag("auto")
+                ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                    Text(name).tag(code)
+                }
             }
+            .labelsHidden()
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: onSwap) {
@@ -39,6 +39,7 @@ struct LanguageBarView: View {
         }
         .padding(.horizontal, 4)
         .padding(.vertical, 2)
+        .background { InteractiveMarker() }
     }
 
     /// Shows a "?" when confidence is above the detection threshold (so a language is returned)
@@ -47,13 +48,13 @@ struct LanguageBarView: View {
         min(Defaults[.detectionConfidenceThreshold] + 0.3, 0.8)
     }
 
-    private var sourceDisplayName: String {
-        if let lang = detectedLanguage {
+    private var autoDetectDisplayName: String {
+        if sourceLanguage == "auto", let lang = detectedLanguage {
             let name = Locale.current.localizedString(forIdentifier: lang) ?? lang
             if let conf = detectionConfidence, conf < uncertainDisplayThreshold {
-                return "\(name) ?"
+                return "\(String(localized: "Auto Detect")) (\(name) ?)"
             }
-            return name
+            return "\(String(localized: "Auto Detect")) (\(name))"
         }
         return String(localized: "Auto Detect")
     }

@@ -10,7 +10,6 @@ struct GeneralSettingsView: View {
     @Default(.popupDefaultWidth) private var popupDefaultWidth
     @Default(.popupDefaultHeight) private var popupDefaultHeight
     @Default(.sourceLanguage) private var sourceLanguage
-    @Default(.isLanguageDetectionEnabled) private var isLanguageDetectionEnabled
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
     @Default(.appLanguage) private var appLanguage
 
@@ -71,37 +70,24 @@ struct GeneralSettingsView: View {
                     }
                 }
 
-                Toggle("Auto-translate selected text", isOn: $isAutoDetectEnabled)
+                Toggle("Show floating icon on text selection", isOn: $isAutoDetectEnabled)
             }
 
             Section("Language Detection") {
-                Toggle("Auto-detect source language", isOn: $isLanguageDetectionEnabled)
-                    .onChange(of: isLanguageDetectionEnabled) { _, newValue in
-                        if !newValue, sourceLanguage == "auto" {
-                            sourceLanguage = Defaults[.targetLanguage].hasPrefix("zh") ? "en" : "zh-Hans"
-                        }
+                Picker("Source Language:", selection: $sourceLanguage) {
+                    Text("Auto Detect").tag("auto")
+                    ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                        Text(name).tag(code)
                     }
+                }
 
-                if isLanguageDetectionEnabled {
-                    Picker("Preferred Source Language:", selection: $sourceLanguage) {
-                        Text("No Preference").tag("auto")
-                        ForEach(SupportedLanguages.all, id: \.code) { code, name in
-                            Text(name).tag(code)
-                        }
-                    }
-
+                if sourceLanguage == "auto" {
                     LabeledContent("Detection Sensitivity: \(confidenceThreshold, specifier: "%.1f")") {
                         Slider(value: $confidenceThreshold, in: 0.1...0.8, step: 0.1)
                     }
                     Text("Lower = more aggressive detection (may be inaccurate); Higher = more conservative (may return unknown)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                } else {
-                    Picker("Source Language:", selection: $sourceLanguage) {
-                        ForEach(SupportedLanguages.all, id: \.code) { code, name in
-                            Text(name).tag(code)
-                        }
-                    }
                 }
             }
 

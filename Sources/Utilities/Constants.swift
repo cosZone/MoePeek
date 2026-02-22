@@ -67,7 +67,6 @@ extension Defaults.Keys {
 
     // Language detection
     static let detectionConfidenceThreshold = Key<Double>("detectionConfidenceThreshold", default: 0.3)
-    static let isLanguageDetectionEnabled = Key<Bool>("isLanguageDetectionEnabled", default: true)
 
     // Clipboard grabber timeout
     static let clipboardTimeout = Key<Int>("clipboardTimeout", default: 200)

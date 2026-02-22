@@ -189,7 +189,6 @@
       }
     },
     "Auto Detect" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -210,13 +209,12 @@
         }
       }
     },
-    "Auto-translate selected text" : {
-      "extractionState" : "stale",
+    "Show floating icon on text selection" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选中文字自动翻译"
+            "value" : "选中文字时显示悬浮球"
           }
         }
       }
@@ -939,6 +937,7 @@
       }
     },
     "No Preference" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
