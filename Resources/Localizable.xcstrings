@@ -955,6 +955,16 @@
         }
       }
     },
+    "MoePeek is now listed in Screen Recording settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MoePeek 现已出现在屏幕录制设置列表中"
+          }
+        }
+      }
+    },
     "More translation services available in Settings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1276,6 +1286,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "被有道限速，请稍后重试。"
+          }
+        }
+      }
+    },
+    "Request Permission" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求权限"
           }
         }
       }

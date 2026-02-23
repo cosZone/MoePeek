@@ -13,6 +13,7 @@ struct OnboardingView: View {
 
     @Default(.enabledProviders) private var enabledProviders
     @State private var currentPageIndex = 0
+    @State private var hasRequestedScreenRecording = false
 
     private var openaiProvider: OpenAICompatibleProvider? {
         registry.providers.first { $0.id == "openai" } as? OpenAICompatibleProvider
@@ -200,13 +201,55 @@ struct OnboardingView: View {
     }
 
     private var screenRecordingStep: some View {
-        permissionStep(
-            icon: "rectangle.dashed.badge.record",
-            title: "Screen Recording Permission",
-            description: "MoePeek needs screen recording permission for OCR screenshot translation to recognize text on screen.",
-            isGranted: permissionManager.isScreenRecordingGranted,
-            onOpenSettings: { permissionManager.openScreenRecordingSettings() }
-        )
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: "rectangle.dashed.badge.record")
+                .font(.system(size: 40))
+                .foregroundStyle(permissionManager.isScreenRecordingGranted ? .green : .secondary)
+
+            Text("Screen Recording Permission")
+                .font(.title2.bold())
+
+            Text("MoePeek needs screen recording permission for OCR screenshot translation to recognize text on screen.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            if permissionManager.isScreenRecordingGranted {
+                Label("Granted", systemImage: "checkmark.circle.fill")
+                    .font(.headline)
+                    .foregroundStyle(.green)
+                    .transition(.scale.combined(with: .opacity))
+            } else if !hasRequestedScreenRecording {
+                Button("Request Permission") {
+                    hasRequestedScreenRecording = true
+                    permissionManager.requestScreenRecording()
+                }
+                .controlSize(.large)
+                .buttonStyle(.borderedProminent)
+            } else {
+                VStack(spacing: 8) {
+                    Button("Open System Settings") {
+                        permissionManager.openScreenRecordingSettings()
+                    }
+                    .controlSize(.large)
+
+                    Text("MoePeek is now listed in Screen Recording settings")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Text("Status updates automatically after granting")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+
+            Spacer()
+        }
+        .animation(.easeInOut(duration: 0.3), value: permissionManager.isScreenRecordingGranted)
+        .animation(.easeInOut(duration: 0.3), value: hasRequestedScreenRecording)
     }
 
     // MARK: - Provider Selection Step
