@@ -78,7 +78,9 @@ struct MenuItemView: View {
         .disabled(!appDelegate.updaterController.canCheckForUpdates)
 
         Button {
-            openSettings()
+            SettingsWindowActivation.openOrBringToFront {
+                openSettings()
+            }
         } label: {
             Label("Settings...", systemImage: "gearshape")
         }
