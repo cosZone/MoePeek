@@ -933,6 +933,16 @@
     "MoePeek %@" : {
 
     },
+    "MoePeek is now listed in Screen Recording settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MoePeek 现已出现在屏幕录制设置列表中"
+          }
+        }
+      }
+    },
     "MoePeek needs accessibility permission to read your selected text. This is essential for text selection translation." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -945,22 +955,11 @@
       }
     },
     "MoePeek needs screen recording permission for OCR screenshot translation to recognize text on screen." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "MoePeek 需要屏幕录制权限来进行 OCR 截图翻译，识别屏幕上的文字。"
-          }
-        }
-      }
-    },
-    "MoePeek is now listed in Screen Recording settings" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MoePeek 现已出现在屏幕录制设置列表中"
           }
         }
       }
@@ -1290,16 +1289,6 @@
         }
       }
     },
-    "Request Permission" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请求权限"
-          }
-        }
-      }
-    },
     "Request build failed" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1318,6 +1307,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请求失败 (%lld)"
+          }
+        }
+      }
+    },
+    "Request Permission" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求权限"
           }
         }
       }
@@ -1410,7 +1410,6 @@
       }
     },
     "Screen Recording Permission" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

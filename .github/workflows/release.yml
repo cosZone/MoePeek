@@ -80,6 +80,12 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent build/app/MoePeek.app \
             "MoePeek-v${{ steps.version.outputs.version }}-macOS.zip"
 
+      - name: Package PopClip Extension
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            PopClipExtension/MoePeek.popclipext \
+            "MoePeek.popclipext.zip"
+
       - name: Check Sparkle signing key
         id: sparkle
         run: |
@@ -140,4 +146,5 @@ jobs:
           files: |
             MoePeek-v${{ steps.version.outputs.version }}-macOS.zip
             MoePeek-v${{ steps.version.outputs.version }}-macOS.dmg
+            MoePeek.popclipext.zip
             appcast.xml

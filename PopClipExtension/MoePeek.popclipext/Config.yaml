@@ -1,0 +1,8 @@
+#popclip
+name: MoePeek
+identifier: com.nahida.popclip.extension.moepeek
+description: Translate selected text with MoePeek
+popclip version: 4586
+macos version: "14.0"
+icon: symbol:character.bubble
+url: mopeek://translate?text=***

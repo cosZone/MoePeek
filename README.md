@@ -79,6 +79,17 @@ On first launch, MoePeek walks you through an onboarding flow to grant the requi
 
 All shortcuts can be customized in **Settings → General**.
 
+### PopClip Integration
+
+If you use [PopClip](https://www.popclip.app/), you can translate selected text with a single click from the PopClip bar.
+
+**Install the extension:**
+
+1. Make sure MoePeek is installed and running.
+2. Download [`MoePeek.popclipext.zip`](https://github.com/cosZone/MoePeek/releases/latest/download/MoePeek.popclipext.zip) from the latest release and unzip it.
+3. Double-click `MoePeek.popclipext` — PopClip will install it automatically.
+4. Select any text in any app → click the **MoePeek** icon in the PopClip bar.
+
 ## FAQ
 
 ### "MoePeek.app is damaged and can't be opened"
@@ -103,6 +114,13 @@ defaults delete com.nahida.MoePeek
 ```
 
 Then relaunch the app.
+
+## Contributing
+
+Issues and PRs are welcome! A few things to know:
+
+- I work a day job, so I may not respond immediately — I typically batch-process issues and PRs on weekends.
+- Feel free to fork and build your own version. Per the AGPL-3.0 license, derivative works **must also be open source**.
 
 ## Acknowledgements
 

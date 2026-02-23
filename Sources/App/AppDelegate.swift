@@ -54,6 +54,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // MARK: - URL Scheme Handler
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            guard url.scheme == "mopeek", url.host == "translate" else { continue }
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let text = components.queryItems?.first(where: { $0.name == "text" })?.value,
+                  !text.isEmpty
+            else { continue }
+
+            coordinator.translate(text)
+            if case .idle = coordinator.phase { continue }
+            panelController.showAtCursor()
+        }
+    }
+
     // MARK: - Language Override
 
     private func applyLanguageOverride() {

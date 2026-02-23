@@ -29,6 +29,12 @@ let project = Project(
                 "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                 "SUFeedURL": "https://github.com/cosZone/MoePeek/releases/latest/download/appcast.xml",
                 "SUPublicEDKey": "$(SPARKLE_ED_PUBLIC_KEY)",
+                "CFBundleURLTypes": [
+                    [
+                        "CFBundleURLName": "com.nahida.MoePeek",
+                        "CFBundleURLSchemes": ["mopeek"],
+                    ],
+                ],
             ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],

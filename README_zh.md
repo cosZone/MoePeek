@@ -80,6 +80,17 @@
 
 所有快捷键均可在**设置 → 通用**中自定义。
 
+### PopClip 集成
+
+如果你使用 [PopClip](https://www.popclip.app/)，可以直接从 PopClip 菜单栏一键触发 MoePeek 翻译。
+
+**安装扩展：**
+
+1. 确保 MoePeek 已安装并正在运行。
+2. 从最新 Release 下载 [`MoePeek.popclipext.zip`](https://github.com/cosZone/MoePeek/releases/latest/download/MoePeek.popclipext.zip) 并解压。
+3. 双击 `MoePeek.popclipext`，PopClip 会自动完成安装。
+4. 在任意应用中选中文字 → 点击 PopClip 栏中的 **MoePeek** 图标即可翻译。
+
 ## 常见问题
 
 ### macOS 提示"已损坏，无法打开"
@@ -104,6 +115,13 @@ defaults delete com.nahida.MoePeek
 ```
 
 重新打开应用即可。
+
+## 参与贡献
+
+欢迎提 Issue 和 PR！有几点说明：
+
+- 平时上班较忙，可能无法及时回复，通常会集中在周末统一处理 Issue 和 PR。
+- 欢迎 Fork 进行二次开发。根据 AGPL-3.0 协议，衍生项目**必须同样开源**。
 
 ## 致谢
 
