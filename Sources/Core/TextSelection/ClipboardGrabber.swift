@@ -7,7 +7,6 @@ enum ClipboardGrabber {
     static func grabViaClipboard() async -> String? {
         let pasteboard = NSPasteboard.general
         let previousCount = pasteboard.changeCount
-
         // Save current clipboard contents
         let savedItems = pasteboard.pasteboardItems?.compactMap { item -> (String, Data)? in
             guard let type = item.types.first, let data = item.data(forType: type) else { return nil }

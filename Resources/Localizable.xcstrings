@@ -23,11 +23,15 @@
       }
     },
     "%@ model(s) enabled — will run in parallel during translation." : {
+
+    },
+    "%lld model(s) enabled — will run in parallel during translation." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已启用 %@ 个模型 - 翻译时将并行运行。"
+            "value" : "已启用 %lld 个模型 - 翻译时将并行运行。"
           }
         }
       }
@@ -1388,7 +1392,18 @@
         }
       }
     },
+    "Running multiple local models in parallel requires sufficient VRAM. %@ may swap models causing increased latency." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行运行多个本地模型需要足够的显存。%@ 可能会换入换出模型，导致延迟增加。"
+          }
+        }
+      }
+    },
     "Running multiple local models in parallel requires sufficient VRAM. LM Studio may swap models causing increased latency." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1399,6 +1414,7 @@
       }
     },
     "Running multiple local models in parallel requires sufficient VRAM. Ollama may swap models causing increased latency." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1487,11 +1503,15 @@
       }
     },
     "Select models to run in parallel during translation (max %@)." : {
+
+    },
+    "Select models to run in parallel during translation (max %lld)." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择翻译时并行运行的模型（最多 %@ 个）。"
+            "value" : "选择翻译时并行运行的模型（最多 %lld 个）。"
           }
         }
       }
