@@ -16,6 +16,7 @@ struct PopupView: View {
     @Default(.popupFontSize) private var fontSize
 
     private let inputMinHeight: CGFloat = 36
+    private let contentHorizontalPadding: CGFloat = 14
 
     private var maxInputHeight: CGFloat {
         // Reserve 120pt for language bar + results; floor ensures drag range above inputMinHeight
@@ -35,7 +36,8 @@ struct PopupView: View {
                     Text("Grabbing text…")
                         .foregroundStyle(.secondary)
                 }
-                .padding(14)
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.vertical, 14)
 
             case .active:
                 activeContent
@@ -87,7 +89,8 @@ struct PopupView: View {
                     Label(message, systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.red)
                 }
-                .padding(14)
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.vertical, 14)
             } else {
                 // Source input
                 SourceInputView(
@@ -97,14 +100,15 @@ struct PopupView: View {
                     }
                 )
                 .frame(height: inputHeight)
-                .padding(.horizontal, 14)
-                .padding(.top, 10)
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.top, 20)
                 .padding(.bottom, 4)
 
                 DraggableDividerView(
                     inputHeight: $inputHeight,
                     minHeight: inputMinHeight,
                     maxHeight: maxInputHeight,
+                    horizontalPadding: contentHorizontalPadding,
                     onDragEnd: { Defaults[.popupInputHeight] = Int(inputHeight) }
                 )
 
@@ -166,7 +170,7 @@ struct PopupView: View {
                     .help("Open Settings")
                     .background { InteractiveMarker() }
                 }
-                .padding(.horizontal, 10)
+                .padding(.horizontal, contentHorizontalPadding)
                 .padding(.vertical, 4)
                 .onChange(of: targetLang) { _, newValue in
                     Defaults[.targetLanguage] = newValue
@@ -184,7 +188,7 @@ struct PopupView: View {
                 }
 
                 Divider()
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, contentHorizontalPadding)
 
                 // Provider results
                 ScrollView {
@@ -202,7 +206,7 @@ struct PopupView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, contentHorizontalPadding)
                     .padding(.vertical, 6)
                 }
             }
@@ -312,6 +316,7 @@ private struct DraggableDividerView: View {
     @Binding var inputHeight: CGFloat
     let minHeight: CGFloat
     let maxHeight: CGFloat
+    let horizontalPadding: CGFloat
     let onDragEnd: () -> Void
 
     @State private var dragStartMouse: CGFloat?
@@ -320,7 +325,7 @@ private struct DraggableDividerView: View {
 
     var body: some View {
         Divider()
-            .padding(.horizontal, 10)
+            .padding(.horizontal, horizontalPadding)
             .frame(height: 8)
             .contentShape(Rectangle())
             .gesture(
