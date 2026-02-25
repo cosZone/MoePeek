@@ -1173,6 +1173,16 @@
         }
       }
     },
+    "Optional" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可选"
+          }
+        }
+      }
+    },
     "Official" : {
       "extractionState" : "stale",
       "localizations" : {
