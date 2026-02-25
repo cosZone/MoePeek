@@ -1,3 +1,4 @@
+import Defaults
 import SwiftUI
 
 struct AddCustomProviderSheet: View {
@@ -8,6 +9,7 @@ struct AddCustomProviderSheet: View {
     @State private var name = ""
     @State private var baseURL = ""
     @State private var defaultModel = ""
+    @State private var apiKey = ""
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
@@ -26,6 +28,7 @@ struct AddCustomProviderSheet: View {
                 TextField("Name:", text: $name, prompt: Text(verbatim: "My API"))
                 TextField("Base URL:", text: $baseURL, prompt: Text(verbatim: "https://api.example.com/v1"))
                 TextField("Default Model:", text: $defaultModel, prompt: Text(verbatim: "gpt-4o-mini"))
+                SecureField("API Key:", text: $apiKey, prompt: Text(verbatim: "sk-... (Optional)"))
             }
             .formStyle(.grouped)
 
@@ -50,6 +53,11 @@ struct AddCustomProviderSheet: View {
             defaultModel: defaultModel.trimmingCharacters(in: .whitespaces)
         )
         registry.addCustomProvider(def)
+        let trimmedKey = apiKey.trimmingCharacters(in: .whitespaces)
+        if !trimmedKey.isEmpty,
+           let oai = registry.provider(withID: def.id) as? OpenAICompatibleProvider {
+            Defaults[oai.apiKeyKey] = trimmedKey
+        }
         selectedProviderID = def.id
         dismiss()
     }
