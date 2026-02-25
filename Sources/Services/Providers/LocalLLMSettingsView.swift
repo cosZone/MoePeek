@@ -25,6 +25,7 @@ struct LocalLLMSettingsView: View {
     @State private var isFetchingModels = false
     @State private var serverStatus: ServerStatus = .unknown
     @State private var enabledModelsState: Set<String>
+    @State private var modelSearchQuery: String = ""
 
     init(
         config: LocalLLMSettingsConfig,
@@ -123,31 +124,46 @@ struct LocalLLMSettingsView: View {
                     .foregroundStyle(.secondary)
 
                 let persistedUnknown = enabledModels.wrappedValue.subtracting(Set(availableModels)).sorted()
+                let allModels = availableModels + persistedUnknown
 
-                if (availableModels + persistedUnknown).isEmpty {
+                if allModels.isEmpty {
                     Text("Click the refresh button above to fetch available models.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .padding(.vertical, 4)
                 } else {
-                    ForEach(availableModels, id: \.self) { modelID in
-                        ModelCheckboxRow(
-                            modelID: modelID,
-                            isEnabled: enabledModels.wrappedValue.contains(modelID),
-                            isUnknown: false,
-                            isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
-                            onToggle: { toggleModel(modelID) }
-                        )
-                    }
+                    TextField("Search models…", text: $modelSearchQuery)
+                        .textFieldStyle(.roundedBorder)
 
-                    ForEach(persistedUnknown, id: \.self) { modelID in
-                        ModelCheckboxRow(
-                            modelID: modelID,
-                            isEnabled: true,
-                            isUnknown: true,
-                            isDisabled: false,
-                            onToggle: { toggleModel(modelID) }
-                        )
+                    let query = modelSearchQuery.trimmingCharacters(in: .whitespaces).lowercased()
+                    let filteredAvailable = query.isEmpty ? availableModels : availableModels.filter { $0.lowercased().contains(query) }
+                    let filteredUnknown = query.isEmpty ? persistedUnknown : persistedUnknown.filter { $0.lowercased().contains(query) }
+
+                    if filteredAvailable.isEmpty && filteredUnknown.isEmpty && !query.isEmpty {
+                        Text("No models match your search.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 8)
+                    } else {
+                        ForEach(filteredAvailable, id: \.self) { modelID in
+                            ModelCheckboxRow(
+                                modelID: modelID,
+                                isEnabled: enabledModels.wrappedValue.contains(modelID),
+                                isUnknown: false,
+                                isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
+                                onToggle: { toggleModel(modelID) }
+                            )
+                        }
+
+                        ForEach(filteredUnknown, id: \.self) { modelID in
+                            ModelCheckboxRow(
+                                modelID: modelID,
+                                isEnabled: true,
+                                isUnknown: true,
+                                isDisabled: false,
+                                onToggle: { toggleModel(modelID) }
+                            )
+                        }
                     }
                 }
 

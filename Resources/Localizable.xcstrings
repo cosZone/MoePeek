@@ -57,6 +57,16 @@
         }
       }
     },
+    "Access Token" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问令牌"
+          }
+        }
+      }
+    },
     "Accessibility" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -570,6 +580,16 @@
         }
       }
     },
+    "Endpoint" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端点类型"
+          }
+        }
+      }
+    },
     "Enter your API configuration to use the OpenAI translation service.\nYou can also configure this later in Settings." : {
       "localizations" : {
         "zh-Hans" : {
@@ -598,6 +618,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "字体大小：%lld"
+          }
+        }
+      }
+    },
+    "For api.deeplx.org, include your API key in the URL.\nFor self-hosted: `http://localhost:1188`\nDo not include /translate path suffix." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 api.deeplx.org 时，请在 URL 中包含您的 API Key。\n自托管示例：`http://localhost:1188`\n请勿在 URL 末尾附加 /translate 路径。"
+          }
+        }
+      }
+    },
+    "Free" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "免费"
           }
         }
       }
@@ -875,6 +916,17 @@
         }
       }
     },
+    "Learn more about DeepLX" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解更多关于 DeepLX"
+          }
+        }
+      }
+    },
     "Licensed under AGPL-3.0" : {
 
     },
@@ -1044,6 +1096,16 @@
         }
       }
     },
+    "No models match your search." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有匹配的模型。"
+          }
+        }
+      }
+    },
     "No Preference" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1117,6 +1179,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OCR 失败：%@"
+          }
+        }
+      }
+    },
+    "Official" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "官方版"
           }
         }
       }
@@ -1267,6 +1340,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上一步"
+          }
+        }
+      }
+    },
+    "Pro" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专业版"
+          }
+        }
+      }
+    },
+    "Protects your self-hosted DeepLX server. Set via `--token` flag or `TOKEN` environment variable." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保护您的自托管 DeepLX 服务器。通过 `--token` 标志或 `TOKEN` 环境变量设置。"
           }
         }
       }
@@ -1491,6 +1585,16 @@
     "Secret Key" : {
 
     },
+    "Search models…" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索模型…"
+          }
+        }
+      }
+    },
     "Select a model" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1579,6 +1683,16 @@
         }
       }
     },
+    "Server URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器地址"
+          }
+        }
+      }
+    },
     "Services" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1619,6 +1733,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选中文字时显示悬浮球"
+          }
+        }
+      }
+    },
+    "Simulates DeepL iOS client. No authentication required. Rate limits (HTTP 429) may apply." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟 DeepL iOS 客户端。无需身份验证，但可能遭遇速率限制（HTTP 429）。"
           }
         }
       }
@@ -1872,6 +1996,17 @@
         }
       }
     },
+    "Unknown DeepLX error" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知 DeepLX 错误"
+          }
+        }
+      }
+    },
     "Unsupported" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1909,6 +2044,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用 Bing 翻译，可能会受到速率限制。"
+          }
+        }
+      }
+    },
+    "Uses DeepL official API (`/v2`). Requires `authKey` configured on the DeepLX server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 DeepL 官方 API（`/v2`）。需要在 DeepLX 服务器上配置 `authKey`。"
+          }
+        }
+      }
+    },
+    "Uses DeepL Pro session. Requires `dl_session` cookie configured on the DeepLX server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 DeepL Pro 会话。需要在 DeepLX 服务器上配置 `dl_session` Cookie。"
           }
         }
       }

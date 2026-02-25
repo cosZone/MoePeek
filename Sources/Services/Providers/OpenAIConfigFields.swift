@@ -13,6 +13,7 @@ struct OpenAIConfigFields: View {
     @State private var customModelInput: String
     @State private var modelText: String
     @State private var enabledModelsState: Set<String>
+    @State private var modelSearchQuery: String = ""
     private let metaService = ModelMetadataService.shared
 
     init(provider: OpenAICompatibleProvider, compact: Bool = false) {
@@ -66,6 +67,13 @@ struct OpenAIConfigFields: View {
         let enabled = enabledModels.wrappedValue
         let unknown = enabled.subtracting(fetched).sorted()
         return filteredModels + unknown
+    }
+
+    /// Models filtered by search query for display in the parallel models list.
+    private var searchFilteredModels: [String] {
+        let query = modelSearchQuery.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !query.isEmpty else { return displayModels }
+        return displayModels.filter { $0.lowercased().contains(query) }
     }
 
     var body: some View {
@@ -135,27 +143,39 @@ struct OpenAIConfigFields: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
+                    if !displayModels.isEmpty {
+                        TextField("Search models…", text: $modelSearchQuery)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
                     if displayModels.isEmpty {
                         Text("Click the refresh button above to fetch available models, or add a custom model below.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .padding(.vertical, 4)
                     } else {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 2) {
-                                ForEach(displayModels, id: \.self) { modelID in
-                                    ModelCheckboxRow(
-                                        modelID: modelID,
-                                        isEnabled: enabledModels.wrappedValue.contains(modelID),
-                                        isUnknown: !filteredModels.contains(modelID),
-                                        isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
-                                        metaMatch: metaService.meta(for: modelID),
-                                        onToggle: { toggleModel(modelID) }
-                                    )
+                        if searchFilteredModels.isEmpty && !modelSearchQuery.trimmingCharacters(in: .whitespaces).isEmpty {
+                            Text("No models match your search.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.vertical, 8)
+                        } else {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    ForEach(searchFilteredModels, id: \.self) { modelID in
+                                        ModelCheckboxRow(
+                                            modelID: modelID,
+                                            isEnabled: enabledModels.wrappedValue.contains(modelID),
+                                            isUnknown: !filteredModels.contains(modelID),
+                                            isDisabled: !enabledModels.wrappedValue.contains(modelID) && enabledModels.wrappedValue.count >= maxParallelModels,
+                                            metaMatch: metaService.meta(for: modelID),
+                                            onToggle: { toggleModel(modelID) }
+                                        )
+                                    }
                                 }
                             }
+                            .frame(maxHeight: 160)
                         }
-                        .frame(maxHeight: 160)
                     }
 
                     // Add custom model

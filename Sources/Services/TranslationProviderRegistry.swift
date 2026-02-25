@@ -85,6 +85,7 @@ final class TranslationProviderRegistry {
 
             // Translation APIs
             DeepLProvider(),
+            DeepLXProvider(),
             BaiduTranslateProvider(),
             NiuTransProvider(),
             CaiyunProvider(),
