@@ -1,3 +1,4 @@
+import AppKit
 import Defaults
 import SwiftUI
 
@@ -7,24 +8,15 @@ struct SourceInputView: View {
     let onSubmit: () -> Void
     @Default(.popupFontSize) private var fontSize
 
-    @FocusState private var isFocused: Bool
-
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            TextEditor(text: $text)
-                .font(.system(size: CGFloat(fontSize)))
-                .scrollContentBackground(.hidden)
-                .focused($isFocused)
+            SourceTextEditor(
+                text: $text,
+                fontSize: CGFloat(fontSize),
+                onSubmit: onSubmit
+            )
                 .frame(maxHeight: .infinity)
                 .background { InteractiveMarker() }
-                .onKeyPress(phases: .down) { press in
-                    guard press.key == .return else { return .ignored }
-                    if press.modifiers.contains(.shift) {
-                        return .ignored // Let TextEditor handle Shift+Enter as newline
-                    }
-                    onSubmit()
-                    return .handled
-                }
 
             HStack(spacing: 4) {
                 Spacer()
@@ -34,11 +26,99 @@ struct SourceInputView: View {
                     .foregroundStyle(.quaternary)
             }
         }
-        // SwiftUI requires at least one layout pass before @FocusState can take effect;
-        // a short yield lets the hosting view finish its initial layout.
-        .task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(50))
-            isFocused = true
+    }
+}
+
+private struct SourceTextEditor: NSViewRepresentable {
+    @Binding var text: String
+    let fontSize: CGFloat
+    let onSubmit: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text)
+    }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.borderType = .noBorder
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.drawsBackground = false
+
+        let textView = SubmitAwareTextView()
+        textView.isRichText = false
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
+        textView.isContinuousSpellCheckingEnabled = false
+        textView.allowsUndo = true
+        textView.drawsBackground = false
+        textView.delegate = context.coordinator
+        textView.string = text
+        textView.font = .systemFont(ofSize: fontSize)
+        textView.textContainerInset = .zero
+        textView.textContainer?.lineFragmentPadding = 0
+        textView.onSubmit = onSubmit
+
+        scrollView.documentView = textView
+        context.coordinator.textView = textView
+
+        DispatchQueue.main.async {
+            guard let window = textView.window else { return }
+            window.makeFirstResponder(textView)
         }
+
+        return scrollView
+    }
+
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
+        guard let textView = context.coordinator.textView else { return }
+
+        if textView.string != text {
+            textView.string = text
+        }
+
+        textView.font = .systemFont(ofSize: fontSize)
+        textView.onSubmit = onSubmit
+
+        if !context.coordinator.didFocusInitially {
+            context.coordinator.didFocusInitially = true
+            DispatchQueue.main.async {
+                guard let window = textView.window else { return }
+                window.makeFirstResponder(textView)
+            }
+        }
+    }
+
+    final class Coordinator: NSObject, NSTextViewDelegate {
+        @Binding var text: String
+        weak var textView: SubmitAwareTextView?
+        var didFocusInitially = false
+
+        init(text: Binding<String>) {
+            _text = text
+        }
+
+        func textDidChange(_ notification: Notification) {
+            guard let textView = notification.object as? NSTextView else { return }
+            text = textView.string
+        }
+    }
+}
+
+private final class SubmitAwareTextView: NSTextView {
+    var onSubmit: (() -> Void)?
+
+    override func keyDown(with event: NSEvent) {
+        let isReturnKey = event.keyCode == 36 || event.keyCode == 76
+        let hasShift = event.modifierFlags.contains(.shift)
+
+        if isReturnKey, !hasShift {
+            onSubmit?()
+            return
+        }
+
+        super.keyDown(with: event)
     }
 }
