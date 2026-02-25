@@ -23,7 +23,7 @@ final class OpenAIConnectionManager {
 
     // MARK: - Actions
 
-    func fetchModels(baseURL: String, apiKey: String, silent: Bool = false) async {
+    func fetchModels(baseURL: String, apiKey: String, extraHeaders: [String: String]? = nil, silent: Bool = false) async {
         guard !isFetchingModels else { return }
         guard let url = validatedURL(base: baseURL, path: "/models", apiKey: apiKey) else {
             if !silent {
@@ -39,6 +39,9 @@ final class OpenAIConnectionManager {
         var request = URLRequest(url: url)
         request.timeoutInterval = 15
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        for (name, value) in extraHeaders ?? [:] {
+            request.setValue(value, forHTTPHeaderField: name)
+        }
 
         do {
             let (data, response) = try await translationURLSession.data(for: request)
@@ -59,7 +62,7 @@ final class OpenAIConnectionManager {
         }
     }
 
-    func testConnection(baseURL: String, apiKey: String, model: String) async {
+    func testConnection(baseURL: String, apiKey: String, model: String, extraHeaders: [String: String]? = nil) async {
         guard !isTestingConnection else { return }
         guard !model.isEmpty,
               let url = validatedURL(base: baseURL, path: "/chat/completions", apiKey: apiKey) else {
@@ -85,6 +88,9 @@ final class OpenAIConnectionManager {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        for (name, value) in extraHeaders ?? [:] {
+            request.setValue(value, forHTTPHeaderField: name)
+        }
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)

@@ -23,8 +23,7 @@ struct ProviderResultCard: View {
                         .foregroundStyle(.tertiary)
                         .frame(width: 10)
 
-                    Image(systemName: provider.iconSystemName)
-                        .font(.system(size: CGFloat(fontSize - 2)))
+                    ProviderIconView(provider: provider, font: .system(size: CGFloat(fontSize - 2)), size: CGFloat(fontSize + 2))
                         .foregroundStyle(.secondary)
 
                     Text(provider.displayName)

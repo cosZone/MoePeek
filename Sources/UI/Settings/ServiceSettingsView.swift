@@ -107,9 +107,7 @@ struct ServiceSettingsView: View {
                 .controlSize(.mini)
                 .labelsHidden()
 
-            Image(systemName: provider.iconSystemName)
-                .font(.callout)
-                .frame(width: 16)
+            ProviderIconView(provider: provider, size: 16)
 
             Text(provider.displayName)
                 .font(.callout)

@@ -7,9 +7,13 @@ struct OpenAICompatibleProvider: TranslationProvider {
     let id: String
     let displayName: String
     let iconSystemName: String
+    let iconAssetName: String?
     let isCustom: Bool
     let supportsStreaming = true
     let isAvailable = true
+
+    /// Extra HTTP headers to add to all requests (e.g. OpenRouter's X-Title for app attribution).
+    let extraHeaders: [String: String]?
 
     var category: ProviderCategory { isCustom ? .custom : .llm }
     var isDeletable: Bool { isCustom }
@@ -44,15 +48,19 @@ struct OpenAICompatibleProvider: TranslationProvider {
         id: String,
         displayName: String,
         iconSystemName: String = "globe",
+        iconAssetName: String? = nil,
         defaultBaseURL: String,
         defaultModel: String,
         guideURL: String? = nil,
-        isCustom: Bool = false
+        isCustom: Bool = false,
+        extraHeaders: [String: String]? = nil
     ) {
         self.id = id
         self.displayName = displayName
         self.iconSystemName = iconSystemName
+        self.iconAssetName = iconAssetName
         self.isCustom = isCustom
+        self.extraHeaders = extraHeaders
         self.baseURLKey = .init("provider_\(id)_baseURL", default: defaultBaseURL)
         self.modelKey = .init("provider_\(id)_model", default: defaultModel)
         self.enabledModelsKey = .init("provider_\(id)_enabledModels", default: [])
@@ -69,9 +77,11 @@ struct OpenAICompatibleProvider: TranslationProvider {
             id: definition.id,
             displayName: definition.name,
             iconSystemName: "server.rack",
+            iconAssetName: nil,
             defaultBaseURL: definition.defaultBaseURL,
             defaultModel: definition.defaultModel,
-            isCustom: true
+            isCustom: true,
+            extraHeaders: nil
         )
     }
 
@@ -143,6 +153,9 @@ struct OpenAICompatibleProvider: TranslationProvider {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        for (name, value) in extraHeaders ?? [:] {
+            request.setValue(value, forHTTPHeaderField: name)
+        }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         return request
     }

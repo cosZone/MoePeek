@@ -114,6 +114,16 @@ final class TranslationProviderRegistry {
                 defaultModel: "glm-4-flash",
                 guideURL: "https://open.bigmodel.cn/usercenter/apikeys"
             ),
+            OpenAICompatibleProvider(
+                id: "openrouter",
+                displayName: "OpenRouter",
+                iconSystemName: "network",
+                iconAssetName: "OpenRouter",
+                defaultBaseURL: "https://openrouter.ai/api/v1",
+                defaultModel: "openrouter/auto",
+                guideURL: "https://openrouter.ai/keys",
+                extraHeaders: ["X-Title": "MoePeek", "X-OpenRouter-Title": "MoePeek"]
+            ),
             OllamaProvider(),
             LMStudioProvider(),
         ]

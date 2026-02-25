@@ -1176,6 +1176,16 @@
         }
       }
     },
+    "Unified API for 200+ models, requires API Key" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "统一 API，支持 200+ 模型，需要配置 API Key"
+          }
+        }
+      }
+    },
     "Parallel Models" : {
       "localizations" : {
         "zh-Hans" : {

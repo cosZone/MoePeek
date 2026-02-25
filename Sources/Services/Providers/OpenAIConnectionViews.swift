@@ -6,6 +6,7 @@ struct ModelFetchAccessory: View {
     @Binding var model: String
     let baseURL: String
     let apiKey: String
+    var extraHeaders: [String: String]? = nil
 
     var body: some View {
         if connectionManager.isFetchingModels {
@@ -24,7 +25,7 @@ struct ModelFetchAccessory: View {
                 .fixedSize()
 
                 Button {
-                    Task { await connectionManager.fetchModels(baseURL: baseURL, apiKey: apiKey) }
+                    Task { await connectionManager.fetchModels(baseURL: baseURL, apiKey: apiKey, extraHeaders: extraHeaders) }
                 } label: {
                     Image(systemName: "arrow.clockwise.circle")
                 }
@@ -33,7 +34,7 @@ struct ModelFetchAccessory: View {
             }
         } else {
             Button {
-                Task { await connectionManager.fetchModels(baseURL: baseURL, apiKey: apiKey) }
+                Task { await connectionManager.fetchModels(baseURL: baseURL, apiKey: apiKey, extraHeaders: extraHeaders) }
             } label: {
                 Image(systemName: "arrow.clockwise.circle")
             }
@@ -50,11 +51,12 @@ struct ConnectionTestView: View {
     let baseURL: String
     let apiKey: String
     let model: String
+    var extraHeaders: [String: String]? = nil
 
     var body: some View {
         HStack(spacing: 8) {
             Button {
-                Task { await connectionManager.testConnection(baseURL: baseURL, apiKey: apiKey, model: model) }
+                Task { await connectionManager.testConnection(baseURL: baseURL, apiKey: apiKey, model: model, extraHeaders: extraHeaders) }
             } label: {
                 Label("Test Connection", systemImage: "bolt.horizontal")
             }

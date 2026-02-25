@@ -98,7 +98,8 @@ struct OpenAIConfigFields: View {
                         connectionManager: connectionManager,
                         model: model,
                         baseURL: baseURLText,
-                        apiKey: apiKeyText
+                        apiKey: apiKeyText,
+                        extraHeaders: provider.extraHeaders
                     )
                 }
                 if !compact, enabledModels.wrappedValue.isEmpty {
@@ -196,7 +197,8 @@ struct OpenAIConfigFields: View {
                 connectionManager: connectionManager,
                 baseURL: baseURLText,
                 apiKey: apiKeyText,
-                model: model.wrappedValue
+                model: model.wrappedValue,
+                extraHeaders: provider.extraHeaders
             )
         }
         .onChange(of: baseURLText) { _, newValue in
@@ -227,6 +229,7 @@ struct OpenAIConfigFields: View {
                 await connectionManager.fetchModels(
                     baseURL: baseURLText,
                     apiKey: apiKeyText,
+                    extraHeaders: provider.extraHeaders,
                     silent: true
                 )
             }

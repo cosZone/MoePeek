@@ -24,8 +24,11 @@ protocol TranslationProvider: Sendable {
     var id: String { get }
     /// Display name shown in UI.
     var displayName: String { get }
-    /// SF Symbol icon name.
+    /// SF Symbol icon name (fallback when iconAssetName is nil).
     var iconSystemName: String { get }
+    /// Optional asset catalog image name for provider logo (e.g. "OpenRouter").
+    /// When non-nil, UI should prefer this over iconSystemName.
+    var iconAssetName: String? { get }
     /// Provider category for UI grouping.
     var category: ProviderCategory { get }
     /// Whether this provider supports streaming output.
@@ -68,6 +71,7 @@ extension TranslationProvider {
     var category: ProviderCategory { .llm }
     var isDeletable: Bool { false }
     var activeModels: [String] { [] }
+    var iconAssetName: String? { nil }
 
     func translateStream(
         _ text: String,
@@ -90,6 +94,7 @@ struct ModelSlotProvider: TranslationProvider {
     var id: String { "\(inner.id):\(modelOverride)" }
     var displayName: String { "\(inner.displayName) · \(modelOverride)" }
     var iconSystemName: String { inner.iconSystemName }
+    var iconAssetName: String? { inner.iconAssetName }
     var category: ProviderCategory { inner.category }
     var supportsStreaming: Bool { inner.supportsStreaming }
     var isAvailable: Bool { inner.isAvailable }
