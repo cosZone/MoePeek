@@ -114,7 +114,9 @@ private final class SubmitAwareTextView: NSTextView {
         let isReturnKey = event.keyCode == 36 || event.keyCode == 76
         let hasShift = event.modifierFlags.contains(.shift)
 
-        if isReturnKey, !hasShift {
+        // During IME composition (e.g. Chinese Pinyin), Enter should first commit marked text.
+        // Only submit translation when composition has ended.
+        if isReturnKey, !hasShift, !hasMarkedText() {
             onSubmit?()
             return
         }
