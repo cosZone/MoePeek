@@ -6,6 +6,7 @@ struct BingTranslateProvider: TranslationProvider {
     let id = "bing"
     let displayName = "Bing Translate"
     let iconSystemName = "globe.americas.fill"
+    let iconAssetName: String? = "Bing"
     let category: ProviderCategory = .freeTranslation
     let supportsStreaming = false
     let isAvailable = true

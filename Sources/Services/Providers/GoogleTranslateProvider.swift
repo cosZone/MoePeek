@@ -6,6 +6,7 @@ struct GoogleTranslateProvider: TranslationProvider {
     let id = "google"
     let displayName = "Google Translate"
     let iconSystemName = "g.circle.fill"
+    let iconAssetName: String? = "Google"
     let category: ProviderCategory = .freeTranslation
     let supportsStreaming = false
     let isAvailable = true

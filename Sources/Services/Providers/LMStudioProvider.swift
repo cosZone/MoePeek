@@ -8,6 +8,7 @@ struct LMStudioProvider: TranslationProvider {
     let id = "lmstudio"
     let displayName = "LM Studio"
     let iconSystemName = "cpu"
+    let iconAssetName: String? = "LMStudio"
     let category: ProviderCategory = .llm
     let supportsStreaming = true
     let isAvailable = true

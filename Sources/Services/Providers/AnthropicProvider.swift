@@ -14,6 +14,7 @@ struct AnthropicProvider: TranslationProvider {
     let id = "anthropic"
     let displayName = "Anthropic"
     let iconSystemName = "brain.filled.head.profile"
+    let iconAssetName: String? = "Anthropic"
     var category: ProviderCategory { .llm }
     let supportsStreaming = true
     let isAvailable = true

@@ -8,6 +8,7 @@ struct BaiduTranslateProvider: TranslationProvider {
     let id = "baidu"
     let displayName = "Baidu"
     let iconSystemName = "pawprint.fill"
+    let iconAssetName: String? = "Baidu"
     let category: ProviderCategory = .traditional
     let supportsStreaming = false
     let isAvailable = true

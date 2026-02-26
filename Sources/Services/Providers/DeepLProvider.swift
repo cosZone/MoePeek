@@ -7,6 +7,7 @@ struct DeepLProvider: TranslationProvider {
     let id = "deepl"
     let displayName = "DeepL"
     let iconSystemName = "doc.text"
+    let iconAssetName: String? = "DeepL"
     let category: ProviderCategory = .traditional
     let supportsStreaming = false
     let isAvailable = true

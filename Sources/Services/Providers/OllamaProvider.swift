@@ -7,6 +7,7 @@ import SwiftUI
 struct OllamaProvider: TranslationProvider {
     let id = "ollama"
     let displayName = "Ollama"
+    let iconAssetName: String? = "Ollama"
     let iconSystemName = "desktopcomputer"
     let category: ProviderCategory = .llm
     let supportsStreaming = true

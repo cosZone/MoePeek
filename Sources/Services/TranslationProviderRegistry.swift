@@ -95,6 +95,7 @@ final class TranslationProviderRegistry {
                 id: "openai",
                 displayName: "OpenAI",
                 iconSystemName: "brain",
+                iconAssetName: "OpenAI",
                 defaultBaseURL: "https://api.openai.com/v1",
                 defaultModel: "gpt-4o-mini",
                 guideURL: "https://platform.openai.com/api-keys"
@@ -103,6 +104,7 @@ final class TranslationProviderRegistry {
                 id: "deepseek",
                 displayName: "DeepSeek",
                 iconSystemName: "brain.head.profile",
+                iconAssetName: "DeepSeek",
                 defaultBaseURL: "https://api.deepseek.com/v1",
                 defaultModel: "deepseek-chat",
                 guideURL: "https://platform.deepseek.com/api_keys"
@@ -111,6 +113,7 @@ final class TranslationProviderRegistry {
                 id: "zhipu",
                 displayName: "智谱 GLM",
                 iconSystemName: "sparkles",
+                iconAssetName: "Zhipu",
                 defaultBaseURL: "https://open.bigmodel.cn/api/paas/v4",
                 defaultModel: "glm-4-flash",
                 guideURL: "https://open.bigmodel.cn/usercenter/apikeys"
