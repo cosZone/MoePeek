@@ -26,7 +26,7 @@ struct MenuItemView: View {
         } label: {
             Label("Manual Translation", systemImage: "keyboard")
         }
-        .keyboardShortcut("a", modifiers: .option)
+        .globalKeyboardShortcut(.inputTranslation)
 
         Button {
             guard let coordinator = appDelegate.coordinator,
@@ -39,7 +39,7 @@ struct MenuItemView: View {
         } label: {
             Label("Screenshot OCR", systemImage: "text.viewfinder")
         }
-        .keyboardShortcut("s", modifiers: .option)
+        .globalKeyboardShortcut(.ocrScreenshot)
 
         Button {
             guard let coordinator = appDelegate.coordinator,
@@ -51,7 +51,7 @@ struct MenuItemView: View {
         } label: {
             Label("Selection Translation", systemImage: "text.cursor")
         }
-        .keyboardShortcut("d", modifiers: .option)
+        .globalKeyboardShortcut(.translateSelection)
 
         Button {
             guard let coordinator = appDelegate.coordinator,
@@ -61,7 +61,7 @@ struct MenuItemView: View {
         } label: {
             Label("Clipboard Translation", systemImage: "doc.on.clipboard")
         }
-        .keyboardShortcut("v", modifiers: .option)
+        .globalKeyboardShortcut(.clipboardTranslation)
 
         Divider()
 
