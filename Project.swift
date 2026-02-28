@@ -49,7 +49,7 @@ let project = Project(
                     "CODE_SIGN_STYLE": "$(MOEPEEK_CODE_SIGN_STYLE)",
                     "CODE_SIGN_IDENTITY": "$(MOEPEEK_CODE_SIGN_IDENTITY)",
                     "DEVELOPMENT_TEAM": "$(MOEPEEK_DEVELOPMENT_TEAM)",
-                    "MARKETING_VERSION": "0.10.2",
+                    "MARKETING_VERSION": "0.10.3",
                     "CURRENT_PROJECT_VERSION": "1",
                 ],
                 configurations: [
