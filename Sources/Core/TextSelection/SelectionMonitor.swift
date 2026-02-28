@@ -83,6 +83,10 @@ final class SelectionMonitor {
 
         grabTask?.cancel()
         grabTask = Task { @MainActor [weak self] in
+            // Snapshot clipboard state at mouse-up so we can detect if the user
+            // presses ⌘+C during the wait / Tier 1-2 evaluation window.
+            let clipboardCountAtMouseUp = NSPasteboard.general.changeCount
+
             // Wait 100ms for the target app to update its AX selection state
             try? await Task.sleep(for: .milliseconds(100))
             guard let self, !Task.isCancelled else { return }
@@ -105,6 +109,16 @@ final class SelectionMonitor {
             }
 
             guard !Task.isCancelled else { return }
+
+            // Short-circuit before Tier 3: if the clipboard changed since mouse-up,
+            // the user already pressed ⌘+C — read directly without simulating another copy.
+            if NSPasteboard.general.changeCount != clipboardCountAtMouseUp {
+                if let text = NSPasteboard.general.string(forType: .string),
+                   !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    self.onTextSelected?(text, point)
+                    return
+                }
+            }
 
             // Tier 3: Clipboard — simulate ⌘C, read pasteboard, restore
             if let text = await ClipboardGrabber.grabViaClipboard(),
