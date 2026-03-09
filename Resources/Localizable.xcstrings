@@ -255,17 +255,6 @@
         }
       }
     },
-    "Auto-copy OCR text to clipboard" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OCR 识别后自动复制文字到剪贴板"
-          }
-        }
-      }
-    },
     "Auto-detect source language" : {
       "extractionState" : "stale",
       "localizations" : {

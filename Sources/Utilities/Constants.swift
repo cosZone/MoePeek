@@ -97,9 +97,6 @@ extension Defaults.Keys {
     // Custom providers
     static let customProviders = Key<[CustomProviderDefinition]>("customProviders", default: [])
 
-    // OCR
-    static let autoCopyOCRText = Key<Bool>("autoCopyOCRText", default: false)
-
     // App language override
     static let appLanguage = Key<AppLanguage>("appLanguage", default: .system)
 }

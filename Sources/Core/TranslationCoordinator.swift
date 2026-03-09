@@ -73,10 +73,6 @@ final class TranslationCoordinator {
 
         do {
             let text = try await ScreenCaptureOCR.captureAndRecognize()
-            if Defaults[.autoCopyOCRText] {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(text, forType: .string)
-            }
             translate(text)
         } catch is OCRError {
             phase = .idle
