@@ -13,6 +13,7 @@ struct GeneralSettingsView: View {
     @Default(.popupFontName) private var popupFontName
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
+    @Default(.autoCopyOCRText) private var autoCopyOCRText
     @Default(.appLanguage) private var appLanguage
 
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -74,6 +75,7 @@ struct GeneralSettingsView: View {
                 }
 
                 Toggle("Show floating icon on text selection", isOn: $isAutoDetectEnabled)
+                Toggle("Auto-copy OCR text to clipboard", isOn: $autoCopyOCRText)
             }
 
             Section("Language Detection") {
