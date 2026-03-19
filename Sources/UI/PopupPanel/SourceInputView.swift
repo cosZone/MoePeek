@@ -52,23 +52,38 @@ private struct SourceTextEditor: NSViewRepresentable {
         scrollView.hasHorizontalScroller = false
         scrollView.autohidesScrollers = true
         scrollView.drawsBackground = false
+        scrollView.contentView.drawsBackground = false
 
-        let textView = SubmitAwareTextView()
+        let contentSize = scrollView.contentSize
+        let textView = SubmitAwareTextView(frame: NSRect(origin: .zero, size: contentSize))
         textView.isRichText = false
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
         textView.isContinuousSpellCheckingEnabled = false
+        textView.importsGraphics = false
         textView.allowsUndo = true
         textView.drawsBackground = false
+        textView.backgroundColor = .clear
+        textView.minSize = NSSize(width: 0, height: contentSize.height)
+        textView.maxSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
         textView.delegate = context.coordinator
-        textView.string = text
-        textView.font = resolvedFont
-        textView.textColor = .labelColor
-        textView.insertionPointColor = .labelColor
         textView.textContainerInset = .zero
-        textView.textContainer?.lineFragmentPadding = 0
         textView.onSubmit = onSubmit
+        textView.textContainer?.containerSize = NSSize(
+            width: contentSize.width,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.lineFragmentPadding = 0
+        textView.applyDisplayAttributes(font: resolvedFont)
+        textView.setExternalText(text)
 
         scrollView.documentView = textView
         context.coordinator.textView = textView
@@ -84,13 +99,13 @@ private struct SourceTextEditor: NSViewRepresentable {
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = context.coordinator.textView else { return }
 
+        textView.applyDisplayAttributes(font: resolvedFont)
+        textView.updateLayout(for: nsView.contentSize)
+
         if textView.string != text {
-            textView.string = text
+            textView.setExternalText(text)
         }
 
-        textView.font = resolvedFont
-        textView.textColor = .labelColor
-        textView.insertionPointColor = .labelColor
         textView.onSubmit = onSubmit
 
         if !context.coordinator.didFocusInitially {
@@ -112,7 +127,8 @@ private struct SourceTextEditor: NSViewRepresentable {
         }
 
         func textDidChange(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
+            guard let textView = notification.object as? SubmitAwareTextView else { return }
+            textView.refreshDisplay()
             text = textView.string
         }
     }
@@ -120,6 +136,47 @@ private struct SourceTextEditor: NSViewRepresentable {
 
 private final class SubmitAwareTextView: NSTextView {
     var onSubmit: (() -> Void)?
+    private var displayFont: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
+
+    func applyDisplayAttributes(font: NSFont) {
+        displayFont = font
+        self.font = displayFont
+        textColor = .labelColor
+        insertionPointColor = .labelColor
+        typingAttributes = mergedTypingAttributes()
+        selectedTextAttributes = [
+            .foregroundColor: NSColor.selectedTextColor,
+            .backgroundColor: NSColor.selectedTextBackgroundColor,
+        ]
+        applyDisplayAttributesToTextStorage()
+        refreshDisplay()
+    }
+
+    func setExternalText(_ newValue: String) {
+        string = newValue
+        typingAttributes = mergedTypingAttributes()
+        applyDisplayAttributesToTextStorage()
+        setSelectedRange(NSRange(location: (newValue as NSString).length, length: 0))
+        refreshDisplay()
+    }
+
+    func updateLayout(for contentSize: NSSize) {
+        minSize = NSSize(width: 0, height: contentSize.height)
+        if let textContainer {
+            textContainer.containerSize = NSSize(
+                width: contentSize.width,
+                height: CGFloat.greatestFiniteMagnitude
+            )
+            textContainer.widthTracksTextView = true
+        }
+        frame.size.width = contentSize.width
+        refreshDisplay()
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        applyDisplayAttributes(font: displayFont)
+    }
 
     override func keyDown(with event: NSEvent) {
         let isReturnKey = event.keyCode == 36 || event.keyCode == 76
@@ -134,5 +191,38 @@ private final class SubmitAwareTextView: NSTextView {
         }
 
         super.keyDown(with: event)
+    }
+
+    private func mergedTypingAttributes() -> [NSAttributedString.Key: Any] {
+        var attributes = typingAttributes
+        attributes[.font] = displayFont
+        attributes[.foregroundColor] = NSColor.labelColor
+        return attributes
+    }
+
+    private func applyDisplayAttributesToTextStorage() {
+        guard let textStorage else { return }
+        let range = NSRange(location: 0, length: textStorage.length)
+        textStorage.beginEditing()
+        if range.length > 0 {
+            textStorage.addAttributes(
+                [
+                    .font: displayFont,
+                    .foregroundColor: NSColor.labelColor,
+                ],
+                range: range
+            )
+        }
+        textStorage.endEditing()
+    }
+
+    func refreshDisplay() {
+        if let textContainer, let layoutManager {
+            layoutManager.ensureLayout(for: textContainer)
+        }
+        needsDisplay = true
+        setNeedsDisplay(bounds)
+        enclosingScrollView?.contentView.needsDisplay = true
+        enclosingScrollView?.needsDisplay = true
     }
 }

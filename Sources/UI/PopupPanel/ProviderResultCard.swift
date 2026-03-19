@@ -103,6 +103,7 @@ struct ProviderResultCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(partial)
                     .font(.popup(name: fontName, size: CGFloat(fontSize)))
+                    .foregroundStyle(.primary)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -111,6 +112,7 @@ struct ProviderResultCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(text)
                     .font(.popup(name: fontName, size: CGFloat(fontSize)))
+                    .foregroundStyle(.primary)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
