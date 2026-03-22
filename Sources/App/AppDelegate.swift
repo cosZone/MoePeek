@@ -28,11 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         onboardingController = OnboardingWindowController(permissionManager: permissionManager, registry: registry)
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()
-        // Apply dock visibility — only switch to .regular when needed;
-        // LSUIElement=YES already provides .accessory by default.
-        if Defaults[.showInDock] {
-            NSApp.setActivationPolicy(.regular)
-        }
+        // Apply dock visibility — always set explicitly because macOS may cache
+        // .regular from a previous session, ignoring LSUIElement on relaunch.
+        NSApp.setActivationPolicy(Defaults[.showInDock] ? .regular : .accessory)
 
         setupShortcuts()
         setupSelectionMonitor()
