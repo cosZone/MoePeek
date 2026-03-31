@@ -9,13 +9,13 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
-    private let coordinator: TranslationCoordinator
 
-    /// The app that was frontmost before we activated ourselves for input mode.
-    /// Used to restore focus after dismissing the input panel.
-    private var previouslyActiveApp: NSRunningApplication?
+    private let coordinator: TranslationCoordinator
     private let ttsCoordinator: TTSCoordinator?
     private let settingsController: SettingsWindowController?
+
+    /// The app that was frontmost before we activated ourselves for input mode.
+    private var previouslyActiveApp: NSRunningApplication?
 
     init(
         coordinator: TranslationCoordinator,
@@ -86,9 +86,9 @@ final class PopupPanelController {
         coordinator.dismiss()
         onDismiss?()
 
-        // Restore focus to the previously active app so the user's workflow isn't interrupted.
-        if let previousApp = previouslyActiveApp {
-            previousApp.activate(options: [])
+        // Restore focus only when MoePeek is still frontmost (user hasn't switched away manually).
+        if let previousApp = previouslyActiveApp, NSRunningApplication.current.isActive {
+            previousApp.activate()
         }
         previouslyActiveApp = nil
     }
