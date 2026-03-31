@@ -9,6 +9,8 @@ struct PopupView: View {
     @State private var editableText: String = ""
     @State private var isOpeningSettings = false
     @State private var expandedProviders: Set<String> = []
+    @State private var autoPlayedGeneration: Int = -1
+    @Environment(\.ttsCoordinator) private var ttsCoordinator
     @State private var sourceLang: String = Defaults[.sourceLanguage]
     @State private var targetLang: String = Defaults[.targetLanguage]
     @State private var inputHeight: CGFloat = CGFloat(Defaults[.popupInputHeight])
@@ -63,6 +65,13 @@ struct PopupView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onChange(of: coordinator.sourceText) { _, newValue in
             editableText = newValue
+            if Defaults[.ttsAutoPlaySource],
+               !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let tts = ttsCoordinator
+            {
+                let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
+                tts.speak(newValue, language: lang)
+            }
         }
         .onChange(of: coordinator.targetLanguage) { _, newValue in
             targetLang = newValue
@@ -72,9 +81,20 @@ struct PopupView: View {
             sourceLang = Defaults[.sourceLanguage]
             targetLang = coordinator.targetLanguage
             expandedProviders = Set(coordinator.activeSlots.map(\.id))
+
+            if Defaults[.ttsAutoPlaySource],
+               !coordinator.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let tts = ttsCoordinator
+            {
+                let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
+                tts.speak(coordinator.sourceText, language: lang)
+            }
         }
         .onChange(of: coordinator.translationGeneration) { _, _ in
             expandedProviders = Set(coordinator.activeSlots.map(\.id))
+        }
+        .onChange(of: coordinator.providerStates) { _, newStates in
+            handleAutoPlay(states: newStates)
         }
     }
 
@@ -95,6 +115,7 @@ struct PopupView: View {
                 // Source input
                 SourceInputView(
                     text: $editableText,
+                    sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
                     onSubmit: {
                         coordinator.translate(editableText)
                     }
@@ -199,6 +220,7 @@ struct PopupView: View {
                                 ProviderResultCard(
                                     provider: provider,
                                     state: state,
+                                    targetLanguage: targetLang,
                                     isExpanded: expandedBinding(for: provider.id),
                                     onRetry: {
                                         coordinator.retryProvider(provider)
@@ -228,6 +250,38 @@ struct PopupView: View {
                 }
             }
         )
+    }
+
+    private func handleAutoPlay(states: [String: TranslationCoordinator.ProviderState]) {
+        guard Defaults[.ttsAutoPlayTarget],
+              let tts = ttsCoordinator,
+              coordinator.translationGeneration != autoPlayedGeneration else { return }
+
+        let preferredProvider = Defaults[.ttsAutoPlayTargetProvider]
+
+        let completedText: String?
+        if preferredProvider == "first" {
+            // Auto-play the first provider (in display order) that has completed
+            completedText = coordinator.activeSlots
+                .lazy
+                .compactMap { provider -> String? in
+                    if case .completed(let text) = states[provider.id] { return text }
+                    return nil
+                }
+                .first
+        } else {
+            // Wait for the specific provider to complete
+            if case .completed(let text) = states[preferredProvider] {
+                completedText = text
+            } else {
+                completedText = nil
+            }
+        }
+
+        if let text = completedText {
+            autoPlayedGeneration = coordinator.translationGeneration
+            tts.speak(text, language: targetLang)
+        }
     }
 
     @MainActor

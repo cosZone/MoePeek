@@ -12,7 +12,12 @@ struct MoePeekApp: App {
 
         // Settings window
         Settings {
-            SettingsView(registry: appDelegate.registry, updaterController: appDelegate.updaterController)
+            SettingsView(
+                registry: appDelegate.registry,
+                ttsRegistry: appDelegate.ttsRegistry,
+                ttsCoordinator: appDelegate.ttsCoordinator,
+                updaterController: appDelegate.updaterController
+            )
         }
         .windowResizability(.contentMinSize)
     }

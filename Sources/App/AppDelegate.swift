@@ -8,6 +8,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // registry must be available before applicationDidFinishLaunching because
     // SwiftUI evaluates MoePeekApp.body (which reads registry) during app init.
     lazy var registry = TranslationProviderRegistry.builtIn()
+    lazy var ttsRegistry = TTSProviderRegistry.builtIn()
+    lazy var ttsCoordinator = TTSCoordinator(registry: ttsRegistry)
     var coordinator: TranslationCoordinator!
     var panelController: PopupPanelController!
     var permissionManager: PermissionManager!
@@ -24,7 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         permissionManager = PermissionManager()
         coordinator = TranslationCoordinator(permissionManager: permissionManager, registry: registry)
-        panelController = PopupPanelController(coordinator: coordinator)
+        panelController = PopupPanelController(coordinator: coordinator, ttsCoordinator: ttsCoordinator)
         onboardingController = OnboardingWindowController(permissionManager: permissionManager, registry: registry)
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()
