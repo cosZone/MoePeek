@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var selectionMonitor: SelectionMonitor!
     var triggerIconController: TriggerIconController!
     lazy var updaterController = UpdaterController()
+    var settingsController: SettingsWindowController!
 
     func applicationDidFinishLaunching(_: Notification) {
         applyLanguageOverride()
@@ -26,7 +27,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         permissionManager = PermissionManager()
         coordinator = TranslationCoordinator(permissionManager: permissionManager, registry: registry)
-        panelController = PopupPanelController(coordinator: coordinator, ttsCoordinator: ttsCoordinator)
+        settingsController = SettingsWindowController(
+            registry: registry,
+            ttsRegistry: ttsRegistry,
+            ttsCoordinator: ttsCoordinator,
+            updaterController: updaterController
+        )
+        panelController = PopupPanelController(
+            coordinator: coordinator,
+            ttsCoordinator: ttsCoordinator,
+            settingsController: settingsController
+        )
         onboardingController = OnboardingWindowController(permissionManager: permissionManager, registry: registry)
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()

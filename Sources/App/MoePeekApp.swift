@@ -9,16 +9,5 @@ struct MoePeekApp: App {
         MenuBarExtra("MoePeek", systemImage: "character.bubble") {
             MenuItemView(appDelegate: appDelegate)
         }
-
-        // Settings window
-        Settings {
-            SettingsView(
-                registry: appDelegate.registry,
-                ttsRegistry: appDelegate.ttsRegistry,
-                ttsCoordinator: appDelegate.ttsCoordinator,
-                updaterController: appDelegate.updaterController
-            )
-        }
-        .windowResizability(.contentMinSize)
     }
 }

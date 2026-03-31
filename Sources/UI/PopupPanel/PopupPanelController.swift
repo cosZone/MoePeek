@@ -12,10 +12,16 @@ final class PopupPanelController {
 
     private let coordinator: TranslationCoordinator
     private let ttsCoordinator: TTSCoordinator?
+    private let settingsController: SettingsWindowController?
 
-    init(coordinator: TranslationCoordinator, ttsCoordinator: TTSCoordinator? = nil) {
+    init(
+        coordinator: TranslationCoordinator,
+        ttsCoordinator: TTSCoordinator? = nil,
+        settingsController: SettingsWindowController? = nil
+    ) {
         self.coordinator = coordinator
         self.ttsCoordinator = ttsCoordinator
+        self.settingsController = settingsController
     }
 
     func showAtCursor() {
@@ -95,6 +101,7 @@ final class PopupPanelController {
                 coordinator: coordinator,
                 onOpenSettings: { [weak self] in
                     self?.dismiss()
+                    self?.settingsController?.showWindow()
                 }
             )
             .environment(\.popupPanel, newPanel)

@@ -6,7 +6,6 @@ import SwiftUI
 /// Content for the menu bar dropdown.
 struct MenuItemView: View {
     let appDelegate: AppDelegate
-    @Environment(\.openSettings) private var openSettings
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
@@ -95,10 +94,6 @@ struct MenuItemView: View {
 
     @MainActor
     private func openSettingsOrBringToFront() {
-        NSApp.activate(ignoringOtherApps: true)
-        let handled = NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-        if !handled {
-            openSettings()
-        }
+        appDelegate.settingsController.showWindow()
     }
 }
