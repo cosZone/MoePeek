@@ -14,6 +14,9 @@ final class PopupPanelController {
     private let ttsCoordinator: TTSCoordinator?
     private let settingsController: SettingsWindowController?
 
+    /// The app that was frontmost before we activated ourselves for input mode.
+    private var previouslyActiveApp: NSRunningApplication?
+
     init(
         coordinator: TranslationCoordinator,
         ttsCoordinator: TTSCoordinator? = nil,
@@ -63,6 +66,8 @@ final class PopupPanelController {
         // Input mode needs the app activated so the panel can receive keyboard events.
         // Without this, makeKeyAndOrderFront alone won't route keystrokes to our panel
         // because macOS keeps delivering them to the previously active app.
+        // Remember the previously active app so we can restore focus after dismissal.
+        previouslyActiveApp = NSWorkspace.shared.frontmostApplication
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
 
@@ -80,6 +85,12 @@ final class PopupPanelController {
         panel = nil
         coordinator.dismiss()
         onDismiss?()
+
+        // Restore focus only when MoePeek is still frontmost (user hasn't switched away manually).
+        if let previousApp = previouslyActiveApp, NSRunningApplication.current.isActive {
+            previousApp.activate()
+        }
+        previouslyActiveApp = nil
     }
 
     var isVisible: Bool {
