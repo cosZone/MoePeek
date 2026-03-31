@@ -78,7 +78,7 @@ struct MenuItemView: View {
         .disabled(!appDelegate.updaterController.canCheckForUpdates)
 
         Button {
-            openSettingsOrBringToFront()
+            appDelegate.settingsController.showWindow()
         } label: {
             Label("Settings...", systemImage: "gearshape")
         }
@@ -90,10 +90,5 @@ struct MenuItemView: View {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")
-    }
-
-    @MainActor
-    private func openSettingsOrBringToFront() {
-        appDelegate.settingsController.showWindow()
     }
 }

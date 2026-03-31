@@ -27,7 +27,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     func showWindow() {
         if let window, window.isVisible {
-            NSApp.activate(ignoringOtherApps: true)
+            NSApp.activate()
             window.makeKeyAndOrderFront(nil)
             return
         }
@@ -46,7 +46,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = String(localized: "MoePeek Settings")
+        window.title = "MoePeek \(String(localized: "Settings"))"
         window.contentView = hostingView
         window.contentMinSize = NSSize(width: 720, height: 420)
         window.center()
@@ -54,7 +54,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.delegate = self
         self.window = window
 
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.activate()
         window.makeKeyAndOrderFront(nil)
     }
 
