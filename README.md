@@ -48,6 +48,7 @@
 **And More**
 
 - Smart language detection across 14 languages, auto-flips translation direction
+- Text-to-speech playback for translated text using Apple's built-in speech synthesis
 - Non-activating floating panels that never steal focus from your current app
 - 3-tier text grabbing: Accessibility API → AppleScript → Clipboard fallback
 - Fully customizable keyboard shortcuts
