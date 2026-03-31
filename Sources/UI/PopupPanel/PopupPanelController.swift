@@ -9,8 +9,11 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
-
     private let coordinator: TranslationCoordinator
+
+    /// The app that was frontmost before we activated ourselves for input mode.
+    /// Used to restore focus after dismissing the input panel.
+    private var previouslyActiveApp: NSRunningApplication?
     private let ttsCoordinator: TTSCoordinator?
     private let settingsController: SettingsWindowController?
 
@@ -63,6 +66,8 @@ final class PopupPanelController {
         // Input mode needs the app activated so the panel can receive keyboard events.
         // Without this, makeKeyAndOrderFront alone won't route keystrokes to our panel
         // because macOS keeps delivering them to the previously active app.
+        // Remember the previously active app so we can restore focus after dismissal.
+        previouslyActiveApp = NSWorkspace.shared.frontmostApplication
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
 
@@ -80,6 +85,12 @@ final class PopupPanelController {
         panel = nil
         coordinator.dismiss()
         onDismiss?()
+
+        // Restore focus to the previously active app so the user's workflow isn't interrupted.
+        if let previousApp = previouslyActiveApp {
+            previousApp.activate(options: [])
+        }
+        previouslyActiveApp = nil
     }
 
     var isVisible: Bool {
