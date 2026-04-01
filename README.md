@@ -100,8 +100,14 @@ If you use [PopClip](https://www.popclip.app/), you can translate selected text 
 
 1. Make sure MoePeek is installed and running.
 2. Download [`MoePeek.popclipext.zip`](https://github.com/cosZone/MoePeek/releases/latest/download/MoePeek.popclipext.zip) from the latest release and unzip it.
-3. Double-click `MoePeek.popclipext` — PopClip will install it automatically.
-4. Select any text in any app → click the **MoePeek** icon in the PopClip bar.
+3. Remove the quarantine attribute so macOS allows the extension to load:
+   ```bash
+   xattr -dr com.apple.quarantine /path/to/MoePeek.popclipext
+   ```
+4. Double-click `MoePeek.popclipext` — PopClip will install it automatically.
+5. Select any text in any app → click the **MoePeek** icon in the PopClip bar.
+
+> **Note:** If PopClip shows an error, also make sure MoePeek.app itself has been un-quarantined — see the [FAQ below](#moepeekapp-is-damaged-and-cant-be-opened). ([Related issue](https://github.com/cosZone/MoePeek/issues/9#issuecomment-4167992729))
 
 ## FAQ
 
