@@ -9,6 +9,7 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
+    private var isPinned = false
 
     private let coordinator: TranslationCoordinator
     private let ttsCoordinator: TTSCoordinator?
@@ -30,6 +31,12 @@ final class PopupPanelController {
     func showAtCursor() {
         let initialSize = setupPanel()
         guard let panel else { return }
+
+        if isPinned, panel.isVisible {
+            panel.orderFront(nil)
+            startDismissMonitor()
+            return
+        }
 
         let cursorPos = NSEvent.mouseLocation
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
@@ -77,6 +84,7 @@ final class PopupPanelController {
     func dismiss() {
         dismissMonitor?.stop()
         dismissMonitor = nil
+        isPinned = false
         ttsCoordinator?.stop()
         panel?.contentView = nil
         panel?.close()
@@ -95,6 +103,10 @@ final class PopupPanelController {
 
     var isVisible: Bool {
         panel?.isVisible ?? false
+    }
+
+    func setPinned(_ pinned: Bool) {
+        isPinned = pinned
     }
 
     // MARK: - Private
@@ -130,7 +142,11 @@ final class PopupPanelController {
 
     private func startDismissMonitor() {
         guard let panel else { return }
-        dismissMonitor = PopupDismissMonitor(panel: panel) { [weak self] in
+        dismissMonitor?.stop()
+        dismissMonitor = PopupDismissMonitor(
+            panel: panel,
+            isPinned: { [weak self] in self?.isPinned ?? false }
+        ) { [weak self] in
             self?.dismiss()
         }
         dismissMonitor?.start()
