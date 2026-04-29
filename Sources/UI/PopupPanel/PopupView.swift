@@ -4,10 +4,12 @@ import SwiftUI
 /// The SwiftUI content displayed inside the popup translation panel.
 struct PopupView: View {
     let coordinator: TranslationCoordinator
+    var onPinnedChange: ((Bool) -> Void)?
     var onOpenSettings: (() -> Void)?
     @State private var editableText: String = ""
     @State private var expandedProviders: Set<String> = []
     @State private var autoPlayedGeneration: Int = -1
+    @State private var isPinned = false
     @Environment(\.ttsCoordinator) private var ttsCoordinator
     @State private var sourceLang: String = Defaults[.sourceLanguage]
     @State private var targetLang: String = Defaults[.targetLanguage]
@@ -59,6 +61,9 @@ struct PopupView: View {
         .overlay(alignment: .bottomTrailing) {
             ResizeGripView()
         }
+        .overlay(alignment: .topTrailing) {
+            pinButton
+        }
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onChange(of: coordinator.sourceText) { _, newValue in
@@ -94,6 +99,24 @@ struct PopupView: View {
         .onChange(of: coordinator.providerStates) { _, newStates in
             handleAutoPlay(states: newStates)
         }
+    }
+
+    private var pinButton: some View {
+        Button {
+            isPinned.toggle()
+            onPinnedChange?(isPinned)
+        } label: {
+            Image(systemName: isPinned ? "pin.fill" : "pin")
+                .font(.system(size: CGFloat(fontSize - 2)))
+                .foregroundStyle(isPinned ? Color.accentColor : Color.secondary)
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(isPinned ? "Unpin Popup" : "Pin Popup")
+        .padding(.top, 8)
+        .padding(.trailing, 8)
+        .background { InteractiveMarker() }
     }
 
     // MARK: - Active Content

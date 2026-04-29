@@ -122,6 +122,9 @@ final class PopupPanelController {
             let newPanel = PopupPanel(contentRect: NSRect(origin: .zero, size: initialSize))
             let contentView = PopupView(
                 coordinator: coordinator,
+                onPinnedChange: { [weak self] pinned in
+                    self?.setPinned(pinned)
+                },
                 onOpenSettings: { [weak self] in
                     self?.dismiss()
                     self?.settingsController?.showWindow()
