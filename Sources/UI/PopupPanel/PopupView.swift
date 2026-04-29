@@ -26,28 +26,24 @@ struct PopupView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 0) {
-                switch coordinator.phase {
-                case .idle:
-                    EmptyView()
+        VStack(alignment: .leading, spacing: 0) {
+            switch coordinator.phase {
+            case .idle:
+                EmptyView()
 
-                case .grabbing:
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("Grabbing text…")
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.horizontal, contentHorizontalPadding)
-                    .padding(.vertical, contentHorizontalPadding)
-
-                case .active:
-                    activeContent
+            case .grabbing:
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Grabbing text…")
+                        .foregroundStyle(.secondary)
                 }
-            }
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.vertical, contentHorizontalPadding)
 
-            pinButton
+            case .active:
+                activeContent
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
@@ -134,96 +130,102 @@ struct PopupView: View {
                 .padding(.horizontal, contentHorizontalPadding)
                 .padding(.vertical, contentHorizontalPadding)
             } else {
-                // Source input
-                SourceInputView(
-                    text: $editableText,
-                    sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
-                    onSubmit: {
-                        coordinator.translate(editableText)
-                    }
-                )
-                .frame(height: inputHeight)
-                .padding(.horizontal, contentHorizontalPadding)
-                .padding(.top, contentHorizontalPadding)
-                .padding(.bottom, 4)
+                ZStack(alignment: .topTrailing) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Source input
+                        SourceInputView(
+                            text: $editableText,
+                            sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
+                            onSubmit: {
+                                coordinator.translate(editableText)
+                            }
+                        )
+                        .frame(height: inputHeight)
+                        .padding(.horizontal, contentHorizontalPadding)
+                        .padding(.top, contentHorizontalPadding)
+                        .padding(.bottom, 4)
 
-                DraggableDividerView(
-                    inputHeight: $inputHeight,
-                    minHeight: inputMinHeight,
-                    maxHeight: maxInputHeight,
-                    horizontalPadding: contentHorizontalPadding,
-                    onDragEnd: { Defaults[.popupInputHeight] = Int(inputHeight) }
-                )
+                        DraggableDividerView(
+                            inputHeight: $inputHeight,
+                            minHeight: inputMinHeight,
+                            maxHeight: maxInputHeight,
+                            horizontalPadding: contentHorizontalPadding,
+                            onDragEnd: { Defaults[.popupInputHeight] = Int(inputHeight) }
+                        )
 
-                // Language bar + settings button
-                HStack(spacing: 4) {
-                    LanguageBarView(
-                        sourceLanguage: $sourceLang,
-                        detectedLanguage: coordinator.detectedLanguage,
-                        detectionConfidence: coordinator.detectionResult?.confidence,
-                        targetLanguage: $targetLang,
-                        onSwap: {
-                            let effectiveSource = sourceLang == "auto"
-                                ? (coordinator.detectedLanguage ?? targetLang)
-                                : sourceLang
-                            // When auto-detect has no result yet, effectiveSource falls back
-                            // to targetLang and swap becomes a no-op
-                            guard effectiveSource != targetLang else { return }
-                            sourceLang = targetLang
-                            targetLang = effectiveSource
+                        // Language bar + settings button
+                        HStack(spacing: 4) {
+                            LanguageBarView(
+                                sourceLanguage: $sourceLang,
+                                detectedLanguage: coordinator.detectedLanguage,
+                                detectionConfidence: coordinator.detectionResult?.confidence,
+                                targetLanguage: $targetLang,
+                                onSwap: {
+                                    let effectiveSource = sourceLang == "auto"
+                                    ? (coordinator.detectedLanguage ?? targetLang)
+                                    : sourceLang
+                                    // When auto-detect has no result yet, effectiveSource falls back
+                                    // to targetLang and swap becomes a no-op
+                                    guard effectiveSource != targetLang else { return }
+                                    sourceLang = targetLang
+                                    targetLang = effectiveSource
+                                }
+                            )
+
+                            Button {
+                                onOpenSettings?()
+                            } label: {
+                                Image(systemName: "gearshape")
+                                    .font(.system(size: CGFloat(fontSize - 2)))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Open Settings")
+                            .background { InteractiveMarker() }
                         }
-                    )
-
-                    Button {
-                        onOpenSettings?()
-                    } label: {
-                        Image(systemName: "gearshape")
-                            .font(.system(size: CGFloat(fontSize - 2)))
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .help("Open Settings")
-                    .background { InteractiveMarker() }
-                }
-                .padding(.horizontal, contentHorizontalPadding)
-                .padding(.vertical, 4)
-                .onChange(of: targetLang) { _, newValue in
-                    Defaults[.targetLanguage] = newValue
-                    // Skip retranslation when this change came from coordinator sync
-                    guard newValue != coordinator.targetLanguage else { return }
-                    if !editableText.isEmpty {
-                        coordinator.translate(editableText)
-                    }
-                }
-                .onChange(of: sourceLang) { _, newValue in
-                    Defaults[.sourceLanguage] = newValue
-                    if !editableText.isEmpty {
-                        coordinator.translate(editableText)
-                    }
-                }
-
-                Divider()
-                    .padding(.horizontal, contentHorizontalPadding)
-
-                // Provider results
-                ScrollView {
-                    VStack(spacing: 6) {
-                        ForEach(coordinator.activeSlots, id: \.id) { provider in
-                            if let state = coordinator.providerStates[provider.id] {
-                                ProviderResultCard(
-                                    provider: provider,
-                                    state: state,
-                                    targetLanguage: targetLang,
-                                    isExpanded: expandedBinding(for: provider.id),
-                                    onRetry: {
-                                        coordinator.retryProvider(provider)
-                                    }
-                                )
+                        .padding(.horizontal, contentHorizontalPadding)
+                        .padding(.vertical, 4)
+                        .onChange(of: targetLang) { _, newValue in
+                            Defaults[.targetLanguage] = newValue
+                            // Skip retranslation when this change came from coordinator sync
+                            guard newValue != coordinator.targetLanguage else { return }
+                            if !editableText.isEmpty {
+                                coordinator.translate(editableText)
                             }
                         }
+                        .onChange(of: sourceLang) { _, newValue in
+                            Defaults[.sourceLanguage] = newValue
+                            if !editableText.isEmpty {
+                                coordinator.translate(editableText)
+                            }
+                        }
+
+                        Divider()
+                            .padding(.horizontal, contentHorizontalPadding)
+
+                        // Provider results
+                        ScrollView {
+                            VStack(spacing: 6) {
+                                ForEach(coordinator.activeSlots, id: \.id) { provider in
+                                    if let state = coordinator.providerStates[provider.id] {
+                                        ProviderResultCard(
+                                            provider: provider,
+                                            state: state,
+                                            targetLanguage: targetLang,
+                                            isExpanded: expandedBinding(for: provider.id),
+                                            onRetry: {
+                                                coordinator.retryProvider(provider)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, contentHorizontalPadding)
+                            .padding(.vertical, 6)
+                        }
                     }
-                    .padding(.horizontal, contentHorizontalPadding)
-                    .padding(.vertical, 6)
+
+                    pinButton
                 }
             }
         }
