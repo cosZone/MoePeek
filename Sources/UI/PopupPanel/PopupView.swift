@@ -26,24 +26,28 @@ struct PopupView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            switch coordinator.phase {
-            case .idle:
-                EmptyView()
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading, spacing: 0) {
+                switch coordinator.phase {
+                case .idle:
+                    EmptyView()
 
-            case .grabbing:
-                HStack(spacing: 8) {
-                    ProgressView()
-                        .controlSize(.small)
-                    Text("Grabbing text…")
-                        .foregroundStyle(.secondary)
+                case .grabbing:
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Grabbing text…")
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.horizontal, contentHorizontalPadding)
+                    .padding(.vertical, contentHorizontalPadding)
+
+                case .active:
+                    activeContent
                 }
-                .padding(.horizontal, contentHorizontalPadding)
-                .padding(.vertical, contentHorizontalPadding)
-
-            case .active:
-                activeContent
             }
+
+            pinButton
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
@@ -60,9 +64,6 @@ struct PopupView: View {
         }
         .overlay(alignment: .bottomTrailing) {
             ResizeGripView()
-        }
-        .overlay(alignment: .topTrailing) {
-            pinButton
         }
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -107,14 +108,14 @@ struct PopupView: View {
             onPinnedChange?(isPinned)
         } label: {
             Image(systemName: isPinned ? "pin.fill" : "pin")
-                .font(.system(size: CGFloat(fontSize - 2)))
+                .font(.system(size: max(CGFloat(fontSize - 5), 10)))
                 .foregroundStyle(isPinned ? Color.accentColor : Color.secondary)
-                .frame(width: 24, height: 24)
+                .frame(width: 18, height: 18)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(isPinned ? "Unpin Popup" : "Pin Popup")
-        .padding(.top, 8)
+        .padding(.top, 4)
         .padding(.trailing, 8)
         .background { InteractiveMarker() }
     }
