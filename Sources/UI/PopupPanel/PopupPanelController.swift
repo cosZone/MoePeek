@@ -32,6 +32,10 @@ final class PopupPanelController {
         let initialSize = setupPanel()
         guard let panel else { return }
 
+        if coordinator.globalError != nil {
+            isPinned = false
+        }
+
         if isPinned, panel.isVisible {
             panel.orderFront(nil)
             startDismissMonitor()

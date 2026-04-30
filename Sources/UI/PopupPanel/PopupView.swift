@@ -96,6 +96,11 @@ struct PopupView: View {
         .onChange(of: coordinator.providerStates) { _, newStates in
             handleAutoPlay(states: newStates)
         }
+        .onChange(of: coordinator.globalError) { _, message in
+            guard message != nil, isPinned else { return }
+            isPinned = false
+            onPinnedChange?(false)
+        }
     }
 
     private var pinButton: some View {
