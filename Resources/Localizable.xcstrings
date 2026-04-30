@@ -1789,6 +1789,17 @@
         }
       }
     },
+    "Screen recording permission not granted. Open Settings to enable it." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕录制权限未授权。请前往设置中开启。"
+          }
+        }
+      }
+    },
     "Screenshot OCR" : {
       "extractionState" : "stale",
       "localizations" : {
