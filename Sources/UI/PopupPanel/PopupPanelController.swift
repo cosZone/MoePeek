@@ -9,6 +9,7 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
+    private var copyShortcutDismissTask: Task<Void, Never>?
 
     private let coordinator: TranslationCoordinator
 
@@ -16,7 +17,7 @@ final class PopupPanelController {
         self.coordinator = coordinator
     }
 
-    func showAtCursor() {
+    func showAtCursor(focusInput: Bool = true) {
         let initialSize = setupPanel()
         guard let panel else { return }
 
@@ -31,8 +32,14 @@ final class PopupPanelController {
             screen: screen
         )
         panel.setFrame(frame, display: true)
-        // Non-activating: don't steal focus from the user's active app.
-        panel.orderFront(nil)
+        if focusInput {
+            NSApp.activate(ignoringOtherApps: true)
+            panel.makeKeyAndOrderFront(nil)
+            panel.focusSourceInput()
+        } else {
+            // Non-activating: don't steal focus from the user's active app.
+            panel.orderFront(nil)
+        }
 
         startDismissMonitor()
     }
@@ -57,11 +64,14 @@ final class PopupPanelController {
         // because macOS keeps delivering them to the previously active app.
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+        panel.focusSourceInput()
 
         startDismissMonitor()
     }
 
     func dismiss() {
+        copyShortcutDismissTask?.cancel()
+        copyShortcutDismissTask = nil
         dismissMonitor?.stop()
         dismissMonitor = nil
         panel?.contentView = nil
@@ -88,8 +98,14 @@ final class PopupPanelController {
 
         if panel == nil {
             let newPanel = PopupPanel(contentRect: NSRect(origin: .zero, size: initialSize))
+            newPanel.onCopyResultShortcut = { [weak self] index in
+                self?.copyResultFromShortcut(atDisplayIndex: index) ?? false
+            }
             let contentView = PopupView(
                 coordinator: coordinator,
+                onDismiss: { [weak self] in
+                    self?.dismiss()
+                },
                 onOpenSettings: { [weak self] in
                     self?.dismiss()
                 }
@@ -104,6 +120,18 @@ final class PopupPanelController {
         }
 
         return initialSize
+    }
+
+    private func copyResultFromShortcut(atDisplayIndex index: Int) -> Bool {
+        guard coordinator.copyResult(atDisplayIndex: index) else { return false }
+
+        copyShortcutDismissTask?.cancel()
+        copyShortcutDismissTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(280))
+            guard !Task.isCancelled else { return }
+            self?.dismiss()
+        }
+        return true
     }
 
     private func startDismissMonitor() {

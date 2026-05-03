@@ -15,8 +15,14 @@ extension EnvironmentValues {
     }
 }
 
+enum PopupPanelViewIdentifier {
+    static let sourceInputTextView = "SourceInputTextView"
+}
+
 /// A floating, non-activating panel for showing translation results near the cursor.
 final class PopupPanel: NSPanel {
+    var onCopyResultShortcut: ((Int) -> Bool)?
+
     init(contentRect: NSRect) {
         super.init(
             contentRect: contentRect,
@@ -45,11 +51,26 @@ final class PopupPanel: NSPanel {
     // Allow becoming key window so users can select/copy text within the panel.
     override var canBecomeKey: Bool { true }
 
+    func focusSourceInput(retries: Int = 4) {
+        if focusSourceInputNow() { return }
+        guard retries > 0 else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
+            self?.focusSourceInput(retries: retries - 1)
+        }
+    }
+
     // MARK: - Selective Window Dragging
 
     /// Intercepts left-mouse-down on non-interactive areas to start a window drag,
     /// while letting interactive controls (text views, buttons, gesture views) handle events normally.
     override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown,
+           let resultIndex = copyResultShortcutIndex(for: event),
+           onCopyResultShortcut?(resultIndex) == true {
+            return
+        }
+
         if event.type == .leftMouseDown {
             if shouldStartWindowDrag(for: event) {
                 performDrag(with: event)
@@ -59,6 +80,29 @@ final class PopupPanel: NSPanel {
             if !isKeyWindow { makeKey() }
         }
         super.sendEvent(event)
+    }
+
+    private func copyResultShortcutIndex(for event: NSEvent) -> Int? {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        let disallowedFlags: NSEvent.ModifierFlags = [.shift, .option, .control]
+        guard flags.contains(.command),
+              flags.intersection(disallowedFlags).isEmpty,
+              let characters = event.charactersIgnoringModifiers,
+              characters.count == 1,
+              let number = Int(characters),
+              (1...9).contains(number)
+        else { return nil }
+
+        return number - 1
+    }
+
+    private func focusSourceInputNow() -> Bool {
+        guard let contentView,
+              let textView = findSourceInputTextView(in: contentView)
+        else { return false }
+
+        makeKey()
+        return makeFirstResponder(textView)
     }
 
     private func shouldStartWindowDrag(for event: NSEvent) -> Bool {
@@ -88,5 +132,20 @@ final class PopupPanel: NSPanel {
             if hasInteractiveMarker(in: subview, containing: point) { return true }
         }
         return false
+    }
+
+    private func findSourceInputTextView(in view: NSView) -> NSTextView? {
+        if view.identifier?.rawValue == PopupPanelViewIdentifier.sourceInputTextView,
+           let textView = view as? NSTextView {
+            return textView
+        }
+
+        for subview in view.subviews {
+            if let textView = findSourceInputTextView(in: subview) {
+                return textView
+            }
+        }
+
+        return nil
     }
 }

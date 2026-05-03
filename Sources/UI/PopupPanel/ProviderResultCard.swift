@@ -6,7 +6,11 @@ struct ProviderResultCard: View {
     let provider: any TranslationProvider
     let state: TranslationCoordinator.ProviderState
     @Binding var isExpanded: Bool
+    let isCopyFeedbackActive: Bool
+    let copyFeedbackGeneration: Int
+    var onCopy: (() -> Void)?
     var onRetry: (() -> Void)?
+    @State private var isCopyPulsing = false
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
 
@@ -58,6 +62,18 @@ struct ProviderResultCard: View {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
         )
+        .onChange(of: copyFeedbackGeneration) { _, _ in
+            guard isCopyFeedbackActive else { return }
+            withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
+                isCopyPulsing = true
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(180))
+                withAnimation(.spring(response: 0.22, dampingFraction: 0.8)) {
+                    isCopyPulsing = false
+                }
+            }
+        }
     }
 
     // MARK: - Status Indicator
@@ -100,36 +116,9 @@ struct ProviderResultCard: View {
                 .font(.popup(name: fontName, size: CGFloat(fontSize)))
                 .foregroundStyle(.secondary)
         case let .streaming(partial):
-            VStack(alignment: .leading, spacing: 4) {
-                Text(partial)
-                    .font(.popup(name: fontName, size: CGFloat(fontSize)))
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .background { InteractiveMarker() }
+            resultContent(partial)
         case let .completed(text):
-            VStack(alignment: .leading, spacing: 4) {
-                Text(text)
-                    .font(.popup(name: fontName, size: CGFloat(fontSize)))
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack {
-                    Spacer()
-                    Button {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(text, forType: .string)
-                    } label: {
-                        Label("Copy", systemImage: "doc.on.doc")
-                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.mini)
-                }
-            }
-            .background { InteractiveMarker() }
+            resultContent(text)
         case let .error(message):
             VStack(alignment: .leading, spacing: 4) {
                 Label(message, systemImage: "exclamationmark.triangle")
@@ -150,5 +139,34 @@ struct ProviderResultCard: View {
             }
             .background { InteractiveMarker() }
         }
+    }
+
+    private func resultContent(_ text: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(text)
+                .font(.popup(name: fontName, size: CGFloat(fontSize)))
+                .foregroundStyle(.primary)
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            if let onCopy {
+                HStack {
+                    Spacer()
+                    Button(action: onCopy) {
+                        Label(
+                            isCopyFeedbackActive ? "Copied" : "Copy",
+                            systemImage: isCopyFeedbackActive ? "checkmark" : "doc.on.doc"
+                        )
+                        .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                    .tint(isCopyFeedbackActive ? .green : nil)
+                    .scaleEffect(isCopyPulsing ? 1.08 : 1)
+                    .animation(.easeInOut(duration: 0.12), value: isCopyFeedbackActive)
+                }
+            }
+        }
+        .background { InteractiveMarker() }
     }
 }
