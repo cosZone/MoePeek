@@ -49,6 +49,7 @@
 **更多特性**
 
 - 智能语言检测，支持 14 种语言，自动切换翻译方向
+- 翻译结果文本朗读，基于 Apple 内置语音合成
 - 非激活浮窗，永远不会抢走当前应用焦点
 - 三层文本抓取：Accessibility API → AppleScript → 剪贴板逐级回退
 - 所有快捷键均可自定义
@@ -100,8 +101,14 @@ MoePeek 是一个纯 **AI vibe coding** 的自用项目。它能满足我个人�
 
 1. 确保 MoePeek 已安装并正在运行。
 2. 从最新 Release 下载 [`MoePeek.popclipext.zip`](https://github.com/cosZone/MoePeek/releases/latest/download/MoePeek.popclipext.zip) 并解压。
-3. 双击 `MoePeek.popclipext`，PopClip 会自动完成安装。
-4. 在任意应用中选中文字 → 点击 PopClip 栏中的 **MoePeek** 图标即可翻译。
+3. 移除隔离属性，否则 macOS 可能阻止加载扩展：
+   ```bash
+   xattr -dr com.apple.quarantine /解压后的路径/MoePeek.popclipext
+   ```
+4. 双击 `MoePeek.popclipext`，PopClip 会自动完成安装。
+5. 在任意应用中选中文字 → 点击 PopClip 栏中的 **MoePeek** 图标即可翻译。
+
+> **提示：** 如果 PopClip 仍报错，请确认 MoePeek.app 本身也已移除隔离属性——参见下方[常见问题](#macos-提示已损坏无法打开)。（[相关 Issue](https://github.com/cosZone/MoePeek/issues/9#issuecomment-4167992729)）
 
 ## 常见问题
 

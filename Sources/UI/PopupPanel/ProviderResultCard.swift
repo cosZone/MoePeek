@@ -5,6 +5,7 @@ import SwiftUI
 struct ProviderResultCard: View {
     let provider: any TranslationProvider
     let state: TranslationCoordinator.ProviderState
+    let targetLanguage: String
     @Binding var isExpanded: Bool
     let isCopyFeedbackActive: Bool
     let copyFeedbackGeneration: Int
@@ -13,6 +14,8 @@ struct ProviderResultCard: View {
     @State private var isCopyPulsing = false
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
+    @Default(.ttsAccent) private var ttsAccent
+    @Environment(\.ttsCoordinator) private var ttsCoordinator
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -76,6 +79,10 @@ struct ProviderResultCard: View {
         }
     }
 
+    private func isSpeaking(_ text: String) -> Bool {
+        ttsCoordinator?.isPlaying(text) ?? false
+    }
+
     // MARK: - Status Indicator
 
     @ViewBuilder
@@ -116,9 +123,9 @@ struct ProviderResultCard: View {
                 .font(.popup(name: fontName, size: CGFloat(fontSize)))
                 .foregroundStyle(.secondary)
         case let .streaming(partial):
-            resultContent(partial)
+            resultContent(partial, canSpeak: false)
         case let .completed(text):
-            resultContent(text)
+            resultContent(text, canSpeak: true)
         case let .error(message):
             VStack(alignment: .leading, spacing: 4) {
                 Label(message, systemImage: "exclamationmark.triangle")
@@ -141,7 +148,7 @@ struct ProviderResultCard: View {
         }
     }
 
-    private func resultContent(_ text: String) -> some View {
+    private func resultContent(_ text: String, canSpeak: Bool) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(text)
                 .font(.popup(name: fontName, size: CGFloat(fontSize)))
@@ -149,21 +156,45 @@ struct ProviderResultCard: View {
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if let onCopy {
+            if (canSpeak && ttsCoordinator != nil) || onCopy != nil {
                 HStack {
                     Spacer()
-                    Button(action: onCopy) {
-                        Label(
-                            isCopyFeedbackActive ? "Copied" : "Copy",
-                            systemImage: isCopyFeedbackActive ? "checkmark" : "doc.on.doc"
-                        )
-                        .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+
+                    if canSpeak, let ttsCoordinator {
+                        Button {
+                            if isSpeaking(text) {
+                                ttsCoordinator.stop()
+                            } else {
+                                ttsCoordinator.speak(text, language: targetLanguage)
+                            }
+                        } label: {
+                            HStack(spacing: 2) {
+                                Image(systemName: isSpeaking(text) ? "speaker.wave.3.fill" : "speaker.wave.2")
+                                if targetLanguage.hasPrefix("en") {
+                                    Text(ttsAccent.shortLabel)
+                                }
+                            }
+                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .help("Speak")
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.mini)
-                    .tint(isCopyFeedbackActive ? .green : nil)
-                    .scaleEffect(isCopyPulsing ? 1.08 : 1)
-                    .animation(.easeInOut(duration: 0.12), value: isCopyFeedbackActive)
+
+                    if let onCopy {
+                        Button(action: onCopy) {
+                            Label(
+                                isCopyFeedbackActive ? "Copied" : "Copy",
+                                systemImage: isCopyFeedbackActive ? "checkmark" : "doc.on.doc"
+                            )
+                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .tint(isCopyFeedbackActive ? .green : nil)
+                        .scaleEffect(isCopyPulsing ? 1.08 : 1)
+                        .animation(.easeInOut(duration: 0.12), value: isCopyFeedbackActive)
+                    }
                 }
             }
         }

@@ -54,6 +54,7 @@ enum SettingsTab: String, Defaults.Serializable {
     case excludedApps
     case services
     case providerOrder
+    case audio
     case about
 }
 
@@ -110,4 +111,14 @@ extension Defaults.Keys {
 
     // App language override
     static let appLanguage = Key<AppLanguage>("appLanguage", default: .system)
+
+    // TTS (Text-to-Speech)
+    static let ttsProvider = Key<String>("tts_provider", default: "apple")
+    static let ttsAccent = Key<TTSAccent>("tts_accent", default: .american)
+    static let ttsSpeechRate = Key<Double>("tts_speechRate", default: 1.0)
+    static let ttsAutoPlaySource = Key<Bool>("tts_autoPlaySource", default: false)
+    static let ttsAutoPlayTarget = Key<Bool>("tts_autoPlayTarget", default: false)
+    // "first" = first provider to complete; otherwise a specific provider ID
+    static let ttsAutoPlayTargetProvider = Key<String>("tts_autoPlayTargetProvider", default: "first")
+    static let ttsLanguageRates = Key<[String: Double]>("tts_languageRates", default: [:])
 }

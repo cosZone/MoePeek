@@ -12,9 +12,20 @@ final class PopupPanelController {
     private var copyShortcutDismissTask: Task<Void, Never>?
 
     private let coordinator: TranslationCoordinator
+    private let ttsCoordinator: TTSCoordinator?
+    private let settingsController: SettingsWindowController?
 
-    init(coordinator: TranslationCoordinator) {
+    /// The app that was frontmost before we activated ourselves for input mode.
+    private var previouslyActiveApp: NSRunningApplication?
+
+    init(
+        coordinator: TranslationCoordinator,
+        ttsCoordinator: TTSCoordinator? = nil,
+        settingsController: SettingsWindowController? = nil
+    ) {
         self.coordinator = coordinator
+        self.ttsCoordinator = ttsCoordinator
+        self.settingsController = settingsController
     }
 
     func showAtCursor(focusInput: Bool = true) {
@@ -33,6 +44,7 @@ final class PopupPanelController {
         )
         panel.setFrame(frame, display: true)
         if focusInput {
+            previouslyActiveApp = NSWorkspace.shared.frontmostApplication
             NSApp.activate(ignoringOtherApps: true)
             panel.makeKeyAndOrderFront(nil)
             panel.focusSourceInput()
@@ -62,6 +74,8 @@ final class PopupPanelController {
         // Input mode needs the app activated so the panel can receive keyboard events.
         // Without this, makeKeyAndOrderFront alone won't route keystrokes to our panel
         // because macOS keeps delivering them to the previously active app.
+        // Remember the previously active app so we can restore focus after dismissal.
+        previouslyActiveApp = NSWorkspace.shared.frontmostApplication
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
         panel.focusSourceInput()
@@ -74,6 +88,7 @@ final class PopupPanelController {
         copyShortcutDismissTask = nil
         dismissMonitor?.stop()
         dismissMonitor = nil
+        ttsCoordinator?.stop()
         panel?.contentView = nil
         panel?.close()
         // Recreate panel on next show to ensure a fresh SwiftUI view tree,
@@ -81,6 +96,12 @@ final class PopupPanelController {
         panel = nil
         coordinator.dismiss()
         onDismiss?()
+
+        // Restore focus only when MoePeek is still frontmost (user hasn't switched away manually).
+        if let previousApp = previouslyActiveApp, NSRunningApplication.current.isActive {
+            previousApp.activate()
+        }
+        previouslyActiveApp = nil
     }
 
     var isVisible: Bool {
@@ -108,9 +129,11 @@ final class PopupPanelController {
                 },
                 onOpenSettings: { [weak self] in
                     self?.dismiss()
+                    self?.settingsController?.showWindow()
                 }
             )
             .environment(\.popupPanel, newPanel)
+            .environment(\.ttsCoordinator, ttsCoordinator)
             let hostingView = NSHostingView(rootView: contentView)
             // Prevent NSHostingView from auto-resizing the window on content changes,
             // which causes an infinite constraint update loop during streaming.

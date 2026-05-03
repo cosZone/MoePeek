@@ -7,10 +7,10 @@ struct PopupView: View {
     let coordinator: TranslationCoordinator
     var onDismiss: (() -> Void)?
     var onOpenSettings: (() -> Void)?
-    @Environment(\.openSettings) private var openSettings
     @State private var editableText: String = ""
-    @State private var isOpeningSettings = false
     @State private var expandedProviders: Set<String> = []
+    @State private var autoPlayedGeneration: Int = -1
+    @Environment(\.ttsCoordinator) private var ttsCoordinator
     @State private var sourceLang: String = Defaults[.sourceLanguage]
     @State private var targetLang: String = Defaults[.targetLanguage]
     @State private var inputHeight: CGFloat = CGFloat(Defaults[.popupInputHeight])
@@ -71,6 +71,13 @@ struct PopupView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onChange(of: coordinator.sourceText) { _, newValue in
             editableText = newValue
+            if Defaults[.ttsAutoPlaySource],
+               !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let tts = ttsCoordinator
+            {
+                let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
+                tts.speak(newValue, language: lang)
+            }
         }
         .onChange(of: coordinator.targetLanguage) { _, newValue in
             targetLang = newValue
@@ -81,6 +88,14 @@ struct PopupView: View {
             targetLang = coordinator.targetLanguage
             expandedProviders = Set(coordinator.activeSlots.map(\.id))
             clampInputHeightToAllowedRange()
+
+            if Defaults[.ttsAutoPlaySource],
+               !coordinator.sourceText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let tts = ttsCoordinator
+            {
+                let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
+                tts.speak(coordinator.sourceText, language: lang)
+            }
         }
         .onChange(of: coordinator.translationGeneration) { _, _ in
             expandedProviders = Set(coordinator.activeSlots.map(\.id))
@@ -88,6 +103,9 @@ struct PopupView: View {
         .onChange(of: coordinator.copiedProviderID) { _, providerID in
             guard let providerID else { return }
             expandedProviders.insert(providerID)
+        }
+        .onChange(of: coordinator.providerStates) { _, newStates in
+            handleAutoPlay(states: newStates)
         }
     }
 
@@ -108,6 +126,7 @@ struct PopupView: View {
                 // Source input
                 SourceInputView(
                     text: $editableText,
+                    sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
                     onSubmit: {
                         coordinator.translate(editableText)
                     },
@@ -151,36 +170,7 @@ struct PopupView: View {
                     )
 
                     Button {
-                        guard !isOpeningSettings else { return }
-                        isOpeningSettings = true
-                        // LSUIElement (.accessory) apps cannot reliably activate from a
-                        // non-activating panel context. The sequence:
-                        // 1. Switch to .regular so WindowServer allows activation
-                        // 2. Capture openSettings before the view hierarchy is torn down
-                        // 3. Dismiss the popup (removes non-activating panel interference)
-                        // 4. Wait for policy change to propagate, then activate & open Settings
-                        // 5. Poll for the Settings window and force it to front
-                        if NSApp.activationPolicy() == .accessory {
-                            NSApp.setActivationPolicy(.regular)
-                        }
-                        let settingsAction = openSettings
                         onOpenSettings?()
-                        Task { @MainActor in
-                            try? await Task.sleep(for: .milliseconds(100))
-                            openSettingsOrBringToFront {
-                                settingsAction()
-                            }
-                            for _ in 0..<10 {
-                                try? await Task.sleep(for: .milliseconds(50))
-                                guard let w = NSApp.windows.first(where: {
-                                    !($0 is NSPanel) && $0.styleMask.contains(.titled) && $0.isVisible
-                                }) else { continue }
-                                w.makeKeyAndOrderFront(nil)
-                                NSApp.activate(ignoringOtherApps: true)
-                                break
-                            }
-                            isOpeningSettings = false
-                        }
                     } label: {
                         Image(systemName: "gearshape")
                             .font(.system(size: CGFloat(fontSize - 2)))
@@ -218,6 +208,7 @@ struct PopupView: View {
                                 ProviderResultCard(
                                     provider: provider,
                                     state: state,
+                                    targetLanguage: targetLang,
                                     isExpanded: expandedBinding(for: provider.id),
                                     isCopyFeedbackActive: coordinator.copiedProviderID == provider.id,
                                     copyFeedbackGeneration: coordinator.copyFeedbackGeneration,
@@ -275,12 +266,35 @@ struct PopupView: View {
         onDismiss?()
     }
 
-    @MainActor
-    private func openSettingsOrBringToFront(_ fallbackOpenSettings: () -> Void) {
-        NSApp.activate(ignoringOtherApps: true)
-        let handled = NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-        if !handled {
-            fallbackOpenSettings()
+    private func handleAutoPlay(states: [String: TranslationCoordinator.ProviderState]) {
+        guard Defaults[.ttsAutoPlayTarget],
+              let tts = ttsCoordinator,
+              coordinator.translationGeneration != autoPlayedGeneration else { return }
+
+        let preferredProvider = Defaults[.ttsAutoPlayTargetProvider]
+
+        let completedText: String?
+        if preferredProvider == "first" {
+            // Auto-play the first provider (in display order) that has completed
+            completedText = coordinator.activeSlots
+                .lazy
+                .compactMap { provider -> String? in
+                    if case .completed(let text) = states[provider.id] { return text }
+                    return nil
+                }
+                .first
+        } else {
+            // Wait for the specific provider to complete
+            if case .completed(let text) = states[preferredProvider] {
+                completedText = text
+            } else {
+                completedText = nil
+            }
+        }
+
+        if let text = completedText {
+            autoPlayedGeneration = coordinator.translationGeneration
+            tts.speak(text, language: targetLang)
         }
     }
 }
