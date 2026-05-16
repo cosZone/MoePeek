@@ -7,7 +7,11 @@ struct ProviderResultCard: View {
     let state: TranslationCoordinator.ProviderState
     let targetLanguage: String
     @Binding var isExpanded: Bool
+    let isCopyFeedbackActive: Bool
+    let copyFeedbackGeneration: Int
+    var onCopy: (() -> Void)?
     var onRetry: (() -> Void)?
+    @State private var isCopyPulsing = false
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
@@ -61,6 +65,18 @@ struct ProviderResultCard: View {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
         )
+        .onChange(of: copyFeedbackGeneration) { _, _ in
+            guard isCopyFeedbackActive else { return }
+            withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
+                isCopyPulsing = true
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(180))
+                withAnimation(.spring(response: 0.22, dampingFraction: 0.8)) {
+                    isCopyPulsing = false
+                }
+            }
+        }
     }
 
     private func isSpeaking(_ text: String) -> Bool {
@@ -107,58 +123,9 @@ struct ProviderResultCard: View {
                 .font(.popup(name: fontName, size: CGFloat(fontSize)))
                 .foregroundStyle(.secondary)
         case let .streaming(partial):
-            VStack(alignment: .leading, spacing: 4) {
-                Text(partial)
-                    .font(.popup(name: fontName, size: CGFloat(fontSize)))
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .background { InteractiveMarker() }
+            resultContent(partial, canSpeak: false)
         case let .completed(text):
-            VStack(alignment: .leading, spacing: 4) {
-                Text(text)
-                    .font(.popup(name: fontName, size: CGFloat(fontSize)))
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack {
-                    Spacer()
-
-                    if let ttsCoordinator {
-                        Button {
-                            if isSpeaking(text) {
-                                ttsCoordinator.stop()
-                            } else {
-                                ttsCoordinator.speak(text, language: targetLanguage)
-                            }
-                        } label: {
-                            HStack(spacing: 2) {
-                                Image(systemName: isSpeaking(text) ? "speaker.wave.3.fill" : "speaker.wave.2")
-                                if targetLanguage.hasPrefix("en") {
-                                    Text(ttsAccent.shortLabel)
-                                }
-                            }
-                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.mini)
-                        .help("Speak")
-                    }
-
-                    Button {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(text, forType: .string)
-                    } label: {
-                        Label("Copy", systemImage: "doc.on.doc")
-                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.mini)
-                }
-            }
-            .background { InteractiveMarker() }
+            resultContent(text, canSpeak: true)
         case let .error(message):
             VStack(alignment: .leading, spacing: 4) {
                 Label(message, systemImage: "exclamationmark.triangle")
@@ -179,5 +146,58 @@ struct ProviderResultCard: View {
             }
             .background { InteractiveMarker() }
         }
+    }
+
+    private func resultContent(_ text: String, canSpeak: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(text)
+                .font(.popup(name: fontName, size: CGFloat(fontSize)))
+                .foregroundStyle(.primary)
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            if (canSpeak && ttsCoordinator != nil) || onCopy != nil {
+                HStack {
+                    Spacer()
+
+                    if canSpeak, let ttsCoordinator {
+                        Button {
+                            if isSpeaking(text) {
+                                ttsCoordinator.stop()
+                            } else {
+                                ttsCoordinator.speak(text, language: targetLanguage)
+                            }
+                        } label: {
+                            HStack(spacing: 2) {
+                                Image(systemName: isSpeaking(text) ? "speaker.wave.3.fill" : "speaker.wave.2")
+                                if targetLanguage.hasPrefix("en") {
+                                    Text(ttsAccent.shortLabel)
+                                }
+                            }
+                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .help("Speak")
+                    }
+
+                    if let onCopy {
+                        Button(action: onCopy) {
+                            Label(
+                                isCopyFeedbackActive ? "Copied" : "Copy",
+                                systemImage: isCopyFeedbackActive ? "checkmark" : "doc.on.doc"
+                            )
+                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .tint(isCopyFeedbackActive ? .green : nil)
+                        .scaleEffect(isCopyPulsing ? 1.08 : 1)
+                        .animation(.easeInOut(duration: 0.12), value: isCopyFeedbackActive)
+                    }
+                }
+            }
+        }
+        .background { InteractiveMarker() }
     }
 }
