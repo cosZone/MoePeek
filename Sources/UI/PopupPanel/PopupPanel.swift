@@ -1,5 +1,4 @@
 import AppKit
-import Defaults
 import SwiftUI
 
 // MARK: - Environment Key
@@ -26,6 +25,11 @@ final class PopupPanel: NSPanel {
     /// Set when `focusSourceInput()` is called before the source text view has been mounted.
     /// `SubmitAwareTextView.viewDidMoveToWindow` consumes this flag once the view attaches.
     private(set) var pendingSourceInputFocus = false
+
+    /// Number of upcoming `NSWindow.didMoveNotification` events that should be ignored by the
+    /// position-saving observer. The controller bumps this before each programmatic `setFrame`
+    /// so we don't overwrite the saved drag position with a freshly-computed show location.
+    var suppressNextMoveSave: Int = 0
 
     init(contentRect: NSRect) {
         super.init(
@@ -95,15 +99,8 @@ final class PopupPanel: NSPanel {
         if event.type == .leftMouseDown {
             if shouldStartWindowDrag(for: event) {
                 performDrag(with: event)
-                if Defaults[.popupRememberPosition] {
-                    // Persist the top-left corner: NSWindow.frame.origin is bottom-left in
-                    // screen coordinates, so the top-left y equals origin.y + height. Storing
-                    // top-left keeps the visual anchor stable across size changes between sessions.
-                    let f = frame
-                    Defaults[.popupLastTopLeftX] = Double(f.origin.x)
-                    Defaults[.popupLastTopLeftY] = Double(f.origin.y + f.height)
-                    Defaults[.popupHasSavedPosition] = true
-                }
+                // Position saving is handled by the controller's NSWindow.didMoveNotification
+                // observer, which fires during and at the end of the drag.
                 return
             }
             // Make panel key so text selection and other interactions work.

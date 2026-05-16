@@ -10,6 +10,7 @@ final class PopupPanelController {
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
     private var copyShortcutDismissTask: Task<Void, Never>?
+    private var panelMoveObserver: NSObjectProtocol?
 
     private let coordinator: TranslationCoordinator
     private let ttsCoordinator: TTSCoordinator?
@@ -54,6 +55,7 @@ final class PopupPanelController {
                 screen: screen
             )
         }
+        panel.suppressNextMoveSave += 1
         panel.setFrame(frame, display: true)
         // Non-activating: don't steal focus from the user's active app.
         // The panel will accept key events (and ⌘1...⌘9 copy shortcuts) once the user clicks
@@ -82,6 +84,7 @@ final class PopupPanelController {
                 y: visibleFrame.midY - initialSize.height / 2
             )
         }
+        panel.suppressNextMoveSave += 1
         panel.setFrame(NSRect(origin: origin, size: initialSize), display: true)
         // Input mode needs the app activated so the panel can receive keyboard events.
         // Without this, makeKeyAndOrderFront alone won't route keystrokes to our panel
@@ -100,6 +103,10 @@ final class PopupPanelController {
         copyShortcutDismissTask = nil
         dismissMonitor?.stop()
         dismissMonitor = nil
+        if let observer = panelMoveObserver {
+            NotificationCenter.default.removeObserver(observer)
+            panelMoveObserver = nil
+        }
         ttsCoordinator?.stop()
         panel?.contentView = nil
         panel?.close()
@@ -152,9 +159,31 @@ final class PopupPanelController {
             hostingView.sizingOptions = []
             newPanel.contentView = hostingView
             panel = newPanel
+            panelMoveObserver = NotificationCenter.default.addObserver(
+                forName: NSWindow.didMoveNotification,
+                object: newPanel,
+                queue: .main
+            ) { [weak self, weak newPanel] _ in
+                guard let panel = newPanel else { return }
+                MainActor.assumeIsolated {
+                    self?.handlePanelMove(panel)
+                }
+            }
         }
 
         return initialSize
+    }
+
+    private func handlePanelMove(_ panel: PopupPanel) {
+        if panel.suppressNextMoveSave > 0 {
+            panel.suppressNextMoveSave -= 1
+            return
+        }
+        guard Defaults[.popupRememberPosition] else { return }
+        let f = panel.frame
+        Defaults[.popupLastTopLeftX] = Double(f.origin.x)
+        Defaults[.popupLastTopLeftY] = Double(f.origin.y + f.height)
+        Defaults[.popupHasSavedPosition] = true
     }
 
     private func copyResultFromShortcut(atDisplayIndex index: Int) -> Bool {
