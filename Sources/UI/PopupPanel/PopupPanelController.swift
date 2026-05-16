@@ -169,15 +169,41 @@ final class PopupPanelController {
         return true
     }
 
-    /// Returns the persisted last-dragged origin if the feature is enabled, a position has been saved,
-    /// and the panel rect at that origin intersects some screen's visible area. Otherwise returns nil
-    /// so the caller falls back to cursor/center positioning.
+    /// Returns the persisted last-dragged origin if the feature is enabled and a position has been
+    /// saved. The persisted point is the top-left corner, so we derive the NSWindow origin
+    /// (bottom-left) by subtracting the current panel height — this keeps the visual position
+    /// anchored even when the panel's width or height differs from the previously saved session.
+    /// The result is clamped to the visible frame of the screen containing the saved top-left so a
+    /// resized-larger panel doesn't spill off the edge.
     private func restoredOrigin(for size: CGSize) -> NSPoint? {
         guard Defaults[.popupRememberPosition], Defaults[.popupHasSavedPosition] else { return nil }
-        let origin = NSPoint(x: Defaults[.popupLastOriginX], y: Defaults[.popupLastOriginY])
+        let topLeft = NSPoint(
+            x: Defaults[.popupLastTopLeftX],
+            y: Defaults[.popupLastTopLeftY]
+        )
+        let origin = NSPoint(x: topLeft.x, y: topLeft.y - size.height)
         let candidate = NSRect(origin: origin, size: size)
-        guard NSScreen.screens.contains(where: { $0.visibleFrame.intersects(candidate) }) else { return nil }
-        return origin
+
+        // Prefer the screen that contained the saved top-left point; otherwise any screen the
+        // candidate rect still overlaps. If neither holds (e.g. external display disconnected),
+        // fall back to cursor/center logic.
+        guard let screen = NSScreen.screens.first(where: { $0.visibleFrame.contains(topLeft) })
+            ?? NSScreen.screens.first(where: { $0.visibleFrame.intersects(candidate) })
+        else { return nil }
+
+        return clampOrigin(origin, size: size, into: screen.visibleFrame)
+    }
+
+    private func clampOrigin(_ origin: NSPoint, size: CGSize, into bounds: NSRect) -> NSPoint {
+        let padding: CGFloat = 8
+        let minX = bounds.minX + padding
+        let maxX = bounds.maxX - size.width - padding
+        let minY = bounds.minY + padding
+        let maxY = bounds.maxY - size.height - padding
+        // If the screen is smaller than the panel along an axis, fall back to the min edge.
+        let clampedX = maxX >= minX ? min(max(origin.x, minX), maxX) : minX
+        let clampedY = maxY >= minY ? min(max(origin.y, minY), maxY) : minY
+        return NSPoint(x: clampedX, y: clampedY)
     }
 
     private func startDismissMonitor() {

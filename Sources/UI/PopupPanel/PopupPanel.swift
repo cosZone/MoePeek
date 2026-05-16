@@ -96,9 +96,12 @@ final class PopupPanel: NSPanel {
             if shouldStartWindowDrag(for: event) {
                 performDrag(with: event)
                 if Defaults[.popupRememberPosition] {
-                    let origin = frame.origin
-                    Defaults[.popupLastOriginX] = Double(origin.x)
-                    Defaults[.popupLastOriginY] = Double(origin.y)
+                    // Persist the top-left corner: NSWindow.frame.origin is bottom-left in
+                    // screen coordinates, so the top-left y equals origin.y + height. Storing
+                    // top-left keeps the visual anchor stable across size changes between sessions.
+                    let f = frame
+                    Defaults[.popupLastTopLeftX] = Double(f.origin.x)
+                    Defaults[.popupLastTopLeftY] = Double(f.origin.y + f.height)
                     Defaults[.popupHasSavedPosition] = true
                 }
                 return
