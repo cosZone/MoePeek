@@ -1638,6 +1638,7 @@
       }
     },
     "Remember Last Popup Position" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

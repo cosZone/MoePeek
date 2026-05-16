@@ -29,6 +29,12 @@ final class PopupPanelController {
         self.settingsController = settingsController
     }
 
+    deinit {
+        if let observer = panelMoveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
     func showAtCursor() {
         let initialSize = setupPanel()
         guard let panel else { return }
