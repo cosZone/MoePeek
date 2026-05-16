@@ -12,4 +12,8 @@ extension NSFont {
         if name.isEmpty { return .systemFont(ofSize: size) }
         return NSFont(name: name, size: size) ?? .systemFont(ofSize: size)
     }
+
+    var lineHeight: CGFloat {
+        ceil(ascender - descender + leading)
+    }
 }

@@ -7,6 +7,8 @@ struct SourceInputView: View {
     @Binding var text: String
     let sourceLanguage: String
     let onSubmit: () -> Void
+    let onCopyAndClose: () -> Void
+    var onContentHeightChange: ((CGFloat) -> Void)?
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
@@ -18,7 +20,11 @@ struct SourceInputView: View {
                 text: $text,
                 fontSize: CGFloat(fontSize),
                 fontName: fontName,
-                onSubmit: onSubmit
+                onSubmit: onSubmit,
+                onCopyAndClose: onCopyAndClose,
+                onContentHeightChange: { editorHeight in
+                    onContentHeightChange?(sourceInputHeight(forEditorHeight: editorHeight))
+                }
             )
                 .frame(maxHeight: .infinity)
                 .background { InteractiveMarker() }
@@ -51,11 +57,17 @@ struct SourceInputView: View {
 
                 Spacer()
 
-                Text("↵ Translate · ⇧↵ Newline")
+                Text("↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline")
                     .font(.popup(name: fontName, size: CGFloat(fontSize - 4)))
                     .foregroundStyle(.quaternary)
             }
         }
+    }
+
+    private func sourceInputHeight(forEditorHeight editorHeight: CGFloat) -> CGFloat {
+        let hintSize = max(CGFloat(fontSize - 4), 8)
+        let hintHeight = NSFont.popup(name: fontName, size: hintSize).lineHeight
+        return ceil(editorHeight + hintHeight + 8)
     }
 }
 
@@ -64,6 +76,8 @@ private struct SourceTextEditor: NSViewRepresentable {
     let fontSize: CGFloat
     let fontName: String
     let onSubmit: () -> Void
+    let onCopyAndClose: () -> Void
+    let onContentHeightChange: (CGFloat) -> Void
 
     private var resolvedFont: NSFont {
         .popup(name: fontName, size: fontSize)
@@ -74,6 +88,7 @@ private struct SourceTextEditor: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> NSScrollView {
+        let coordinator = context.coordinator
         let scrollView = NSScrollView()
         scrollView.borderType = .noBorder
         scrollView.hasVerticalScroller = true
@@ -84,6 +99,7 @@ private struct SourceTextEditor: NSViewRepresentable {
 
         let contentSize = scrollView.contentSize
         let textView = SubmitAwareTextView(frame: NSRect(origin: .zero, size: contentSize))
+        textView.identifier = NSUserInterfaceItemIdentifier(PopupPanelViewIdentifier.sourceInputTextView)
         textView.isRichText = false
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
@@ -101,9 +117,10 @@ private struct SourceTextEditor: NSViewRepresentable {
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.autoresizingMask = [.width]
-        textView.delegate = context.coordinator
+        textView.delegate = coordinator
         textView.textContainerInset = .zero
         textView.onSubmit = onSubmit
+        textView.onCopyAndClose = onCopyAndClose
         textView.textContainer?.containerSize = NSSize(
             width: contentSize.width,
             height: CGFloat.greatestFiniteMagnitude
@@ -114,11 +131,12 @@ private struct SourceTextEditor: NSViewRepresentable {
         textView.setExternalText(text)
 
         scrollView.documentView = textView
-        context.coordinator.textView = textView
+        coordinator.textView = textView
+        coordinator.onContentHeightChange = onContentHeightChange
 
-        DispatchQueue.main.async {
-            guard let window = textView.window else { return }
-            window.makeFirstResponder(textView)
+        Task { @MainActor in
+            coordinator.reportContentHeight()
+            coordinator.focusTextViewIfPossible()
         }
 
         return scrollView
@@ -127,6 +145,8 @@ private struct SourceTextEditor: NSViewRepresentable {
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = context.coordinator.textView else { return }
 
+        let coordinator = context.coordinator
+        coordinator.onContentHeightChange = onContentHeightChange
         textView.applyDisplayAttributes(font: resolvedFont)
         textView.updateLayout(for: nsView.contentSize)
 
@@ -135,20 +155,24 @@ private struct SourceTextEditor: NSViewRepresentable {
         }
 
         textView.onSubmit = onSubmit
+        textView.onCopyAndClose = onCopyAndClose
 
-        if !context.coordinator.didFocusInitially {
-            context.coordinator.didFocusInitially = true
-            DispatchQueue.main.async {
-                guard let window = textView.window else { return }
-                window.makeFirstResponder(textView)
+        if !coordinator.didFocusInitially {
+            Task { @MainActor in
+                coordinator.focusTextViewIfPossible()
             }
         }
+
+        coordinator.reportContentHeight()
     }
 
+    @MainActor
     final class Coordinator: NSObject, NSTextViewDelegate {
         @Binding var text: String
         weak var textView: SubmitAwareTextView?
+        var onContentHeightChange: ((CGFloat) -> Void)?
         var didFocusInitially = false
+        private var lastReportedContentHeight: CGFloat?
 
         init(text: Binding<String>) {
             _text = text
@@ -158,12 +182,33 @@ private struct SourceTextEditor: NSViewRepresentable {
             guard let textView = notification.object as? SubmitAwareTextView else { return }
             textView.refreshDisplay()
             text = textView.string
+            reportContentHeight()
+        }
+
+        @discardableResult
+        func focusTextViewIfPossible() -> Bool {
+            guard let textView, let window = textView.window else { return false }
+            let didFocus = window.makeFirstResponder(textView)
+            didFocusInitially = didFocus
+            return didFocus
+        }
+
+        func reportContentHeight() {
+            guard let textView else { return }
+            let height = textView.measuredContentHeight()
+            guard lastReportedContentHeight.map({ abs($0 - height) > 0.5 }) ?? true else { return }
+            lastReportedContentHeight = height
+            let onContentHeightChange = onContentHeightChange
+            DispatchQueue.main.async {
+                onContentHeightChange?(height)
+            }
         }
     }
 }
 
 private final class SubmitAwareTextView: NSTextView {
     var onSubmit: (() -> Void)?
+    var onCopyAndClose: (() -> Void)?
     private var displayFont: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
 
     func applyDisplayAttributes(font: NSFont) {
@@ -209,10 +254,17 @@ private final class SubmitAwareTextView: NSTextView {
     override func keyDown(with event: NSEvent) {
         let isReturnKey = event.keyCode == 36 || event.keyCode == 76
         let hasShift = event.modifierFlags.contains(.shift)
+        let hasCommand = event.modifierFlags.contains(.command)
 
         // During IME composition (e.g. Chinese Pinyin), Enter should first commit marked text.
-        // Only submit translation when composition has ended.
-        if isReturnKey, !hasShift, !hasMarkedText() {
+        // Only handle Return shortcuts when composition has ended.
+        if isReturnKey, hasCommand, !hasShift, !hasMarkedText() {
+            guard !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+            onCopyAndClose?()
+            return
+        }
+
+        if isReturnKey, !hasCommand, !hasShift, !hasMarkedText() {
             guard !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
             onSubmit?()
             return
@@ -252,5 +304,14 @@ private final class SubmitAwareTextView: NSTextView {
         setNeedsDisplay(bounds)
         enclosingScrollView?.contentView.needsDisplay = true
         enclosingScrollView?.needsDisplay = true
+    }
+
+    func measuredContentHeight() -> CGFloat {
+        guard let textContainer, let layoutManager else {
+            return ceil(displayFont.lineHeight)
+        }
+        layoutManager.ensureLayout(for: textContainer)
+        let usedHeight = layoutManager.usedRect(for: textContainer).height
+        return ceil(max(displayFont.lineHeight, usedHeight))
     }
 }

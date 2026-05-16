@@ -34,10 +34,13 @@ final class TranslationCoordinator {
     /// Monotonically increasing counter; increments each time `translate()` is called.
     /// Used by PopupView to reset `expandedProviders` for subsequent translations.
     private(set) var translationGeneration: Int = 0
+    private(set) var copiedProviderID: String?
+    private(set) var copyFeedbackGeneration: Int = 0
 
     let registry: TranslationProviderRegistry
     private let permissionManager: PermissionManager
     private var activeTasks: [String: Task<Void, Never>] = [:]
+    private var copyFeedbackTask: Task<Void, Never>?
 
     init(permissionManager: PermissionManager, registry: TranslationProviderRegistry) {
         self.permissionManager = permissionManager
@@ -98,6 +101,7 @@ final class TranslationCoordinator {
     /// Reset state and enter input mode (empty source input for manual typing).
     func prepareInputMode() {
         cancelAll()
+        clearCopyFeedback()
         globalError = nil
         sourceText = ""
         detectedLanguage = nil
@@ -120,6 +124,7 @@ final class TranslationCoordinator {
         }
 
         cancelAll()
+        clearCopyFeedback()
         globalError = nil
 
         sourceText = trimmed
@@ -182,8 +187,27 @@ final class TranslationCoordinator {
         activeTasks[provider.id] = task
     }
 
+    @discardableResult
+    func copyResult(atDisplayIndex index: Int) -> Bool {
+        guard activeSlots.indices.contains(index) else { return false }
+        return copyResult(forProviderID: activeSlots[index].id)
+    }
+
+    @discardableResult
+    func copyResult(forProviderID providerID: String) -> Bool {
+        guard let resultText = providerStates[providerID]?.copyableText,
+              !resultText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return false }
+
+        NSPasteboard.general.clearContents()
+        guard NSPasteboard.general.setString(resultText, forType: .string) else { return false }
+        showCopyFeedback(forProviderID: providerID)
+        return true
+    }
+
     func dismiss() {
         cancelAll()
+        clearCopyFeedback()
         phase = .idle
         sourceText = ""
         detectedLanguage = nil
@@ -260,6 +284,26 @@ final class TranslationCoordinator {
         activeTasks.removeAll()
     }
 
+    private func showCopyFeedback(forProviderID providerID: String) {
+        copyFeedbackTask?.cancel()
+        copiedProviderID = providerID
+        copyFeedbackGeneration += 1
+
+        copyFeedbackTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(900))
+            guard !Task.isCancelled else { return }
+            guard self?.copiedProviderID == providerID else { return }
+            self?.copiedProviderID = nil
+            self?.copyFeedbackTask = nil
+        }
+    }
+
+    private func clearCopyFeedback() {
+        copyFeedbackTask?.cancel()
+        copyFeedbackTask = nil
+        copiedProviderID = nil
+    }
+
     /// Build language hints (BCP 47 codes) based on user's target/source language preferences.
     /// Likely source languages are inferred from the target language for common translation pairs.
     private func buildLanguageHints() -> [String: Double]? {
@@ -327,5 +371,18 @@ final class TranslationCoordinator {
         }
 
         return preferred
+    }
+}
+
+private extension TranslationCoordinator.ProviderState {
+    var copyableText: String? {
+        switch self {
+        case let .streaming(partial):
+            partial
+        case let .completed(text):
+            text
+        case .waiting, .translating, .error:
+            nil
+        }
     }
 }
