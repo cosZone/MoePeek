@@ -1477,6 +1477,17 @@
         }
       }
     },
+    "Pin Popup" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钉住窗口"
+          }
+        }
+      }
+    },
     "Please enter a valid Base URL (starting with http:// or https://) and API Key" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1785,6 +1796,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "屏幕录制权限"
+          }
+        }
+      }
+    },
+    "Screen recording permission not granted. Open Settings to enable it." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕录制权限未授权。请前往设置中开启。"
           }
         }
       }
@@ -2292,6 +2314,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知 DeepLX 错误"
+          }
+        }
+      }
+    },
+    "Unpin Popup" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消钉住窗口"
           }
         }
       }

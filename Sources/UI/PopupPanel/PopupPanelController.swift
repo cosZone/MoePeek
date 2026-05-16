@@ -9,6 +9,7 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
+    private var isPinned = false
     private var copyShortcutDismissTask: Task<Void, Never>?
 
     private let coordinator: TranslationCoordinator
@@ -31,6 +32,16 @@ final class PopupPanelController {
     func showAtCursor() {
         let initialSize = setupPanel()
         guard let panel else { return }
+
+        if coordinator.globalError != nil {
+            isPinned = false
+        }
+
+        if isPinned, panel.isVisible {
+            panel.orderFront(nil)
+            startDismissMonitor()
+            return
+        }
 
         let cursorPos = NSEvent.mouseLocation
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
@@ -83,6 +94,7 @@ final class PopupPanelController {
         copyShortcutDismissTask = nil
         dismissMonitor?.stop()
         dismissMonitor = nil
+        isPinned = false
         ttsCoordinator?.stop()
         panel?.contentView = nil
         panel?.close()
@@ -103,6 +115,10 @@ final class PopupPanelController {
         panel?.isVisible ?? false
     }
 
+    func setPinned(_ pinned: Bool) {
+        isPinned = pinned
+    }
+
     // MARK: - Private
 
     @discardableResult
@@ -119,6 +135,9 @@ final class PopupPanelController {
             }
             let contentView = PopupView(
                 coordinator: coordinator,
+                onPinnedChange: { [weak self] pinned in
+                    self?.setPinned(pinned)
+                },
                 onDismiss: { [weak self] in
                     self?.dismiss()
                 },
@@ -154,7 +173,11 @@ final class PopupPanelController {
 
     private func startDismissMonitor() {
         guard let panel else { return }
-        dismissMonitor = PopupDismissMonitor(panel: panel) { [weak self] in
+        dismissMonitor?.stop()
+        dismissMonitor = PopupDismissMonitor(
+            panel: panel,
+            isPinned: { [weak self] in self?.isPinned ?? false }
+        ) { [weak self] in
             self?.dismiss()
         }
         dismissMonitor?.start()

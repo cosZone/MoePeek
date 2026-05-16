@@ -72,13 +72,21 @@ final class TranslationCoordinator {
 
     /// Triggered by OCR shortcut: screen capture → OCR → translate.
     func ocrAndTranslate() async {
+        guard permissionManager.isScreenRecordingGranted else {
+            phase = .active
+            sourceText = ""
+            globalError = String(localized: "Screen recording permission not granted. Open Settings to enable it.")
+            return
+        }
+
+        let previousPhase = phase
         phase = .grabbing
 
         do {
             let text = try await ScreenCaptureOCR.captureAndRecognize()
             translate(text)
-        } catch is OCRError {
-            phase = .idle
+        } catch OCRError.captureCancelled {
+            phase = previousPhase
         } catch {
             phase = .active
             sourceText = ""

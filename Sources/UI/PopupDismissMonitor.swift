@@ -4,6 +4,7 @@ import AppKit
 @MainActor
 final class PopupDismissMonitor {
     private let panel: NSPanel
+    private let isPinned: @MainActor () -> Bool
     private let onDismiss: @MainActor () -> Void
 
     nonisolated(unsafe) private var globalClickMonitor: Any?
@@ -11,8 +12,13 @@ final class PopupDismissMonitor {
     nonisolated(unsafe) private var localClickMonitor: Any?
     nonisolated(unsafe) private var localKeyMonitor: Any?
 
-    init(panel: NSPanel, onDismiss: @escaping @MainActor () -> Void) {
+    init(
+        panel: NSPanel,
+        isPinned: @escaping @MainActor () -> Bool = { false },
+        onDismiss: @escaping @MainActor () -> Void
+    ) {
         self.panel = panel
+        self.isPinned = isPinned
         self.onDismiss = onDismiss
     }
 
@@ -22,7 +28,7 @@ final class PopupDismissMonitor {
             matching: [.leftMouseDown, .rightMouseDown]
         ) { [weak self] _ in
             Task { @MainActor in
-                self?.onDismiss()
+                self?.dismissForOutsideClick()
             }
         }
 
@@ -43,12 +49,12 @@ final class PopupDismissMonitor {
             let clickLocation = event.locationInWindow
             if event.window !== self.panel {
                 Task { @MainActor in
-                    self.onDismiss()
+                    self.dismissForOutsideClick()
                 }
             } else if let contentView = self.panel.contentView,
                       !contentView.frame.contains(clickLocation) {
                 Task { @MainActor in
-                    self.onDismiss()
+                    self.dismissForOutsideClick()
                 }
             }
             return event
@@ -63,6 +69,11 @@ final class PopupDismissMonitor {
             }
             return event
         }
+    }
+
+    private func dismissForOutsideClick() {
+        guard !isPinned() else { return }
+        onDismiss()
     }
 
     func stop() {
