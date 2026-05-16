@@ -39,16 +39,21 @@ final class PopupPanelController {
             return
         }
 
-        let cursorPos = NSEvent.mouseLocation
-        guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
-            ?? NSScreen.main
-            ?? NSScreen.screens.first
-        else { return }
-        let frame = PopupPositioning.panelFrame(
-            contentSize: initialSize,
-            cursor: cursorPos,
-            screen: screen
-        )
+        let frame: NSRect
+        if let origin = restoredOrigin(for: initialSize) {
+            frame = NSRect(origin: origin, size: initialSize)
+        } else {
+            let cursorPos = NSEvent.mouseLocation
+            guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
+                ?? NSScreen.main
+                ?? NSScreen.screens.first
+            else { return }
+            frame = PopupPositioning.panelFrame(
+                contentSize: initialSize,
+                cursor: cursorPos,
+                screen: screen
+            )
+        }
         panel.setFrame(frame, display: true)
         // Non-activating: don't steal focus from the user's active app.
         // The panel will accept key events (and ⌘1...⌘9 copy shortcuts) once the user clicks
@@ -62,16 +67,21 @@ final class PopupPanelController {
         let initialSize = setupPanel()
         guard let panel else { return }
 
-        let cursorPos = NSEvent.mouseLocation
-        guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
-            ?? NSScreen.main
-            ?? NSScreen.screens.first
-        else { return }
-        let visibleFrame = screen.visibleFrame
-        let origin = NSPoint(
-            x: visibleFrame.midX - initialSize.width / 2,
-            y: visibleFrame.midY - initialSize.height / 2
-        )
+        let origin: NSPoint
+        if let saved = restoredOrigin(for: initialSize) {
+            origin = saved
+        } else {
+            let cursorPos = NSEvent.mouseLocation
+            guard let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) })
+                ?? NSScreen.main
+                ?? NSScreen.screens.first
+            else { return }
+            let visibleFrame = screen.visibleFrame
+            origin = NSPoint(
+                x: visibleFrame.midX - initialSize.width / 2,
+                y: visibleFrame.midY - initialSize.height / 2
+            )
+        }
         panel.setFrame(NSRect(origin: origin, size: initialSize), display: true)
         // Input mode needs the app activated so the panel can receive keyboard events.
         // Without this, makeKeyAndOrderFront alone won't route keystrokes to our panel
@@ -157,6 +167,17 @@ final class PopupPanelController {
             self?.dismiss()
         }
         return true
+    }
+
+    /// Returns the persisted last-dragged origin if the feature is enabled, a position has been saved,
+    /// and the panel rect at that origin intersects some screen's visible area. Otherwise returns nil
+    /// so the caller falls back to cursor/center positioning.
+    private func restoredOrigin(for size: CGSize) -> NSPoint? {
+        guard Defaults[.popupRememberPosition], Defaults[.popupHasSavedPosition] else { return nil }
+        let origin = NSPoint(x: Defaults[.popupLastOriginX], y: Defaults[.popupLastOriginY])
+        let candidate = NSRect(origin: origin, size: size)
+        guard NSScreen.screens.contains(where: { $0.visibleFrame.intersects(candidate) }) else { return nil }
+        return origin
     }
 
     private func startDismissMonitor() {

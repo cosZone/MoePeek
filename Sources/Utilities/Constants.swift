@@ -103,6 +103,12 @@ extension Defaults.Keys {
     static let popupFontSize = Key<Int>("popupFontSize", default: 12)
     static let popupFontName = Key<String>("popupFontName", default: "")
 
+    // Popup panel last dragged position (used when popupRememberPosition is enabled)
+    static let popupRememberPosition = Key<Bool>("popupRememberPosition", default: true)
+    static let popupHasSavedPosition = Key<Bool>("popupHasSavedPosition", default: false)
+    static let popupLastOriginX = Key<Double>("popupLastOriginX", default: 0)
+    static let popupLastOriginY = Key<Double>("popupLastOriginY", default: 0)
+
     // Settings tab selection
     static let selectedSettingsTab = Key<SettingsTab>("selectedSettingsTab", default: .general)
 

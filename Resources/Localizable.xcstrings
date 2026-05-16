@@ -1637,6 +1637,16 @@
         }
       }
     },
+    "Remember Last Popup Position" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记住弹出窗口上次位置"
+          }
+        }
+      }
+    },
     "Request build failed" : {
       "extractionState" : "stale",
       "localizations" : {

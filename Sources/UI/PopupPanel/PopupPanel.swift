@@ -95,6 +95,12 @@ final class PopupPanel: NSPanel {
         if event.type == .leftMouseDown {
             if shouldStartWindowDrag(for: event) {
                 performDrag(with: event)
+                if Defaults[.popupRememberPosition] {
+                    let origin = frame.origin
+                    Defaults[.popupLastOriginX] = Double(origin.x)
+                    Defaults[.popupLastOriginY] = Double(origin.y)
+                    Defaults[.popupHasSavedPosition] = true
+                }
                 return
             }
             // Make panel key so text selection and other interactions work.
