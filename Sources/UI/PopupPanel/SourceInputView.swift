@@ -134,9 +134,11 @@ private struct SourceTextEditor: NSViewRepresentable {
         coordinator.textView = textView
         coordinator.onContentHeightChange = onContentHeightChange
 
+        // First-responder is established by `SubmitAwareTextView.viewDidMoveToWindow`
+        // (event-driven, no polling). Initial content height is reported here as soon
+        // as layout settles.
         Task { @MainActor in
             coordinator.reportContentHeight()
-            coordinator.focusTextViewIfPossible()
         }
 
         return scrollView
@@ -157,12 +159,6 @@ private struct SourceTextEditor: NSViewRepresentable {
         textView.onSubmit = onSubmit
         textView.onCopyAndClose = onCopyAndClose
 
-        if !coordinator.didFocusInitially {
-            Task { @MainActor in
-                coordinator.focusTextViewIfPossible()
-            }
-        }
-
         coordinator.reportContentHeight()
     }
 
@@ -171,7 +167,6 @@ private struct SourceTextEditor: NSViewRepresentable {
         @Binding var text: String
         weak var textView: SubmitAwareTextView?
         var onContentHeightChange: ((CGFloat) -> Void)?
-        var didFocusInitially = false
         private var lastReportedContentHeight: CGFloat?
 
         init(text: Binding<String>) {
@@ -183,14 +178,6 @@ private struct SourceTextEditor: NSViewRepresentable {
             textView.refreshDisplay()
             text = textView.string
             reportContentHeight()
-        }
-
-        @discardableResult
-        func focusTextViewIfPossible() -> Bool {
-            guard let textView, let window = textView.window else { return false }
-            let didFocus = window.makeFirstResponder(textView)
-            didFocusInitially = didFocus
-            return didFocus
         }
 
         func reportContentHeight() {
@@ -249,6 +236,14 @@ private final class SubmitAwareTextView: NSTextView {
     override func viewDidChangeEffectiveAppearance() {
         super.viewDidChangeEffectiveAppearance()
         applyDisplayAttributes(font: displayFont)
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        // Event-driven first responder handoff: when SwiftUI mounts this text view into
+        // the panel, consume the panel's one-shot focus request set by `focusSourceInput()`.
+        guard let panel = window as? PopupPanel else { return }
+        panel.consumePendingSourceInputFocus(into: self)
     }
 
     override func keyDown(with event: NSEvent) {

@@ -23,6 +23,10 @@ enum PopupPanelViewIdentifier {
 final class PopupPanel: NSPanel {
     var onCopyResultShortcut: ((Int) -> Bool)?
 
+    /// Set when `focusSourceInput()` is called before the source text view has been mounted.
+    /// `SubmitAwareTextView.viewDidMoveToWindow` consumes this flag once the view attaches.
+    private(set) var pendingSourceInputFocus = false
+
     init(contentRect: NSRect) {
         super.init(
             contentRect: contentRect,
@@ -51,13 +55,25 @@ final class PopupPanel: NSPanel {
     // Allow becoming key window so users can select/copy text within the panel.
     override var canBecomeKey: Bool { true }
 
-    func focusSourceInput(retries: Int = 4) {
-        if focusSourceInputNow() { return }
-        guard retries > 0 else { return }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
-            self?.focusSourceInput(retries: retries - 1)
+    /// Move first responder to the source input text view. If the text view has not
+    /// been mounted yet (SwiftUI renders asynchronously), arms a one-shot flag that
+    /// `SubmitAwareTextView.viewDidMoveToWindow` will consume when the view attaches.
+    func focusSourceInput() {
+        if let contentView, let textView = findSourceInputTextView(in: contentView) {
+            makeKey()
+            _ = makeFirstResponder(textView)
+            return
         }
+        pendingSourceInputFocus = true
+    }
+
+    /// Called by `SubmitAwareTextView` once it enters the window hierarchy.
+    /// Consumes the one-shot `pendingSourceInputFocus` flag.
+    func consumePendingSourceInputFocus(into textView: NSTextView) {
+        guard pendingSourceInputFocus else { return }
+        pendingSourceInputFocus = false
+        makeKey()
+        _ = makeFirstResponder(textView)
     }
 
     // MARK: - Selective Window Dragging
@@ -94,15 +110,6 @@ final class PopupPanel: NSPanel {
         else { return nil }
 
         return number - 1
-    }
-
-    private func focusSourceInputNow() -> Bool {
-        guard let contentView,
-              let textView = findSourceInputTextView(in: contentView)
-        else { return false }
-
-        makeKey()
-        return makeFirstResponder(textView)
     }
 
     private func shouldStartWindowDrag(for event: NSEvent) -> Bool {

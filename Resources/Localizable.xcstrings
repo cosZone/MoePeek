@@ -47,11 +47,22 @@
       }
     },
     "↵ Translate · ⇧↵ Newline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "↵ 翻译 · ⇧↵ 换行"
+          }
+        }
+      }
+    },
+    "↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↵ 翻译 · ⌘↵ 复制并关闭 · ⇧↵ 换行"
           }
         }
       }

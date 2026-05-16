@@ -251,10 +251,13 @@ struct PopupView: View {
         inputHeight = clamped
     }
 
+    /// Reflow the input height to follow content. Grows up to `maxInputHeight` and
+    /// shrinks back down to the user-set baseline (persisted in `popupInputHeight`),
+    /// so deleting pasted long text reclaims the space.
     private func expandInputHeightIfNeeded(for preferredHeight: CGFloat) {
-        clampInputHeightToAllowedRange()
-        let targetHeight = min(max(preferredHeight, inputMinHeight), maxInputHeight)
-        guard targetHeight > inputHeight else { return }
+        let baseline = min(max(CGFloat(Defaults[.popupInputHeight]), inputMinHeight), maxInputHeight)
+        let targetHeight = min(max(preferredHeight, baseline), maxInputHeight)
+        guard abs(targetHeight - inputHeight) > 0.5 else { return }
         inputHeight = targetHeight
     }
 

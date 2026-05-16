@@ -28,7 +28,7 @@ final class PopupPanelController {
         self.settingsController = settingsController
     }
 
-    func showAtCursor(focusInput: Bool = true) {
+    func showAtCursor() {
         let initialSize = setupPanel()
         guard let panel else { return }
 
@@ -43,15 +43,10 @@ final class PopupPanelController {
             screen: screen
         )
         panel.setFrame(frame, display: true)
-        if focusInput {
-            previouslyActiveApp = NSWorkspace.shared.frontmostApplication
-            NSApp.activate(ignoringOtherApps: true)
-            panel.makeKeyAndOrderFront(nil)
-            panel.focusSourceInput()
-        } else {
-            // Non-activating: don't steal focus from the user's active app.
-            panel.orderFront(nil)
-        }
+        // Non-activating: don't steal focus from the user's active app.
+        // The panel will accept key events (and ⌘1...⌘9 copy shortcuts) once the user clicks
+        // into it, since PopupPanel.canBecomeKey is true.
+        panel.orderFront(nil)
 
         startDismissMonitor()
     }
