@@ -9,7 +9,6 @@ final class PopupPanelController {
 
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
-    private var isPinned = false
     private var copyShortcutDismissTask: Task<Void, Never>?
 
     private let coordinator: TranslationCoordinator
@@ -33,11 +32,8 @@ final class PopupPanelController {
         let initialSize = setupPanel()
         guard let panel else { return }
 
-        if coordinator.globalError != nil {
-            isPinned = false
-        }
-
-        if isPinned, panel.isVisible {
+        // Coordinator auto-unpins on non-nil globalError via didSet, so checking isPinned alone is safe.
+        if coordinator.isPinned, panel.isVisible {
             panel.orderFront(nil)
             startDismissMonitor()
             return
@@ -94,7 +90,6 @@ final class PopupPanelController {
         copyShortcutDismissTask = nil
         dismissMonitor?.stop()
         dismissMonitor = nil
-        isPinned = false
         ttsCoordinator?.stop()
         panel?.contentView = nil
         panel?.close()
@@ -115,10 +110,6 @@ final class PopupPanelController {
         panel?.isVisible ?? false
     }
 
-    func setPinned(_ pinned: Bool) {
-        isPinned = pinned
-    }
-
     // MARK: - Private
 
     @discardableResult
@@ -135,9 +126,6 @@ final class PopupPanelController {
             }
             let contentView = PopupView(
                 coordinator: coordinator,
-                onPinnedChange: { [weak self] pinned in
-                    self?.setPinned(pinned)
-                },
                 onDismiss: { [weak self] in
                     self?.dismiss()
                 },
@@ -176,7 +164,7 @@ final class PopupPanelController {
         dismissMonitor?.stop()
         dismissMonitor = PopupDismissMonitor(
             panel: panel,
-            isPinned: { [weak self] in self?.isPinned ?? false }
+            isPinned: { [weak self] in self?.coordinator.isPinned ?? false }
         ) { [weak self] in
             self?.dismiss()
         }

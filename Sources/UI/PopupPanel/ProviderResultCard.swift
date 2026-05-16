@@ -12,6 +12,7 @@ struct ProviderResultCard: View {
     var onCopy: (() -> Void)?
     var onRetry: (() -> Void)?
     @State private var isCopyPulsing = false
+    @State private var pulseTask: Task<Void, Never>?
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
@@ -67,15 +68,21 @@ struct ProviderResultCard: View {
         )
         .onChange(of: copyFeedbackGeneration) { _, _ in
             guard isCopyFeedbackActive else { return }
+            pulseTask?.cancel()
             withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
                 isCopyPulsing = true
             }
-            Task { @MainActor in
+            pulseTask = Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(180))
+                guard !Task.isCancelled else { return }
                 withAnimation(.spring(response: 0.22, dampingFraction: 0.8)) {
                     isCopyPulsing = false
                 }
             }
+        }
+        .onDisappear {
+            pulseTask?.cancel()
+            pulseTask = nil
         }
     }
 

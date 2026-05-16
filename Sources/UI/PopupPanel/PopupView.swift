@@ -5,13 +5,11 @@ import SwiftUI
 /// The SwiftUI content displayed inside the popup translation panel.
 struct PopupView: View {
     let coordinator: TranslationCoordinator
-    var onPinnedChange: ((Bool) -> Void)?
     var onDismiss: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     @State private var editableText: String = ""
     @State private var expandedProviders: Set<String> = []
     @State private var autoPlayedGeneration: Int = -1
-    @State private var isPinned = false
     @Environment(\.ttsCoordinator) private var ttsCoordinator
     @State private var sourceLang: String = Defaults[.sourceLanguage]
     @State private var targetLang: String = Defaults[.targetLanguage]
@@ -109,28 +107,18 @@ struct PopupView: View {
         .onChange(of: coordinator.providerStates) { _, newStates in
             handleAutoPlay(states: newStates)
         }
-        .onChange(of: coordinator.globalError) { _, message in
-            guard message != nil, isPinned else { return }
-            isPinned = false
-            onPinnedChange?(false)
-        }
     }
 
     private var pinButton: some View {
         Button {
-            isPinned.toggle()
-            onPinnedChange?(isPinned)
+            coordinator.isPinned.toggle()
         } label: {
-            Image(systemName: isPinned ? "pin.fill" : "pin")
-                .font(.system(size: max(CGFloat(fontSize - 5), 10)))
-                .foregroundStyle(isPinned ? Color.accentColor : Color.secondary)
-                .frame(width: 18, height: 18)
-                .contentShape(Rectangle())
+            Image(systemName: coordinator.isPinned ? "pin.fill" : "pin")
+                .font(.system(size: CGFloat(fontSize - 2)))
+                .foregroundStyle(coordinator.isPinned ? Color.accentColor : Color.secondary)
         }
         .buttonStyle(.plain)
-        .help(isPinned ? "Unpin Popup" : "Pin Popup")
-        .padding(.top, 4)
-        .padding(.trailing, 8)
+        .help(coordinator.isPinned ? "Unpin Popup" : "Pin Popup")
         .background { InteractiveMarker() }
     }
 
@@ -148,113 +136,109 @@ struct PopupView: View {
                 .padding(.horizontal, contentHorizontalPadding)
                 .padding(.vertical, contentHorizontalPadding)
             } else {
-                ZStack(alignment: .topTrailing) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        // Source input
-                        SourceInputView(
-                            text: $editableText,
-                            sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
-                            onSubmit: {
-                                coordinator.translate(editableText)
-                            },
-                            onCopyAndClose: {
-                                copySourceAndClose()
-                            },
-                            onContentHeightChange: { preferredHeight in
-                                expandInputHeightIfNeeded(for: preferredHeight)
-                            }
-                        )
-                        .frame(height: inputHeight)
-                        .padding(.horizontal, contentHorizontalPadding)
-                        .padding(.top, contentHorizontalPadding)
-                        .padding(.bottom, 4)
-
-                        DraggableDividerView(
-                            inputHeight: $inputHeight,
-                            minHeight: inputMinHeight,
-                            maxHeight: maxInputHeight,
-                            horizontalPadding: contentHorizontalPadding,
-                            onDragEnd: { Defaults[.popupInputHeight] = Int(inputHeight) }
-                        )
-
-                        // Language bar + settings button
-                        HStack(spacing: 4) {
-                            LanguageBarView(
-                                sourceLanguage: $sourceLang,
-                                detectedLanguage: coordinator.detectedLanguage,
-                                detectionConfidence: coordinator.detectionResult?.confidence,
-                                targetLanguage: $targetLang,
-                                onSwap: {
-                                    let effectiveSource = sourceLang == "auto"
-                                    ? (coordinator.detectedLanguage ?? targetLang)
-                                    : sourceLang
-                                    // When auto-detect has no result yet, effectiveSource falls back
-                                    // to targetLang and swap becomes a no-op
-                                    guard effectiveSource != targetLang else { return }
-                                    sourceLang = targetLang
-                                    targetLang = effectiveSource
-                                }
-                            )
-
-                            Button {
-                                onOpenSettings?()
-                            } label: {
-                                Image(systemName: "gearshape")
-                                    .font(.system(size: CGFloat(fontSize - 2)))
-                                    .foregroundStyle(.secondary)
-                            }
-                            .buttonStyle(.plain)
-                            .help("Open Settings")
-                            .background { InteractiveMarker() }
-                        }
-                        .padding(.horizontal, contentHorizontalPadding)
-                        .padding(.vertical, 4)
-                        .onChange(of: targetLang) { _, newValue in
-                            Defaults[.targetLanguage] = newValue
-                            // Skip retranslation when this change came from coordinator sync
-                            guard newValue != coordinator.targetLanguage else { return }
-                            if !editableText.isEmpty {
-                                coordinator.translate(editableText)
-                            }
-                        }
-                        .onChange(of: sourceLang) { _, newValue in
-                            Defaults[.sourceLanguage] = newValue
-                            if !editableText.isEmpty {
-                                coordinator.translate(editableText)
-                            }
-                        }
-
-                        Divider()
-                            .padding(.horizontal, contentHorizontalPadding)
-
-                        // Provider results
-                        ScrollView {
-                            VStack(spacing: 6) {
-                                ForEach(coordinator.activeSlots, id: \.id) { provider in
-                                    if let state = coordinator.providerStates[provider.id] {
-                                        ProviderResultCard(
-                                            provider: provider,
-                                            state: state,
-                                            targetLanguage: targetLang,
-                                            isExpanded: expandedBinding(for: provider.id),
-                                            isCopyFeedbackActive: coordinator.copiedProviderID == provider.id,
-                                            copyFeedbackGeneration: coordinator.copyFeedbackGeneration,
-                                            onCopy: {
-                                                coordinator.copyResult(forProviderID: provider.id)
-                                            },
-                                            onRetry: {
-                                                coordinator.retryProvider(provider)
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, contentHorizontalPadding)
-                            .padding(.vertical, 6)
-                        }
+                // Source input
+                SourceInputView(
+                    text: $editableText,
+                    sourceLanguage: coordinator.detectedLanguage ?? sourceLang,
+                    onSubmit: {
+                        coordinator.translate(editableText)
+                    },
+                    onCopyAndClose: {
+                        copySourceAndClose()
+                    },
+                    onContentHeightChange: { preferredHeight in
+                        expandInputHeightIfNeeded(for: preferredHeight)
                     }
+                )
+                .frame(height: inputHeight)
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.top, contentHorizontalPadding)
+                .padding(.bottom, 4)
+
+                DraggableDividerView(
+                    inputHeight: $inputHeight,
+                    minHeight: inputMinHeight,
+                    maxHeight: maxInputHeight,
+                    horizontalPadding: contentHorizontalPadding,
+                    onDragEnd: { Defaults[.popupInputHeight] = Int(inputHeight) }
+                )
+
+                // Language bar + settings + pin
+                HStack(spacing: 4) {
+                    LanguageBarView(
+                        sourceLanguage: $sourceLang,
+                        detectedLanguage: coordinator.detectedLanguage,
+                        detectionConfidence: coordinator.detectionResult?.confidence,
+                        targetLanguage: $targetLang,
+                        onSwap: {
+                            let effectiveSource = sourceLang == "auto"
+                            ? (coordinator.detectedLanguage ?? targetLang)
+                            : sourceLang
+                            // When auto-detect has no result yet, effectiveSource falls back
+                            // to targetLang and swap becomes a no-op
+                            guard effectiveSource != targetLang else { return }
+                            sourceLang = targetLang
+                            targetLang = effectiveSource
+                        }
+                    )
+
+                    Button {
+                        onOpenSettings?()
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: CGFloat(fontSize - 2)))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Open Settings")
+                    .background { InteractiveMarker() }
 
                     pinButton
+                }
+                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.vertical, 4)
+                .onChange(of: targetLang) { _, newValue in
+                    Defaults[.targetLanguage] = newValue
+                    // Skip retranslation when this change came from coordinator sync
+                    guard newValue != coordinator.targetLanguage else { return }
+                    if !editableText.isEmpty {
+                        coordinator.translate(editableText)
+                    }
+                }
+                .onChange(of: sourceLang) { _, newValue in
+                    Defaults[.sourceLanguage] = newValue
+                    if !editableText.isEmpty {
+                        coordinator.translate(editableText)
+                    }
+                }
+
+                Divider()
+                    .padding(.horizontal, contentHorizontalPadding)
+
+                // Provider results
+                ScrollView {
+                    VStack(spacing: 6) {
+                        ForEach(coordinator.activeSlots, id: \.id) { provider in
+                            if let state = coordinator.providerStates[provider.id] {
+                                ProviderResultCard(
+                                    provider: provider,
+                                    state: state,
+                                    targetLanguage: targetLang,
+                                    isExpanded: expandedBinding(for: provider.id),
+                                    isCopyFeedbackActive: coordinator.copiedProviderID == provider.id,
+                                    copyFeedbackGeneration: coordinator.copyFeedbackGeneration,
+                                    onCopy: {
+                                        coordinator.copyResult(forProviderID: provider.id)
+                                    },
+                                    onRetry: {
+                                        coordinator.retryProvider(provider)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, contentHorizontalPadding)
+                    .padding(.vertical, 6)
                 }
             }
         }

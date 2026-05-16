@@ -69,11 +69,16 @@ final class PopupPanel: NSPanel {
 
     /// Called by `SubmitAwareTextView` once it enters the window hierarchy.
     /// Consumes the one-shot `pendingSourceInputFocus` flag.
+    /// Responder-chain mutation is deferred to the next runloop tick to avoid
+    /// reentering AppKit during the `viewDidMoveToWindow` callback.
     func consumePendingSourceInputFocus(into textView: NSTextView) {
         guard pendingSourceInputFocus else { return }
         pendingSourceInputFocus = false
-        makeKey()
-        _ = makeFirstResponder(textView)
+        Task { @MainActor [weak self, weak textView] in
+            guard let self, let textView, textView.window === self else { return }
+            self.makeKey()
+            _ = self.makeFirstResponder(textView)
+        }
     }
 
     // MARK: - Selective Window Dragging

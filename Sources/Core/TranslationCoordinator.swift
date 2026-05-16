@@ -26,7 +26,12 @@ final class TranslationCoordinator {
     private(set) var detectedLanguage: String?
     private(set) var targetLanguage: String = ""
     private(set) var providerStates: [String: ProviderState] = [:]
-    private(set) var globalError: String?
+    /// Setting a non-nil error also auto-unpins, so an error never appears in a frozen pinned panel.
+    private(set) var globalError: String? {
+        didSet {
+            if globalError != nil { isPinned = false }
+        }
+    }
     private(set) var detectionResult: DetectionResult?
     /// Snapshot of expanded provider slots for the current translation session.
     /// PopupView reads this instead of `registry.enabledSlots` to avoid recomputation during streaming.
@@ -36,6 +41,8 @@ final class TranslationCoordinator {
     private(set) var translationGeneration: Int = 0
     private(set) var copiedProviderID: String?
     private(set) var copyFeedbackGeneration: Int = 0
+    /// Single source of truth for popup pin state. PopupView toggles, PopupPanelController reads.
+    var isPinned: Bool = false
 
     let registry: TranslationProviderRegistry
     private let permissionManager: PermissionManager
@@ -224,6 +231,7 @@ final class TranslationCoordinator {
         globalError = nil
         detectionResult = nil
         activeSlots = []
+        isPinned = false
     }
 
     // MARK: - Computed Helpers
