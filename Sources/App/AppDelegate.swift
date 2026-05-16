@@ -98,6 +98,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         migrateV1ProviderSettings()
         migrateV2KeychainToDefaults()
         migrateV3RemovedProviders()
+        migrateV4PopupPositionKeys()
+    }
+
+    /// V4: Earlier builds of the remember-position feature stored the panel's bottom-left
+    /// origin under `popupLastOriginX/Y`. We now persist the top-left corner under
+    /// `popupLastTopLeftX/Y` so the visual position survives size changes. Convert any
+    /// existing bottom-left value to top-left using the current default panel height as
+    /// the best available approximation, then clear the legacy keys. If the saved flag is
+    /// set but neither new nor old keys carry data, clear the flag so the panel falls back
+    /// to cursor/center instead of opening at (0,0).
+    private func migrateV4PopupPositionKeys() {
+        let migrationKey = "hasMigratedPopupPositionToTopLeft"
+        guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
+
+        let ud = UserDefaults.standard
+        let oldX = ud.object(forKey: "popupLastOriginX") as? Double
+        let oldY = ud.object(forKey: "popupLastOriginY") as? Double
+
+        if let oldX, let oldY {
+            let height = Double(Defaults[.popupDefaultHeight])
+            Defaults[.popupLastTopLeftX] = oldX
+            Defaults[.popupLastTopLeftY] = oldY + height
+            ud.removeObject(forKey: "popupLastOriginX")
+            ud.removeObject(forKey: "popupLastOriginY")
+        } else if Defaults[.popupHasSavedPosition],
+                  Defaults[.popupLastTopLeftX] == 0,
+                  Defaults[.popupLastTopLeftY] == 0 {
+            Defaults[.popupHasSavedPosition] = false
+        }
+
+        UserDefaults.standard.set(true, forKey: migrationKey)
     }
 
     /// V1: Migrate old flat keys to namespaced provider keys.
