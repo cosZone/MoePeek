@@ -21,6 +21,35 @@ enum SupportedLanguages {
 
     /// Set of all supported language codes.
     static let codeSet: Set<String> = Set(codes)
+
+    /// English full names for language codes, used when interpolating into LLM prompts.
+    ///
+    /// Small models (≤2B params) often fail to recognize BCP-47 codes like `zh-Hans`,
+    /// so we expand to a stable English name. We hardcode the mapping rather than
+    /// using `Locale.localizedString(forIdentifier:)` to avoid locale-dependent
+    /// variations like "Chinese, Simplified" vs "Simplified Chinese".
+    private static let englishNames: [String: String] = [
+        "en": "English",
+        "zh-Hans": "Simplified Chinese",
+        "zh-Hant": "Traditional Chinese",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "fr": "French",
+        "de": "German",
+        "es": "Spanish",
+        "pt-BR": "Brazilian Portuguese",
+        "ru": "Russian",
+        "ar": "Arabic",
+        "it": "Italian",
+        "th": "Thai",
+        "vi": "Vietnamese",
+    ]
+
+    /// Returns the English full name for a language code (e.g. `zh-Hans` → `Simplified Chinese`).
+    /// Falls back to the code itself for unknown identifiers.
+    static func englishName(for code: String) -> String {
+        englishNames[code] ?? code
+    }
 }
 
 // MARK: - App Language

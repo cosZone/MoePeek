@@ -58,7 +58,10 @@ struct OllamaProvider: ParallelModelProvider {
                     }
 
                     let promptTemplate = Defaults[systemPromptKey]
-                    let systemPrompt = promptTemplate.replacingOccurrences(of: "{targetLang}", with: targetLang)
+                    let systemPrompt = promptTemplate.replacingOccurrences(
+                        of: "{targetLang}",
+                        with: SupportedLanguages.englishName(for: targetLang)
+                    )
 
                     let body: [String: Any] = [
                         "model": model,

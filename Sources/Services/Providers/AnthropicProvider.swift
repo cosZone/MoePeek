@@ -82,7 +82,10 @@ struct AnthropicProvider: ParallelModelProvider {
         }
 
         let promptTemplate = Defaults[systemPromptKey]
-        let systemPrompt = promptTemplate.replacingOccurrences(of: "{targetLang}", with: targetLang)
+        let systemPrompt = promptTemplate.replacingOccurrences(
+            of: "{targetLang}",
+            with: SupportedLanguages.englishName(for: targetLang)
+        )
         let maxTokens = Defaults[maxTokensKey]
 
         let body: [String: Any] = [
