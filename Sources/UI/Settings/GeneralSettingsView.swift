@@ -9,6 +9,7 @@ struct GeneralSettingsView: View {
     @Default(.targetLanguage) private var targetLanguage
     @Default(.isAutoDetectEnabled) private var isAutoDetectEnabled
     @Default(.textDetectionMode) private var textDetectionMode
+    @Default(.triggerActivationMode) private var triggerActivationMode
     @Default(.showInDock) private var showInDock
     @Default(.popupDefaultWidth) private var popupDefaultWidth
     @Default(.popupDefaultHeight) private var popupDefaultHeight
@@ -122,6 +123,11 @@ struct GeneralSettingsView: View {
                 Toggle("Show floating icon on text selection", isOn: $isAutoDetectEnabled)
 
                 if isAutoDetectEnabled {
+                    Picker("Floating Icon Activation:", selection: $triggerActivationMode) {
+                        Text("Hover").tag(TriggerActivationMode.hover)
+                        Text("Click").tag(TriggerActivationMode.click)
+                    }
+
                     Picker("Text Detection Mode:", selection: $textDetectionMode) {
                         Text("Conservative").tag(TextDetectionMode.conservative)
                         Text("Standard").tag(TextDetectionMode.standard)

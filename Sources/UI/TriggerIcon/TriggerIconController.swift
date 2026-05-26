@@ -1,4 +1,5 @@
 import AppKit
+import Defaults
 
 // MARK: - TriggerTrackingView
 
@@ -104,11 +105,28 @@ final class TriggerIconController {
         let panel = TriggerIconPanel()
         let trackingView = TriggerTrackingView(frame: NSRect(x: 0, y: 0, width: TriggerIconPanel.size, height: TriggerIconPanel.size))
 
+        let activationMode = Defaults[.triggerActivationMode]
+
         trackingView.onMouseEntered = { [weak self] in
-            self?.startHoverTimer()
+            guard let self else { return }
+            switch activationMode {
+            case .hover:
+                self.startHoverTimer()
+            case .click:
+                // Pause auto-dismiss while cursor is over the icon so the user has time to click.
+                self.cancelAutoDismissTimer()
+            }
         }
         trackingView.onMouseExited = { [weak self] in
-            self?.cancelHoverTimer()
+            guard let self else { return }
+            switch activationMode {
+            case .hover:
+                self.cancelHoverTimer()
+            case .click:
+                // In click mode, mouseEntered paused auto-dismiss; restart it on exit
+                // so the icon eventually disappears if the user never clicks.
+                self.startAutoDismissTimer()
+            }
         }
         trackingView.onMouseDown = { [weak self] in
             self?.triggerTranslation()

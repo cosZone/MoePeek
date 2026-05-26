@@ -111,6 +111,13 @@ enum MenuBarIconCatalog {
     ]
 }
 
+// MARK: - Trigger Icon Activation Mode
+
+enum TriggerActivationMode: String, CaseIterable, Defaults.Serializable {
+    case hover  // Hover over the trigger icon (default behavior)
+    case click  // Click the trigger icon
+}
+
 // MARK: - Settings Tab
 
 enum SettingsTab: String, Defaults.Serializable {
@@ -152,6 +159,7 @@ extension Defaults.Keys {
     // Auto-detect text selection
     static let isAutoDetectEnabled = Key<Bool>("isAutoDetectEnabled", default: true)
     static let textDetectionMode = Key<TextDetectionMode>("textDetectionMode", default: .full)
+    static let triggerActivationMode = Key<TriggerActivationMode>("triggerActivationMode", default: .hover)
     static let excludedAppBundleIDs = Key<Set<String>>("excludedAppBundleIDs", default: [])
 
     // Appearance
