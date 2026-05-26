@@ -1,7 +1,9 @@
+import AppKit
 import Defaults
 import KeyboardShortcuts
 import ServiceManagement
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct GeneralSettingsView: View {
     @Default(.targetLanguage) private var targetLanguage
@@ -16,6 +18,14 @@ struct GeneralSettingsView: View {
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
     @Default(.appLanguage) private var appLanguage
+    @Default(.menuBarIconStyle) private var menuBarIconStyle
+    @Default(.menuBarCustomIconSource) private var menuBarCustomIconSource
+    @Default(.menuBarCustomSymbolName) private var menuBarCustomSymbolName
+    @Default(.menuBarCustomIconIsTemplate) private var menuBarCustomIconIsTemplate
+    @Default(.menuBarCustomIconRevision) private var menuBarCustomIconRevision
+
+    @State private var iconImportError: String?
+    @State private var showingIconResetConfirm = false
 
     private var textDetectionModeDescription: String {
         switch textDetectionMode {
@@ -77,6 +87,29 @@ struct GeneralSettingsView: View {
                             NSApp.activate()
                         }
                     }
+            }
+
+            Section("Menu Bar Icon") {
+                Picker("Style:", selection: $menuBarIconStyle) {
+                    Text("Filled").tag(MenuBarIconStyle.filled)
+                    Text("Custom").tag(MenuBarIconStyle.custom)
+                }
+                .pickerStyle(.segmented)
+
+                if menuBarIconStyle == .custom {
+                    Picker("Source:", selection: $menuBarCustomIconSource) {
+                        Text("SF Symbol").tag(MenuBarCustomIconSource.symbol)
+                        Text("Upload").tag(MenuBarCustomIconSource.image)
+                    }
+                    .pickerStyle(.segmented)
+
+                    switch menuBarCustomIconSource {
+                    case .symbol:
+                        menuBarSymbolControls
+                    case .image:
+                        menuBarCustomIconControls
+                    }
+                }
             }
 
             Section("Translation") {
@@ -174,6 +207,173 @@ struct GeneralSettingsView: View {
             Button("Later", role: .cancel) { }
         } message: {
             Text("Changing language requires restarting the app.")
+        }
+        .alert(
+            "Could not load icon",
+            isPresented: Binding(
+                get: { iconImportError != nil },
+                set: { if !$0 { iconImportError = nil } }
+            ),
+            actions: { Button("OK", role: .cancel) { iconImportError = nil } },
+            message: { Text(iconImportError ?? "") }
+        )
+        .confirmationDialog(
+            "Remove custom menu bar icon?",
+            isPresented: $showingIconResetConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove", role: .destructive) {
+                MenuBarIconStore.removeCustomIcon()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("The uploaded image will be deleted. You can choose another image any time.")
+        }
+    }
+
+    @ViewBuilder
+    private var menuBarSymbolControls: some View {
+        let isValid = isValidSymbol(menuBarCustomSymbolName)
+        let previewName = isValid ? menuBarCustomSymbolName : MenuBarIconCatalog.defaultSymbol
+
+        // Preview + free-form name input in a single row so the user sees them together.
+        HStack(spacing: 10) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.secondary.opacity(0.12))
+                Image(systemName: previewName)
+                    .font(.system(size: 16))
+            }
+            .frame(width: 32, height: 32)
+
+            TextField(
+                text: $menuBarCustomSymbolName,
+                prompt: Text(verbatim: MenuBarIconCatalog.defaultSymbol)
+            ) {
+                EmptyView()
+            }
+            .textFieldStyle(.roundedBorder)
+            .autocorrectionDisabled()
+            .frame(maxWidth: .infinity)
+
+            Image(systemName: isValid ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                .foregroundStyle(isValid ? .green : .orange)
+                .help(isValid
+                    ? String(localized: "Symbol exists on this system.")
+                    : String(localized: "Symbol not found. Falling back to default."))
+        }
+
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Presets")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6),
+                spacing: 8
+            ) {
+                ForEach(MenuBarIconCatalog.presets, id: \.self) { name in
+                    Button {
+                        menuBarCustomSymbolName = name
+                    } label: {
+                        Image(systemName: name)
+                            .font(.system(size: 15))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 32)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(menuBarCustomSymbolName == name
+                                        ? Color.accentColor.opacity(0.25)
+                                        : Color.secondary.opacity(0.10))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .strokeBorder(
+                                        menuBarCustomSymbolName == name
+                                            ? Color.accentColor
+                                            : Color.clear,
+                                        lineWidth: 1.5
+                                    )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .help(name)
+                    .accessibilityLabel(Text(verbatim: name))
+                }
+            }
+        }
+
+        Text("Tip: open the SF Symbols app from Apple to browse all available names, then paste one above. Names are case-sensitive.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+    }
+
+    private func isValidSymbol(_ name: String) -> Bool {
+        guard !name.isEmpty else { return false }
+        return NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil
+    }
+
+    @ViewBuilder
+    private var menuBarCustomIconControls: some View {
+        let customIcon = MenuBarIconStore.loadCustomIcon(isTemplate: menuBarCustomIconIsTemplate)
+        let hasCustomIcon = customIcon != nil
+
+        LabeledContent("Image:") {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.secondary.opacity(0.12))
+                    if let customIcon {
+                        Image(nsImage: customIcon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 22, height: 22)
+                    } else {
+                        Image(systemName: "photo")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(width: 36, height: 36)
+
+                Button("Choose Image…") { chooseCustomIcon() }
+                if hasCustomIcon {
+                    Button("Reset", role: .destructive) {
+                        showingIconResetConfirm = true
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+
+        Toggle("Render as template (monochrome)", isOn: $menuBarCustomIconIsTemplate)
+
+        Text("Template mode masks the image to the menu bar tint — recommended for monochrome icons so they adapt to light and dark menu bars. Turn it off only for full-color logos.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+
+        Text("Requirements: PNG, JPG, SVG, PDF, TIFF, or ICNS, up to 2 MB. Recommended 36×36 px (18 pt @2x) with transparent background. For template mode, ship a monochrome image — black on transparent, alpha controls visibility.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+
+        Text("Need inspiration? Browse free icons on [Iconify](https://icon-sets.iconify.design/?query=translate) — download an SVG or PNG and upload it here.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .tint(.accentColor)
+    }
+
+    private func chooseCustomIcon() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.allowedContentTypes = [
+            .png, .jpeg, .svg, .pdf, .tiff, .icns, UTType.image,
+        ]
+        panel.prompt = String(localized: "Choose")
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            try MenuBarIconStore.importIcon(from: url)
+        } catch {
+            iconImportError = error.localizedDescription
         }
     }
 }

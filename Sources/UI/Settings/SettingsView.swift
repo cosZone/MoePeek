@@ -11,7 +11,7 @@ struct SettingsView: View {
 
     private var tabHeight: CGFloat {
         switch selectedTab {
-        case .general: return 680
+        case .general: return 840
         case .excludedApps: return 480
         case .services: return 580
         case .providerOrder: return 520

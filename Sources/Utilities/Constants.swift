@@ -47,6 +47,41 @@ enum TextDetectionMode: String, CaseIterable, Defaults.Serializable {
     case full          // Tier 1 + Tier 2 + Tier 3 (AX + AppleScript + ⌘C simulation)
 }
 
+// MARK: - Menu Bar Icon Style
+
+enum MenuBarIconStyle: String, CaseIterable, Defaults.Serializable {
+    case filled
+    case custom
+}
+
+enum MenuBarCustomIconSource: String, CaseIterable, Defaults.Serializable {
+    case symbol
+    case image
+}
+
+/// Constants describing the SF Symbols catalog used by the menu bar icon UI.
+enum MenuBarIconCatalog {
+    /// Default SF Symbol surfaced when the user first picks a custom symbol icon.
+    /// Kept in sync with the `filled` style so switching to custom is non-disruptive.
+    static let defaultSymbol = "character.bubble.fill"
+
+    /// Curated SF Symbol presets exposed in Settings. Names must exist on macOS 14.
+    static let presets: [String] = [
+        "character.bubble.fill",
+        "text.bubble.fill",
+        "bubble.left.fill",
+        "globe",
+        "globe.americas.fill",
+        "character.book.closed.fill",
+        "text.viewfinder",
+        "sparkles",
+        "abc",
+        "textformat",
+        "character",
+        "command",
+    ]
+}
+
 // MARK: - Settings Tab
 
 enum SettingsTab: String, Defaults.Serializable {
@@ -92,6 +127,14 @@ extension Defaults.Keys {
 
     // Appearance
     static let showInDock = Key<Bool>("showInDock", default: true)
+
+    // Menu bar icon
+    static let menuBarIconStyle = Key<MenuBarIconStyle>("menuBarIconStyle", default: .filled)
+    static let menuBarCustomIconSource = Key<MenuBarCustomIconSource>("menuBarCustomIconSource", default: .symbol)
+    static let menuBarCustomSymbolName = Key<String>("menuBarCustomSymbolName", default: MenuBarIconCatalog.defaultSymbol)
+    static let menuBarCustomIconIsTemplate = Key<Bool>("menuBarCustomIconIsTemplate", default: true)
+    // Bumped whenever the custom icon file is replaced so SwiftUI re-evaluates the cached image.
+    static let menuBarCustomIconRevision = Key<Int>("menuBarCustomIconRevision", default: 0)
 
     // Onboarding
     static let hasCompletedOnboarding = Key<Bool>("hasCompletedOnboarding", default: false)

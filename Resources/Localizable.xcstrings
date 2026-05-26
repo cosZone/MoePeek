@@ -366,6 +366,17 @@
         }
       }
     },
+    "Cancel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
     "Capability data from" : {
       "localizations" : {
         "zh-Hans" : {
@@ -441,12 +452,34 @@
         }
       }
     },
+    "Choose" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择"
+          }
+        }
+      }
+    },
     "Choose a provider from the list to configure it." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "从列表中选择一个翻译服务进行配置。"
+          }
+        }
+      }
+    },
+    "Choose Image…" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择图片…"
           }
         }
       }
@@ -572,8 +605,29 @@
     "Copyright © 2025-2026 MoePeek. All rights reserved." : {
 
     },
-    "Custom" : {
+    "Could not decode image." : {
       "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解析该图片。"
+          }
+        }
+      }
+    },
+    "Could not load icon" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载图标"
+          }
+        }
+      }
+    },
+    "Custom" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -741,6 +795,17 @@
         }
       }
     },
+    "Failed to save image: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存图片失败：%@"
+          }
+        }
+      }
+    },
     "Fetch available models" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -748,6 +813,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "获取可用模型列表"
+          }
+        }
+      }
+    },
+    "Filled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面性"
           }
         }
       }
@@ -930,6 +1005,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已授权"
+          }
+        }
+      }
+    },
+    "Image file too large. Maximum 2 MB." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片文件过大，上限 2 MB。"
+          }
+        }
+      }
+    },
+    "Image:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片："
           }
         }
       }
@@ -1137,6 +1234,17 @@
     "Max Tokens" : {
 
     },
+    "Menu Bar Icon" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单栏图标"
+          }
+        }
+      }
+    },
     "Menu Bar Translation Tool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1201,6 +1309,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更多翻译服务请前往设置中配置"
+          }
+        }
+      }
+    },
+    "Need inspiration? Browse free icons on [Iconify](https://icon-sets.iconify.design/?query=translate) — download an SVG or PNG and upload it here." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找灵感？在 [Iconify](https://icon-sets.iconify.design/?query=translate) 上浏览免费图标，下载 SVG 或 PNG 后上传到这里。"
           }
         }
       }
@@ -1369,6 +1487,17 @@
         }
       }
     },
+    "OK" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
+        }
+      }
+    },
     "Ollama server not running at %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1442,6 +1571,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "排序"
+          }
+        }
+      }
+    },
+    "Outline" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线性"
           }
         }
       }
@@ -1552,6 +1692,38 @@
         }
       }
     },
+    "Presets" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预设"
+          }
+        }
+      }
+    },
+    "Presets:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预设："
+          }
+        }
+      }
+    },
+    "Preview:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预览："
+          }
+        }
+      }
+    },
     "Previous" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1648,6 +1820,39 @@
         }
       }
     },
+    "Remove" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除"
+          }
+        }
+      }
+    },
+    "Remove custom menu bar icon?" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除自定义菜单栏图标？"
+          }
+        }
+      }
+    },
+    "Render as template (monochrome)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "渲染为模板（单色）"
+          }
+        }
+      }
+    },
     "Request build failed" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1699,6 +1904,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用于读取选中的文本"
+          }
+        }
+      }
+    },
+    "Requirements: PNG, JPG, SVG, PDF, TIFF, or ICNS, up to 2 MB. Recommended 36×36 px (18 pt @2x) with transparent background. For template mode, ship a monochrome image — black on transparent, alpha controls visibility." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要求：PNG、JPG、SVG、PDF、TIFF 或 ICNS，最大 2 MB。推荐 36×36 像素（18 pt @2x），背景透明。模板模式下请提供单色图（黑色 + 透明 alpha 控制可见性）。"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
           }
         }
       }
@@ -1996,6 +2222,16 @@
         }
       }
     },
+    "SF Symbol" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF Symbol"
+          }
+        }
+      }
+    },
     "Show Dock icon" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2061,6 +2297,17 @@
         }
       }
     },
+    "Source:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来源："
+          }
+        }
+      }
+    },
     "Standard" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2092,6 +2339,17 @@
         }
       }
     },
+    "Style:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "样式："
+          }
+        }
+      }
+    },
     "Supports reasoning / chain-of-thought" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2110,6 +2368,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "支持工具调用"
+          }
+        }
+      }
+    },
+    "Symbol exists on this system." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前系统存在该图标。"
+          }
+        }
+      }
+    },
+    "Symbol name:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图标名称："
+          }
+        }
+      }
+    },
+    "Symbol not found. Falling back to default." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到该图标，将回退至默认值。"
           }
         }
       }
@@ -2168,6 +2459,16 @@
         }
       }
     },
+    "Template mode masks the image to the menu bar tint — recommended for monochrome icons so they adapt to light and dark menu bars. Turn it off only for full-color logos." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模板模式会用菜单栏色调对图片进行蒙版渲染，建议单色图标使用以便适配明暗菜单栏。仅在需要保留彩色 Logo 时关闭。"
+          }
+        }
+      }
+    },
     "Test" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2206,6 +2507,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "需要以下权限才能正常工作，\n接下来将引导你逐步完成设置。"
+          }
+        }
+      }
+    },
+    "The uploaded image will be deleted. You can choose another image any time." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已上传的图片会被删除，你可以随时重新选择一张。"
+          }
+        }
+      }
+    },
+    "Tip: open the SF Symbols app from Apple to browse all available names, then paste one above. Names are case-sensitive." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示：可以打开 Apple 的 SF Symbols app 浏览所有可用名称，然后粘贴到上面。名称区分大小写。"
           }
         }
       }
@@ -2347,6 +2668,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不支持"
+          }
+        }
+      }
+    },
+    "Unsupported image format. Use PNG, JPG, SVG, PDF, TIFF, or ICNS." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支持的图片格式，请使用 PNG、JPG、SVG、PDF、TIFF 或 ICNS。"
+          }
+        }
+      }
+    },
+    "Upload" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上传"
           }
         }
       }
