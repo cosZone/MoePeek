@@ -186,7 +186,8 @@ struct LocalLLMSettingsView: View {
                         Label(message, systemImage: "xmark.circle.fill")
                             .foregroundStyle(.red)
                             .font(.caption)
-                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .textSelection(.enabled)
                     }
                 }
             }

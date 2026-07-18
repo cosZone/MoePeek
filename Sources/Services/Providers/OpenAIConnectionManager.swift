@@ -109,9 +109,13 @@ final class OpenAIConnectionManager {
                 return
             }
             guard httpResponse.statusCode == 200 else {
-                let bodyText = String(data: data, encoding: .utf8) ?? ""
-                let preview = String(bodyText.prefix(200))
-                testResult = .failure(message: "HTTP \(httpResponse.statusCode): \(preview)")
+                if let decoded = try? JSONDecoder().decode(OpenAIErrorResponse.self, from: data) {
+                    testResult = .failure(message: "HTTP \(httpResponse.statusCode): \(decoded.error.message)")
+                } else {
+                    let bodyText = String(data: data, encoding: .utf8) ?? ""
+                    let preview = String(bodyText.prefix(200))
+                    testResult = .failure(message: "HTTP \(httpResponse.statusCode): \(preview)")
+                }
                 return
             }
             testResult = .success(latencyMs: ms)
@@ -133,6 +137,15 @@ final class OpenAIConnectionManager {
         guard trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://"),
               !apiKey.isEmpty else { return nil }
         return URL(string: "\(trimmed)\(path)")
+    }
+}
+
+// MARK: - Error Response
+
+private struct OpenAIErrorResponse: Decodable {
+    let error: ErrorBody
+    struct ErrorBody: Decodable {
+        let message: String
     }
 }
 
