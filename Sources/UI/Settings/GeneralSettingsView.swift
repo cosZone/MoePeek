@@ -50,6 +50,8 @@ struct GeneralSettingsView: View {
                 KeyboardShortcuts.Recorder("Screenshot OCR:", name: .ocrScreenshot)
                 KeyboardShortcuts.Recorder("Manual Translation:", name: .inputTranslation)
                 KeyboardShortcuts.Recorder("Clipboard Translation:", name: .clipboardTranslation)
+
+                KeyboardShortcuts.Recorder("Swap Languages:", name: .swapLanguages)
             }
 
             Section("General") {

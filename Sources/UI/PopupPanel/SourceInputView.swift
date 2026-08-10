@@ -1,5 +1,6 @@
 import AppKit
 import Defaults
+import KeyboardShortcuts
 import SwiftUI
 
 /// Editable source text input with Enter to translate, Shift+Enter for newline.
@@ -8,11 +9,15 @@ struct SourceInputView: View {
     let sourceLanguage: String
     let onSubmit: () -> Void
     let onCopyAndClose: () -> Void
+    let onSwapLanguages: () -> Void
     var onContentHeightChange: ((CGFloat) -> Void)?
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
     @Environment(\.ttsCoordinator) private var ttsCoordinator
+    // Keyboard shortcuts only reach the panel when it is the key window (e.g. selection
+    // translation shows the panel without focus); dim the hints when they wouldn't work.
+    @State private var isWindowKey = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -22,6 +27,10 @@ struct SourceInputView: View {
                 fontName: fontName,
                 onSubmit: onSubmit,
                 onCopyAndClose: onCopyAndClose,
+                onSwapLanguages: onSwapLanguages,
+                onWindowKeyChange: { isKey in
+                    isWindowKey = isKey
+                },
                 onContentHeightChange: { editorHeight in
                     onContentHeightChange?(sourceInputHeight(forEditorHeight: editorHeight))
                 }
@@ -57,11 +66,20 @@ struct SourceInputView: View {
 
                 Spacer()
 
-                Text("↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline")
+                Text(shortcutHint)
                     .font(.popup(name: fontName, size: CGFloat(fontSize - 4)))
                     .foregroundStyle(.quaternary)
+                    .opacity(isWindowKey ? 1 : 0.4)
             }
         }
+    }
+
+    /// The swap shortcut is user-configurable, so the hint shows whatever is currently
+    /// bound and drops that segment entirely once the user clears the binding.
+    private var shortcutHint: String {
+        let base = String(localized: "↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline")
+        guard let swap = KeyboardShortcuts.getShortcut(for: .swapLanguages) else { return base }
+        return base + String(localized: " · \(swap.description) Swap")
     }
 
     private func sourceInputHeight(forEditorHeight editorHeight: CGFloat) -> CGFloat {
@@ -77,6 +95,8 @@ private struct SourceTextEditor: NSViewRepresentable {
     let fontName: String
     let onSubmit: () -> Void
     let onCopyAndClose: () -> Void
+    let onSwapLanguages: () -> Void
+    let onWindowKeyChange: (Bool) -> Void
     let onContentHeightChange: (CGFloat) -> Void
 
     private var resolvedFont: NSFont {
@@ -121,6 +141,8 @@ private struct SourceTextEditor: NSViewRepresentable {
         textView.textContainerInset = .zero
         textView.onSubmit = onSubmit
         textView.onCopyAndClose = onCopyAndClose
+        textView.onSwapLanguages = onSwapLanguages
+        textView.onWindowKeyChange = onWindowKeyChange
         textView.textContainer?.containerSize = NSSize(
             width: contentSize.width,
             height: CGFloat.greatestFiniteMagnitude
@@ -158,6 +180,8 @@ private struct SourceTextEditor: NSViewRepresentable {
 
         textView.onSubmit = onSubmit
         textView.onCopyAndClose = onCopyAndClose
+        textView.onSwapLanguages = onSwapLanguages
+        textView.onWindowKeyChange = onWindowKeyChange
 
         coordinator.reportContentHeight()
     }
@@ -196,6 +220,8 @@ private struct SourceTextEditor: NSViewRepresentable {
 private final class SubmitAwareTextView: NSTextView {
     var onSubmit: (() -> Void)?
     var onCopyAndClose: (() -> Void)?
+    var onSwapLanguages: (() -> Void)?
+    var onWindowKeyChange: ((Bool) -> Void)?
     private var displayFont: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
 
     func applyDisplayAttributes(font: NSFont) {
@@ -240,10 +266,43 @@ private final class SubmitAwareTextView: NSTextView {
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        observeWindowKeyStatus()
         // Event-driven first responder handoff: when SwiftUI mounts this text view into
         // the panel, consume the panel's one-shot focus request set by `focusSourceInput()`.
         guard let panel = window as? PopupPanel else { return }
         panel.consumePendingSourceInputFocus(into: self)
+    }
+
+    /// Tracks whether the hosting panel is the key window, so SwiftUI can dim the
+    /// shortcut hints when keystrokes would go to another app instead.
+    private func observeWindowKeyStatus() {
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: NSWindow.didBecomeKeyNotification, object: nil)
+        center.removeObserver(self, name: NSWindow.didResignKeyNotification, object: nil)
+        guard let window else {
+            onWindowKeyChange?(false)
+            return
+        }
+        center.addObserver(
+            self,
+            selector: #selector(reportWindowKeyStatus),
+            name: NSWindow.didBecomeKeyNotification,
+            object: window
+        )
+        center.addObserver(
+            self,
+            selector: #selector(reportWindowKeyStatus),
+            name: NSWindow.didResignKeyNotification,
+            object: window
+        )
+        // Async so the initial report doesn't mutate SwiftUI state mid view update
+        Task { @MainActor [weak self] in
+            self?.reportWindowKeyStatus()
+        }
+    }
+
+    @objc private func reportWindowKeyStatus() {
+        onWindowKeyChange?(window?.isKeyWindow ?? false)
     }
 
     override func keyDown(with event: NSEvent) {
@@ -262,6 +321,15 @@ private final class SubmitAwareTextView: NSTextView {
         if isReturnKey, !hasCommand, !hasShift, !hasMarkedText() {
             guard !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
             onSubmit?()
+            return
+        }
+
+        // User-configurable shortcut that swaps source/target languages
+        // (mirrors the swap button in LanguageBarView).
+        if !hasMarkedText(),
+           let configured = KeyboardShortcuts.getShortcut(for: .swapLanguages),
+           KeyboardShortcuts.Shortcut(event: event) == configured {
+            onSwapLanguages?()
             return
         }
 

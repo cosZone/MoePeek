@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " · %@ Swap" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %@ 互换语言"
+          }
+        }
+      }
+    },
     "(default)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -58,6 +69,7 @@
       }
     },
     "↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -848,6 +860,7 @@
       }
     },
     "Floating Icon Activation:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2398,6 +2411,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "支持工具调用"
+          }
+        }
+      }
+    },
+    "Swap Languages:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "互换语言："
           }
         }
       }

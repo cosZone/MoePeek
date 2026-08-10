@@ -146,6 +146,9 @@ struct PopupView: View {
                     onCopyAndClose: {
                         copySourceAndClose()
                     },
+                    onSwapLanguages: {
+                        swapLanguages()
+                    },
                     onContentHeightChange: { preferredHeight in
                         expandInputHeightIfNeeded(for: preferredHeight)
                     }
@@ -171,14 +174,7 @@ struct PopupView: View {
                         detectionConfidence: coordinator.detectionResult?.confidence,
                         targetLanguage: $targetLang,
                         onSwap: {
-                            let effectiveSource = sourceLang == "auto"
-                            ? (coordinator.detectedLanguage ?? targetLang)
-                            : sourceLang
-                            // When auto-detect has no result yet, effectiveSource falls back
-                            // to targetLang and swap becomes a no-op
-                            guard effectiveSource != targetLang else { return }
-                            sourceLang = targetLang
-                            targetLang = effectiveSource
+                            swapLanguages()
                         }
                     )
 
@@ -274,6 +270,17 @@ struct PopupView: View {
         let targetHeight = min(max(preferredHeight, baseline), maxInputHeight)
         guard abs(targetHeight - inputHeight) > 0.5 else { return }
         inputHeight = targetHeight
+    }
+
+    private func swapLanguages() {
+        let effectiveSource = sourceLang == "auto"
+        ? (coordinator.detectedLanguage ?? targetLang)
+        : sourceLang
+        // When auto-detect has no result yet, effectiveSource falls back
+        // to targetLang and swap becomes a no-op
+        guard effectiveSource != targetLang else { return }
+        sourceLang = targetLang
+        targetLang = effectiveSource
     }
 
     private func copySourceAndClose() {

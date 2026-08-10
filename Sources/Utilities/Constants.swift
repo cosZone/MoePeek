@@ -136,6 +136,7 @@ extension KeyboardShortcuts.Name {
     static let ocrScreenshot = Self("ocrScreenshot", default: .init(.s, modifiers: .option))
     static let inputTranslation = Self("inputTranslation", default: .init(.a, modifiers: .option))
     static let clipboardTranslation = Self("clipboardTranslation", default: .init(.v, modifiers: .option))
+    static let swapLanguages = Self("swapLanguages", default: .init(.t, modifiers: .option))
 }
 
 // MARK: - User Defaults Keys
