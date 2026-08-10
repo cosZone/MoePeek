@@ -45,14 +45,14 @@ enum ScreenshotOverlayDetector {
 
         for window in windows {
             guard let layer = window[kCGWindowLayer as String] as? Int, layer > 0,
-                  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat],
-                  let x = bounds["X"], let y = bounds["Y"],
-                  let width = bounds["Width"], let height = bounds["Height"],
-                  coversWholeDisplay(CGRect(x: x, y: y, width: width, height: height), displays),
-                  let pid = window[kCGWindowOwnerPID as String] as? pid_t
+                  let boundsDictionary = window[kCGWindowBounds as String] as? [String: Any],
+                  let bounds = CGRect(dictionaryRepresentation: boundsDictionary as CFDictionary),
+                  coversWholeDisplay(bounds, displays),
+                  let pidValue = window[kCGWindowOwnerPID as String] as? Int,
+                  let pid = pid_t(exactly: pidValue)
             else { continue }
 
-            if pid == frontmostPID { return true }
+            if let frontmostPID, pid == frontmostPID { return true }
             if let bundleID = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier,
                captureToolBundleIDs.contains(bundleID.lowercased()) {
                 return true
