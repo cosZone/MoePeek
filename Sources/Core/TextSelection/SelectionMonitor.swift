@@ -98,24 +98,25 @@ final class SelectionMonitor {
             guard let self, !Task.isCancelled else { return }
 
             // Tier 1: Accessibility API — fast, non-invasive
-            if let text = AccessibilityGrabber.grabSelectedText(near: point),
-               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                self.onTextSelected?(text, point)
-                return
-            }
+            if self.deliver(AccessibilityGrabber.grabSelectedText(near: point), at: point) { return }
 
             // Only attempt fallback tiers if the gesture looks like a selection
             guard wasDragOrMultiClick else { return }
+
+            // Double-click word selection updates the AX selection with a delay; the first
+            // Tier 1 read can miss it and fall through to the clipboard tiers, which may
+            // surface stale clipboard content instead. Retry Tier 1 once. See issue #59.
+            if clickCount >= 2 {
+                try? await Task.sleep(for: .milliseconds(120))
+                guard !Task.isCancelled else { return }
+                if self.deliver(AccessibilityGrabber.grabSelectedText(near: point), at: point) { return }
+            }
 
             // Conservative mode: only AX API, stop here
             guard mode != .conservative else { return }
 
             // Tier 2: AppleScript — Safari-specific JS selection (Finder won't match)
-            if let text = await AppleScriptGrabber.grabFromSafari(),
-               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                self.onTextSelected?(text, point)
-                return
-            }
+            if self.deliver(await AppleScriptGrabber.grabFromSafari(), at: point) { return }
 
             guard !Task.isCancelled else { return }
 
@@ -130,20 +131,19 @@ final class SelectionMonitor {
                     return
                 }
 
-                if let text = NSPasteboard.general.string(forType: .string),
-                   !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    self.onTextSelected?(text, point)
-                    return
-                }
+                if self.deliver(NSPasteboard.general.string(forType: .string), at: point) { return }
             }
 
             // Tier 3: Clipboard — simulate ⌘C, read pasteboard, restore
-            if let text = await ClipboardGrabber.grabViaClipboard(),
-               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                self.onTextSelected?(text, point)
-                return
-            }
+            _ = self.deliver(await ClipboardGrabber.grabViaClipboard(), at: point)
         }
     }
 
+    /// Hands `text` to `onTextSelected` when it carries non-whitespace content, keeping the
+    /// acceptance rule every grab tier shares in one place. Returns true when delivered.
+    private func deliver(_ text: String?, at point: CGPoint) -> Bool {
+        guard let text, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        onTextSelected?(text, point)
+        return true
+    }
 }

@@ -14,6 +14,10 @@ enum ClipboardGrabber {
     /// Saves and restores the previous clipboard content, unless an external
     /// modification (real user ⌘+C) is detected during the grab window.
     @MainActor static func grabViaClipboard() async -> String? {
+        // Skip synthesizing ⌘C while a screenshot tool's capture overlay is on screen —
+        // it would swallow the keypress as its own shortcut and abort the capture. See issue #67.
+        guard !ScreenshotOverlayDetector.isCapturingScreenshot() else { return nil }
+
         guard isGrabbing.withLock({ val in
             if val { return false }
             val = true

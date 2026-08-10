@@ -1,7 +1,10 @@
 import AppKit
 import ApplicationServices
+import os
 
 enum AccessibilityGrabber {
+    private static let log = Logger(subsystem: "com.nahida.MoePeek", category: "AccessibilityGrabber")
+
     /// Read the selected text from the frontmost application using the Accessibility API.
     /// Returns nil if no text is selected or the app doesn't support AX text selection.
     ///
@@ -11,23 +14,7 @@ enum AccessibilityGrabber {
     ///   (bottom-left origin).
     @MainActor
     static func grabSelectedText(near clickPoint: CGPoint? = nil) -> String? {
-        guard let frontApp = NSWorkspace.shared.frontmostApplication else { return nil }
-
-        let appElement = AXUIElementCreateApplication(frontApp.processIdentifier)
-
-        var focusedValue: CFTypeRef?
-        let focusResult = AXUIElementCopyAttributeValue(
-            appElement,
-            kAXFocusedUIElementAttribute as CFString,
-            &focusedValue
-        )
-        guard focusResult == .success,
-              let focusedRef = focusedValue,
-              CFGetTypeID(focusedRef) == AXUIElementGetTypeID()
-        else { return nil }
-
-        // Safe: CFGetTypeID verified above; as?/as! cannot express CF type casts cleanly.
-        let focusedElement = unsafeBitCast(focusedRef, to: AXUIElement.self)
+        guard let focusedElement = copyFocusedElement() else { return nil }
 
         var selectedValue: CFTypeRef?
         let selectResult = AXUIElementCopyAttributeValue(
@@ -36,6 +23,7 @@ enum AccessibilityGrabber {
             &selectedValue
         )
         guard selectResult == .success, let text = selectedValue as? String, !text.isEmpty else {
+            log.debug("kAXSelectedTextAttribute unavailable (status: \(selectResult.rawValue, privacy: .public))")
             return nil
         }
 
@@ -75,5 +63,55 @@ enum AccessibilityGrabber {
         }
 
         return text
+    }
+
+    /// Resolve the currently focused UI element. Tries the frontmost app's element first, then
+    /// falls back to the system-wide element — some apps (and newer macOS releases) expose the
+    /// focused element only via the system-wide accessibility object. See issue #75.
+    @MainActor
+    private static func copyFocusedElement() -> AXUIElement? {
+        guard let frontApp = NSWorkspace.shared.frontmostApplication else {
+            log.debug("no frontmost application")
+            return nil
+        }
+
+        let appElement = AXUIElementCreateApplication(frontApp.processIdentifier)
+        if let element = copyFocusedUIElement(of: appElement) {
+            return element
+        }
+        log.debug("app-level focused element unavailable for \(frontApp.bundleIdentifier ?? "?", privacy: .public)")
+
+        guard let element = copyFocusedUIElement(of: AXUIElementCreateSystemWide()) else {
+            log.debug("system-wide focused element unavailable")
+            return nil
+        }
+
+        // The system-wide object can hand back an element owned by another process — a
+        // non-activating panel holding key focus, for instance. Callers scope exclusions and
+        // stale-selection checks to the frontmost app, so reject anything outside it.
+        var elementPID: pid_t = 0
+        guard AXUIElementGetPid(element, &elementPID) == .success,
+              elementPID == frontApp.processIdentifier
+        else {
+            log.debug("system-wide focused element belongs to another process")
+            return nil
+        }
+        return element
+    }
+
+    private static func copyFocusedUIElement(of element: AXUIElement) -> AXUIElement? {
+        var focusedValue: CFTypeRef?
+        let focusResult = AXUIElementCopyAttributeValue(
+            element,
+            kAXFocusedUIElementAttribute as CFString,
+            &focusedValue
+        )
+        guard focusResult == .success,
+              let focusedRef = focusedValue,
+              CFGetTypeID(focusedRef) == AXUIElementGetTypeID()
+        else { return nil }
+
+        // Safe: CFGetTypeID verified above; as?/as! cannot express CF type casts cleanly.
+        return unsafeBitCast(focusedRef, to: AXUIElement.self)
     }
 }
