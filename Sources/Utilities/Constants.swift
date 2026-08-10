@@ -1,3 +1,4 @@
+import AppKit
 import Defaults
 import Foundation
 import KeyboardShortcuts
@@ -136,7 +137,58 @@ extension KeyboardShortcuts.Name {
     static let ocrScreenshot = Self("ocrScreenshot", default: .init(.s, modifiers: .option))
     static let inputTranslation = Self("inputTranslation", default: .init(.a, modifiers: .option))
     static let clipboardTranslation = Self("clipboardTranslation", default: .init(.v, modifiers: .option))
-    static let swapLanguages = Self("swapLanguages", default: .init(.t, modifiers: .option))
+    static let swapLanguages: Self = {
+        let name = Self("swapLanguages", default: .init(.t, modifiers: .option))
+        KeyboardShortcuts.disable(name)
+        return name
+    }()
+}
+
+/// Keeps the swap shortcut popup-local even though the package recorder uses global names.
+enum SwapLanguagesShortcut {
+    static let didChangeNotification = Notification.Name("SwapLanguagesShortcutDidChange")
+
+    private static let popupReservedNumberKeys: Set<KeyboardShortcuts.Key> = [
+        .one, .two, .three, .four, .five, .six, .seven, .eight, .nine,
+    ]
+
+    static var current: KeyboardShortcuts.Shortcut? {
+        KeyboardShortcuts.getShortcut(for: .swapLanguages)
+    }
+
+    static func recorderDidChange() {
+        KeyboardShortcuts.disable(.swapLanguages)
+        NotificationCenter.default.post(name: didChangeNotification, object: nil)
+    }
+
+    static func matches(_ event: NSEvent) -> Bool {
+        guard let current, let eventShortcut = KeyboardShortcuts.Shortcut(event: event) else {
+            return false
+        }
+        return eventShortcut == current
+    }
+
+    static func isReserved(_ shortcut: KeyboardShortcuts.Shortcut) -> Bool {
+        if shortcut.key == .return || shortcut.key == .keypadEnter {
+            return true
+        }
+
+        if shortcut.modifiers == .command,
+           let key = shortcut.key,
+           popupReservedNumberKeys.contains(key) {
+            return true
+        }
+
+        let globalShortcutNames: [KeyboardShortcuts.Name] = [
+            .translateSelection,
+            .ocrScreenshot,
+            .inputTranslation,
+            .clipboardTranslation,
+        ]
+        return globalShortcutNames
+            .compactMap { KeyboardShortcuts.getShortcut(for: $0) }
+            .contains(shortcut)
+    }
 }
 
 // MARK: - User Defaults Keys

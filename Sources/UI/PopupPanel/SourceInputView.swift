@@ -18,6 +18,7 @@ struct SourceInputView: View {
     // Keyboard shortcuts only reach the panel when it is the key window (e.g. selection
     // translation shows the panel without focus); dim the hints when they wouldn't work.
     @State private var isWindowKey = false
+    @State private var swapShortcut = SwapLanguagesShortcut.current
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -72,13 +73,16 @@ struct SourceInputView: View {
                     .opacity(isWindowKey ? 1 : 0.4)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: SwapLanguagesShortcut.didChangeNotification)) { _ in
+            swapShortcut = SwapLanguagesShortcut.current
+        }
     }
 
     /// The swap shortcut is user-configurable, so the hint shows whatever is currently
     /// bound and drops that segment entirely once the user clears the binding.
     private var shortcutHint: String {
         let base = String(localized: "↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline")
-        guard let swap = KeyboardShortcuts.getShortcut(for: .swapLanguages) else { return base }
+        guard let swap = swapShortcut else { return base }
         return base + String(localized: " · \(swap.description) Swap")
     }
 
@@ -306,6 +310,13 @@ private final class SubmitAwareTextView: NSTextView {
     }
 
     override func keyDown(with event: NSEvent) {
+        if !hasMarkedText(), SwapLanguagesShortcut.matches(event) {
+            if !event.isARepeat {
+                onSwapLanguages?()
+            }
+            return
+        }
+
         let isReturnKey = event.keyCode == 36 || event.keyCode == 76
         let hasShift = event.modifierFlags.contains(.shift)
         let hasCommand = event.modifierFlags.contains(.command)
@@ -321,15 +332,6 @@ private final class SubmitAwareTextView: NSTextView {
         if isReturnKey, !hasCommand, !hasShift, !hasMarkedText() {
             guard !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
             onSubmit?()
-            return
-        }
-
-        // User-configurable shortcut that swaps source/target languages
-        // (mirrors the swap button in LanguageBarView).
-        if !hasMarkedText(),
-           let configured = KeyboardShortcuts.getShortcut(for: .swapLanguages),
-           KeyboardShortcuts.Shortcut(event: event) == configured {
-            onSwapLanguages?()
             return
         }
 
