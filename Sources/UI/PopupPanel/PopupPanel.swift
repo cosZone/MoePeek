@@ -21,6 +21,7 @@ enum PopupPanelViewIdentifier {
 /// A floating, non-activating panel for showing translation results near the cursor.
 final class PopupPanel: NSPanel {
     var onCopyResultShortcut: ((Int) -> Bool)?
+    var onSwapLanguagesShortcut: ((NSEvent) -> Bool)?
 
     /// Set when `focusSourceInput()` is called before the source text view has been mounted.
     /// `SubmitAwareTextView.viewDidMoveToWindow` consumes this flag once the view attaches.
@@ -90,6 +91,11 @@ final class PopupPanel: NSPanel {
     /// Intercepts left-mouse-down on non-interactive areas to start a window drag,
     /// while letting interactive controls (text views, buttons, gesture views) handle events normally.
     override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown,
+           onSwapLanguagesShortcut?(event) == true {
+            return
+        }
+
         if event.type == .keyDown,
            let resultIndex = copyResultShortcutIndex(for: event),
            onCopyResultShortcut?(resultIndex) == true {

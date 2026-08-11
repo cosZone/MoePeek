@@ -274,6 +274,9 @@ private final class SubmitAwareTextView: NSTextView {
         // Event-driven first responder handoff: when SwiftUI mounts this text view into
         // the panel, consume the panel's one-shot focus request set by `focusSourceInput()`.
         guard let panel = window as? PopupPanel else { return }
+        panel.onSwapLanguagesShortcut = { [weak self] event in
+            self?.handleSwapLanguagesShortcut(event) ?? false
+        }
         panel.consumePendingSourceInputFocus(into: self)
     }
 
@@ -309,14 +312,15 @@ private final class SubmitAwareTextView: NSTextView {
         onWindowKeyChange?(window?.isKeyWindow ?? false)
     }
 
-    override func keyDown(with event: NSEvent) {
-        if !hasMarkedText(), SwapLanguagesShortcut.matches(event) {
-            if !event.isARepeat {
-                onSwapLanguages?()
-            }
-            return
+    private func handleSwapLanguagesShortcut(_ event: NSEvent) -> Bool {
+        guard !hasMarkedText(), SwapLanguagesShortcut.matches(event) else { return false }
+        if !event.isARepeat {
+            onSwapLanguages?()
         }
+        return true
+    }
 
+    override func keyDown(with event: NSEvent) {
         let isReturnKey = event.keyCode == 36 || event.keyCode == 76
         let hasShift = event.modifierFlags.contains(.shift)
         let hasCommand = event.modifierFlags.contains(.command)

@@ -140,6 +140,7 @@ extension KeyboardShortcuts.Name {
     static let swapLanguages: Self = {
         let name = Self("swapLanguages", default: .init(.t, modifiers: .option))
         KeyboardShortcuts.disable(name)
+        SwapLanguagesShortcut.restoreGlobalRegistrations()
         return name
     }()
 }
@@ -150,6 +151,15 @@ enum SwapLanguagesShortcut {
 
     private static let popupReservedNumberKeys: Set<KeyboardShortcuts.Key> = [
         .one, .two, .three, .four, .five, .six, .seven, .eight, .nine,
+        .keypad1, .keypad2, .keypad3, .keypad4, .keypad5,
+        .keypad6, .keypad7, .keypad8, .keypad9,
+    ]
+
+    private static let globalShortcutNames: [KeyboardShortcuts.Name] = [
+        .translateSelection,
+        .ocrScreenshot,
+        .inputTranslation,
+        .clipboardTranslation,
     ]
 
     static var current: KeyboardShortcuts.Shortcut? {
@@ -157,8 +167,20 @@ enum SwapLanguagesShortcut {
     }
 
     static func recorderDidChange() {
-        KeyboardShortcuts.disable(.swapLanguages)
+        reconcileRegistrations()
         NotificationCenter.default.post(name: didChangeNotification, object: nil)
+    }
+
+    static func reconcileRegistrations() {
+        KeyboardShortcuts.disable(.swapLanguages)
+        restoreGlobalRegistrations()
+    }
+
+    /// `KeyboardShortcuts` unregisters by key combination rather than by name. Re-enable
+    /// the app-wide shortcuts after disabling or reverting this popup-local binding so a
+    /// rejected collision cannot leave an existing global shortcut inactive.
+    static func restoreGlobalRegistrations() {
+        KeyboardShortcuts.enable(globalShortcutNames)
     }
 
     static func matches(_ event: NSEvent) -> Bool {
@@ -179,12 +201,6 @@ enum SwapLanguagesShortcut {
             return true
         }
 
-        let globalShortcutNames: [KeyboardShortcuts.Name] = [
-            .translateSelection,
-            .ocrScreenshot,
-            .inputTranslation,
-            .clipboardTranslation,
-        ]
         return globalShortcutNames
             .compactMap { KeyboardShortcuts.getShortcut(for: $0) }
             .contains(shortcut)

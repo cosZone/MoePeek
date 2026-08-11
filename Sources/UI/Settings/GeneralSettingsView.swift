@@ -46,10 +46,10 @@ struct GeneralSettingsView: View {
     var body: some View {
         Form {
             Section("Keyboard Shortcuts") {
-                KeyboardShortcuts.Recorder("Selection Translation:", name: .translateSelection)
-                KeyboardShortcuts.Recorder("Screenshot OCR:", name: .ocrScreenshot)
-                KeyboardShortcuts.Recorder("Manual Translation:", name: .inputTranslation)
-                KeyboardShortcuts.Recorder("Clipboard Translation:", name: .clipboardTranslation)
+                GlobalShortcutRecorder("Selection Translation:", name: .translateSelection)
+                GlobalShortcutRecorder("Screenshot OCR:", name: .ocrScreenshot)
+                GlobalShortcutRecorder("Manual Translation:", name: .inputTranslation)
+                GlobalShortcutRecorder("Clipboard Translation:", name: .clipboardTranslation)
 
                 LocalShortcutRecorder()
             }
