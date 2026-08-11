@@ -139,6 +139,11 @@ extension KeyboardShortcuts.Name {
     static let clipboardTranslation = Self("clipboardTranslation", default: .init(.v, modifiers: .option))
     static let swapLanguages: Self = {
         let name = Self("swapLanguages", default: .init(.t, modifiers: .option))
+        // Clear legacy or default bindings that conflict with popup or global actions.
+        if let current = KeyboardShortcuts.getShortcut(for: name),
+           SwapLanguagesShortcut.isReserved(current) {
+            KeyboardShortcuts.setShortcut(nil, for: name)
+        }
         KeyboardShortcuts.disable(name)
         SwapLanguagesShortcut.restoreGlobalRegistrations()
         return name
