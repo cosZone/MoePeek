@@ -70,6 +70,9 @@ struct SourceInputView: View {
                 Text(shortcutHint)
                     .font(.popup(name: fontName, size: CGFloat(fontSize - 4)))
                     .foregroundStyle(.quaternary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .allowsTightening(true)
                     .opacity(isWindowKey ? 1 : 0.4)
             }
         }
