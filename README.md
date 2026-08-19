@@ -163,7 +163,7 @@ Built with:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=cosZone/MoePeek&type=date&legend=top-left)](https://www.star-history.com/#cosZone/MoePeek&type=date&legend=top-left)
+[![Star History Chart](https://star-history.dera.page/svg?repos=cosZone/MoePeek&type=date&legend=top-left)](https://star-history.dera.page/#cosZone/MoePeek&type=date&legend=top-left)
 
 ## License
 
