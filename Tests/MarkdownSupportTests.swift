@@ -19,29 +19,47 @@ import Testing
         #expect(!MarkdownSupport.looksLikeMarkdown("a | b"))
     }
 
-    @Test func rewritesImagesToPlaceholderLinks() {
-        let input = "看图 ![示意图](https://cdn.example.com/a.png \"title\") 结束"
-        let output = MarkdownSupport.rewriteImages(input)
-        #expect(!output.contains("!["))
-        #expect(output.contains("[🖼 示意图 · cdn.example.com](moepeek-image:"))
-        #expect(output.hasSuffix(") 结束"))
-    }
-
     @Test func emptyAltFallsBackToImageLabel() {
-        let output = MarkdownSupport.rewriteImages("![](https://example.com/x.png)")
-        #expect(output.contains("🖼 "))
-        #expect(output.contains("example.com"))
+        let segments = MarkdownSupport.renderingSegments("![](https://example.com/x.png)")
+        guard case .image(let placeholder) = segments.first else {
+            Issue.record("Expected an image rendering segment")
+            return
+        }
+        #expect(placeholder.label.hasPrefix("🖼 "))
+        #expect(placeholder.label.contains("example.com"))
+        #expect(placeholder.url == URL(string: "https://example.com/x.png")!)
     }
 
-    @Test func placeholderURLRoundTrips() {
-        let original = "https://cdn.example.com/path/a b.png?x=1&y=2"
-        let rewritten = MarkdownSupport.rewriteImages("![a](\(original.replacingOccurrences(of: " ", with: "%20")))")
-        let start = rewritten.range(of: "(moepeek-image:")!.upperBound
-        let end = rewritten[start...].firstIndex(of: ")")!
-        let placeholder = URL(string: "moepeek-image:" + rewritten[start..<end])!
-        #expect(MarkdownSupport.imageURL(fromPlaceholder: placeholder)?.absoluteString
-            == original.replacingOccurrences(of: " ", with: "%20"))
-        #expect(MarkdownSupport.imageURL(fromPlaceholder: URL(string: "https://example.com")!) == nil)
+    @Test func splitsImagesIntoDedicatedRenderingSegments() {
+        let input = """
+            ```swift
+            let message = "Hello"
+            ```
+
+            ![示意图](https://cdn.example.com/a.png)
+
+            结束
+            """
+
+        let segments = MarkdownSupport.renderingSegments(input)
+
+        #expect(segments.count == 3)
+        #expect(segments[0] == .markdown("```swift\nlet message = \"Hello\"\n```\n\n"))
+        #expect(segments[1] == .image(.init(
+            label: "🖼 示意图 · cdn.example.com",
+            url: URL(string: "https://cdn.example.com/a.png")!
+        )))
+        #expect(segments[2] == .markdown("\n\n结束"))
+    }
+
+    @Test func preservesEncodedImageURL() {
+        let original = "https://cdn.example.com/path/a%20b.png?x=1&y=2"
+        let segments = MarkdownSupport.renderingSegments("![a](\(original))")
+        guard case .image(let placeholder) = segments.first else {
+            Issue.record("Expected an image rendering segment")
+            return
+        }
+        #expect(placeholder.url.absoluteString == original)
     }
 
     @Test func hardensSingleLineBreaksBetweenPlainLines() {

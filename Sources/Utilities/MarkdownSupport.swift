@@ -1,10 +1,18 @@
 import Foundation
 
+struct MarkdownImagePlaceholder: Equatable {
+    let label: String
+    let url: URL
+}
+
+enum MarkdownRenderingSegment: Equatable {
+    case markdown(String)
+    case image(MarkdownImagePlaceholder)
+}
+
 /// Pure helpers that decide whether a translation result should be rendered as Markdown
 /// and rewrite it into a form the renderer can display without any network access.
 enum MarkdownSupport {
-    static let imagePlaceholderScheme = "moepeek-image"
-
     private static let blockPatterns: [NSRegularExpression] = [
         #"^#{1,6}\s+\S"#,
         #"^\s*[-*+]\s+\S"#,
@@ -36,36 +44,51 @@ enum MarkdownSupport {
         return (blockPatterns + inlinePatterns).contains { $0.firstMatch(in: text, range: range) != nil }
     }
 
-    static func prepareForRendering(_ text: String) -> String {
-        hardenLineBreaks(rewriteImages(text))
-    }
-
-    /// Replaces `![alt](url)` with a link to a private scheme so the renderer never fetches
-    /// remote images. The link label shows the alt text and the image host.
-    static func rewriteImages(_ text: String) -> String {
+    /// Separates images from Textual's link interaction layer so their placeholders can be
+    /// rendered as native buttons while preserving their position in the document.
+    static func renderingSegments(_ text: String) -> [MarkdownRenderingSegment] {
         let nsText = text as NSString
-        var result = text
-        for match in imagePattern.matches(in: text, range: NSRange(location: 0, length: nsText.length)).reversed() {
+        let matches = imagePattern.matches(in: text, range: NSRange(location: 0, length: nsText.length))
+        guard !matches.isEmpty else { return [.markdown(text)] }
+
+        var segments: [MarkdownRenderingSegment] = []
+        var cursor = 0
+
+        func appendMarkdown(_ markdown: String) {
+            guard !markdown.isEmpty else { return }
+            if case .markdown(let previous) = segments.last {
+                segments.removeLast()
+                segments.append(.markdown(previous + markdown))
+            } else {
+                segments.append(.markdown(markdown))
+            }
+        }
+
+        for match in matches {
+            if match.range.location > cursor {
+                appendMarkdown(nsText.substring(with: NSRange(
+                    location: cursor,
+                    length: match.range.location - cursor
+                )))
+            }
+
             let alt = nsText.substring(with: match.range(at: 1))
             let urlString = nsText.substring(with: match.range(at: 2))
-            guard let encoded = urlString.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { continue }
-            var label = alt.isEmpty ? String(localized: "Image") : alt
-            label = label.replacingOccurrences(of: "[", with: "\\[").replacingOccurrences(of: "]", with: "\\]")
-            if let host = URL(string: urlString)?.host, !host.isEmpty {
-                label += " · \(host)"
+            if let url = URL(string: urlString) {
+                segments.append(.image(.init(
+                    label: imagePlaceholderLabel(alt: alt, urlString: urlString),
+                    url: url
+                )))
+            } else {
+                appendMarkdown(nsText.substring(with: match.range))
             }
-            let replacement = "[🖼 \(label)](\(imagePlaceholderScheme):\(encoded))"
-            let swiftRange = Range(match.range, in: result)!
-            result.replaceSubrange(swiftRange, with: replacement)
+            cursor = NSMaxRange(match.range)
         }
-        return result
-    }
 
-    static func imageURL(fromPlaceholder url: URL) -> URL? {
-        guard url.scheme == imagePlaceholderScheme else { return nil }
-        let encoded = url.absoluteString.dropFirst(imagePlaceholderScheme.count + 1)
-        guard let decoded = String(encoded).removingPercentEncoding else { return nil }
-        return URL(string: decoded)
+        if cursor < nsText.length {
+            appendMarkdown(nsText.substring(from: cursor))
+        }
+        return segments
     }
 
     /// LLM output uses single newlines as visual line breaks, but CommonMark folds them into
@@ -107,5 +130,13 @@ enum MarkdownSupport {
 
     private static func isMatch(_ pattern: String, _ line: String) -> Bool {
         line.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private static func imagePlaceholderLabel(alt: String, urlString: String) -> String {
+        var label = alt.isEmpty ? String(localized: "Image") : alt
+        if let host = URL(string: urlString)?.host, !host.isEmpty {
+            label += " · \(host)"
+        }
+        return "🖼 \(label)"
     }
 }

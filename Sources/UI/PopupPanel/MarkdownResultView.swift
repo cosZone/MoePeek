@@ -9,18 +9,27 @@ struct MarkdownResultView: View {
     let font: Font
 
     var body: some View {
-        StructuredText(markdown: MarkdownSupport.prepareForRendering(text))
-            .font(font)
-            .textual.textSelection(.enabled)
-            .textual.imageAttachmentLoader(NoRemoteImageLoader())
-            .environment(\.openURL, OpenURLAction { url in
-                guard let imageURL = MarkdownSupport.imageURL(fromPlaceholder: url) else {
-                    return .systemAction
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(MarkdownSupport.renderingSegments(text).enumerated()), id: \.offset) { _, segment in
+                switch segment {
+                case .markdown(let markdown):
+                    StructuredText(markdown: MarkdownSupport.hardenLineBreaks(markdown))
+                        .textual.textSelection(.enabled)
+                        .textual.imageAttachmentLoader(NoRemoteImageLoader())
+                case .image(let placeholder):
+                    Button {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(placeholder.url.absoluteString, forType: .string)
+                    } label: {
+                        Text(placeholder.label)
+                            .foregroundStyle(Color.accentColor)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(placeholder.label)
                 }
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(imageURL.absoluteString, forType: .string)
-                return .handled
-            })
+            }
+        }
+        .font(font)
     }
 }
 
