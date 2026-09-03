@@ -20,14 +20,14 @@ xcodebuild -workspace MoePeek.xcworkspace -scheme MoePeek -configuration Debug b
 open MoePeek.xcworkspace
 ```
 
-No tests, linting, or CI/CD are currently configured.
+Unit tests live in `Tests/` (Swift Testing, target `MoePeekTests`); run with `xcodebuild test -workspace MoePeek.xcworkspace -scheme MoePeek`. No linting is configured.
 
 ## Tech Stack
 
 - **Swift 6.0+** with `SWIFT_STRICT_CONCURRENCY: complete`
-- **macOS 14.0+** deployment target, LSUIElement (menu bar app, no Dock icon)
+- **macOS 15.0+** deployment target, LSUIElement (menu bar app, no Dock icon)
 - **SwiftUI + AppKit hybrid**: SwiftUI for views, AppKit NSPanel for non-activating floating windows
-- **Dependencies**: KeyboardShortcuts (sindresorhus), Defaults (sindresorhus)
+- **Dependencies**: KeyboardShortcuts (sindresorhus), Defaults (sindresorhus), Sparkle, Textual (gonzalezreal, Markdown rendering)
 - **License**: AGPL-3.0
 
 ## Architecture

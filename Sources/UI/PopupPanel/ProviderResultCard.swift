@@ -16,6 +16,8 @@ struct ProviderResultCard: View {
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
+    @Default(.renderMarkdownResults) private var renderMarkdownResults
+    @Default(.resultViewMode) private var resultViewMode
     @Environment(\.ttsCoordinator) private var ttsCoordinator
 
     var body: some View {
@@ -130,9 +132,9 @@ struct ProviderResultCard: View {
                 .font(.popup(name: fontName, size: CGFloat(fontSize)))
                 .foregroundStyle(.secondary)
         case let .streaming(partial):
-            resultContent(partial, canSpeak: false)
+            resultContent(partial, isCompleted: false)
         case let .completed(text):
-            resultContent(text, canSpeak: true)
+            resultContent(text, isCompleted: true)
         case let .error(message):
             VStack(alignment: .leading, spacing: 4) {
                 Label(message, systemImage: "exclamationmark.triangle")
@@ -155,17 +157,41 @@ struct ProviderResultCard: View {
         }
     }
 
-    private func resultContent(_ text: String, canSpeak: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(text)
-                .font(.popup(name: fontName, size: CGFloat(fontSize)))
-                .foregroundStyle(.primary)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
+    private func resultContent(_ text: String, isCompleted: Bool) -> some View {
+        let canSpeak = isCompleted
+        let offersMarkdown = isCompleted && renderMarkdownResults && MarkdownSupport.looksLikeMarkdown(text)
+        let font = Font.popup(name: fontName, size: CGFloat(fontSize))
 
-            if (canSpeak && ttsCoordinator != nil) || onCopy != nil {
+        return VStack(alignment: .leading, spacing: 4) {
+            if offersMarkdown && resultViewMode == .rendered {
+                MarkdownResultView(text: text, font: font)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Text(text)
+                    .font(font)
+                    .foregroundStyle(.primary)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if offersMarkdown || (canSpeak && ttsCoordinator != nil) || onCopy != nil {
                 HStack {
                     Spacer()
+
+                    if offersMarkdown {
+                        Button {
+                            resultViewMode = resultViewMode == .rendered ? .source : .rendered
+                        } label: {
+                            Label(
+                                resultViewMode == .rendered ? "Source" : "Markdown",
+                                systemImage: resultViewMode == .rendered ? "chevron.left.forwardslash.chevron.right" : "doc.richtext"
+                            )
+                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .help(resultViewMode == .rendered ? "Show source text" : "Show rendered Markdown")
+                    }
 
                     if canSpeak, let ttsCoordinator {
                         Button {

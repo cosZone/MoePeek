@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://github.com/cosZone/MoePeek/releases/latest"><img src="https://img.shields.io/github/v/release/cosZone/MoePeek" alt="GitHub Release" /></a>
   <a href="https://github.com/cosZone/MoePeek/releases"><img src="https://img.shields.io/github/downloads/cosZone/MoePeek/total" alt="Downloads" /></a>
-  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-blue" alt="Platform" />
+  <img src="https://img.shields.io/badge/platform-macOS%2015%2B-blue" alt="Platform" />
   <img src="https://img.shields.io/badge/swift-6.0-orange" alt="Swift" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License" /></a>
 </p>
@@ -57,7 +57,7 @@
 
 ## 为什么选择 MoePeek
 
-- **约 5 MB 安装体积**：纯 Swift 6 构建，仅 3 个依赖。没有 Electron，没有 WebView。
+- **约 7 MB 安装体积**：纯 Swift 6 构建，仅 4 个依赖。没有 Electron，没有 WebView。
 - **约 50 MB 后台内存**：系统性防控内存泄漏，长时间挂后台也稳定。
 - **注重隐私**：Apple 翻译完全在设备端运行。
 - **开源项目**：AGPL-3.0 协议，欢迎提 Issue 和反馈。
@@ -151,6 +151,7 @@ MoePeek 的诞生受到了 [Easydict](https://github.com/tisfeng/Easydict) 和 [
 - [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)：Sindre Sorhus
 - [Defaults](https://github.com/sindresorhus/Defaults)：Sindre Sorhus
 - [Sparkle](https://sparkle-project.org/)：自动更新
+- [Textual](https://github.com/gonzalezreal/textual)：Markdown 渲染
 
 ## 贡献者
 

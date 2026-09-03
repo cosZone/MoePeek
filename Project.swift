@@ -22,7 +22,7 @@ let project = Project(
             destinations: .macOS,
             product: .app,
             bundleId: "com.nahida.MoePeek",
-            deploymentTargets: .macOS("14.0"),
+            deploymentTargets: .macOS("15.0"),
             infoPlist: .extendingDefault(with: [
                 "CFBundleDevelopmentRegion": "en",
                 "CFBundleShortVersionString": "$(MARKETING_VERSION)",
@@ -43,6 +43,7 @@ let project = Project(
                 .external(name: "KeyboardShortcuts"),
                 .external(name: "Defaults"),
                 .external(name: "Sparkle"),
+                .external(name: "Textual"),
             ],
             settings: .settings(
                 base: [
@@ -57,6 +58,17 @@ let project = Project(
                     .release(name: "Release", xcconfig: "Configurations/Signing.xcconfig"),
                 ]
             )
+        ),
+        .target(
+            name: "MoePeekTests",
+            destinations: .macOS,
+            product: .unitTests,
+            bundleId: "com.nahida.MoePeekTests",
+            deploymentTargets: .macOS("15.0"),
+            sources: ["Tests/**"],
+            dependencies: [
+                .target(name: "MoePeek"),
+            ]
         ),
     ]
 )

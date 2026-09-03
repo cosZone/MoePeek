@@ -54,6 +54,14 @@ jobs:
       - name: Resolve dependencies and generate project
         run: tuist install && tuist generate
 
+      # Textual pulls in swiftui-math, whose bundled math fonts add ~7 MB. MoePeek never enables
+      # the math syntax extension and SwiftUIMath loads fonts lazily, so the files are dead weight.
+      # Deleting them before the build keeps the code signature intact.
+      - name: Strip unused math fonts
+        run: |
+          find .build/checkouts/swiftui-math/Sources/SwiftUIMath/mathFonts.bundle \
+            \( -name '*.otf' -o -name '*.plist' \) -delete
+
       - name: Determine version
         id: version
         run: |

@@ -15,6 +15,7 @@ struct GeneralSettingsView: View {
     @Default(.popupDefaultHeight) private var popupDefaultHeight
     @Default(.popupFontSize) private var popupFontSize
     @Default(.popupFontName) private var popupFontName
+    @Default(.renderMarkdownResults) private var renderMarkdownResults
     @Default(.popupRememberPosition) private var popupRememberPosition
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
@@ -206,6 +207,8 @@ struct GeneralSettingsView: View {
                             .tag(family)
                     }
                 }
+
+                Toggle("Render Markdown in results", isOn: $renderMarkdownResults)
             }
         }
         .formStyle(.grouped)

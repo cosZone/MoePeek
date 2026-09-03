@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://github.com/cosZone/MoePeek/releases/latest"><img src="https://img.shields.io/github/v/release/cosZone/MoePeek" alt="GitHub Release" /></a>
   <a href="https://github.com/cosZone/MoePeek/releases"><img src="https://img.shields.io/github/downloads/cosZone/MoePeek/total" alt="Downloads" /></a>
-  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-blue" alt="Platform" />
+  <img src="https://img.shields.io/badge/platform-macOS%2015%2B-blue" alt="Platform" />
   <img src="https://img.shields.io/badge/swift-6.0-orange" alt="Swift" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License" /></a>
 </p>
@@ -56,7 +56,7 @@
 
 ## Why MoePeek
 
-- **~5 MB app size**: Pure Swift 6, only 3 dependencies. No Electron, no WebView.
+- **~7 MB app size**: Pure Swift 6, only 4 dependencies. No Electron, no WebView.
 - **~50 MB background memory**: Systematic memory leak prevention for long-running sessions.
 - **Privacy-friendly**: Apple Translation runs entirely on-device.
 - **Open source**: AGPL-3.0 licensed. Issues and feedback welcome.
@@ -150,6 +150,7 @@ Built with:
 - [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) by Sindre Sorhus
 - [Defaults](https://github.com/sindresorhus/Defaults) by Sindre Sorhus
 - [Sparkle](https://sparkle-project.org/) for auto-updates
+- [Textual](https://github.com/gonzalezreal/textual) for Markdown rendering
 
 ## Contributors
 

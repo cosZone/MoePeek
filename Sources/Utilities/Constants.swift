@@ -77,6 +77,13 @@ enum TextDetectionMode: String, CaseIterable, Defaults.Serializable {
     case full          // Tier 1 + Tier 2 + Tier 3 (AX + AppleScript + ⌘C simulation)
 }
 
+// MARK: - Result View Mode
+
+enum ResultViewMode: String, Defaults.Serializable {
+    case rendered
+    case source
+}
+
 // MARK: - Menu Bar Icon Style
 
 enum MenuBarIconStyle: String, CaseIterable, Defaults.Serializable {
@@ -300,6 +307,10 @@ extension Defaults.Keys {
     static let popupInputHeight = Key<Int>("popupInputHeight", default: 48)
     static let popupFontSize = Key<Int>("popupFontSize", default: 12)
     static let popupFontName = Key<String>("popupFontName", default: "")
+
+    // Markdown rendering of translation results
+    static let renderMarkdownResults = Key<Bool>("renderMarkdownResults", default: true)
+    static let resultViewMode = Key<ResultViewMode>("resultViewMode", default: .rendered)
 
     // Popup panel last dragged position (used when popupRememberPosition is enabled).
     // We persist the top-left corner so the visual position stays anchored even when the
