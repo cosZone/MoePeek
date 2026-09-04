@@ -185,7 +185,7 @@ import Testing
     }
 
     @MainActor
-    @Test func stripsRemoteImagesFromHTMLBeforeImport() async {
+    @Test func stripsEveryRemoteReferenceExceptImagesFromHTML() async {
         let html = Data("""
             <style>p{background:url(https://example.com/bg.png)}</style><script>alert(1)</script>\
             <p style="background-image:url('https://example.com/px.gif')"><b>Bold</b> \
@@ -194,8 +194,42 @@ import Testing
 
         let document = await RichTextImporter.document(from: .init(html: html, plain: "Bold text"))
 
-        #expect(document?.markdown == "**Bold** text")
+        // The image survives as a Markdown link the renderer never fetches; everything else is gone.
+        #expect(document?.markdown == "**Bold** ![](https://example.com/track.png) text")
+        #expect(document?.markdown.contains("bg.png") == false)
+        #expect(document?.markdown.contains("px.gif") == false)
         #expect(document?.attachments.isEmpty == true)
+    }
+
+    @MainActor
+    @Test func keepsRemoteHTMLImagesAsClickToCopyPlaceholders() async {
+        let html = Data("""
+            <p>Before <img src="https://example.com/a.png?x=1&amp;y=2" alt="A [photo]"> after.</p>
+            """.utf8)
+
+        let document = await RichTextImporter.document(from: .init(html: html, plain: "Before after."))
+
+        #expect(document?.markdown == #"Before ![A \[photo\]](https://example.com/a.png?x=1&y=2) after."#)
+        #expect(document?.attachments.isEmpty == true)
+    }
+
+    @MainActor
+    @Test func marksNonFetchableHTMLImagesAsOmitted() async {
+        let html = Data(#"<p>A <img src="data:image/png;base64,iVBORw0KGgo="> B <img src="/local.png"> C</p>"#.utf8)
+
+        let document = await RichTextImporter.document(from: .init(html: html, plain: "A B C"))
+
+        #expect(document?.markdown == "A ![img-1](moepeek-attachment:img-1) B ![img-2](moepeek-attachment:img-2) C")
+        #expect(document?.attachments.isEmpty == true)
+    }
+
+    @MainActor
+    @Test func treatsAnImageOnlySelectionAsRich() async {
+        let html = Data(#"<img src="https://example.com/only.png">"#.utf8)
+
+        let document = await RichTextImporter.document(from: .init(html: html, plain: ""))
+
+        #expect(document?.markdown == "![](https://example.com/only.png)")
     }
 
     @MainActor
