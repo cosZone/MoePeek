@@ -11,9 +11,24 @@ enum ClipboardGrabber {
     private static let syntheticEventTag: Int64 = 0x4D6F6550 // "MoeP"
 
     /// Grab selected text by simulating ⌘+C and reading the clipboard.
-    /// Saves and restores the previous clipboard content, unless an external
-    /// modification (real user ⌘+C) is detected during the grab window.
     @MainActor static func grabViaClipboard() async -> String? {
+        await grab { pasteboard in
+            pasteboard.string(forType: .string).flatMap { $0.isEmpty ? nil : $0 }
+        }
+    }
+
+    /// Like `grabViaClipboard`, but keeps formatting and embedded images when the source app
+    /// provides them. Falls back to the plain string, so nil means the copy produced nothing.
+    @MainActor static func grabRichViaClipboard() async -> RichSourceDocument? {
+        guard let payload = await grab(RichTextImporter.payload(from:)) else { return nil }
+        return await RichTextImporter.document(from: payload)
+    }
+
+    /// Simulates ⌘+C, hands the updated pasteboard to `read`, then restores the previous
+    /// clipboard content unless an external modification (real user ⌘+C) was detected.
+    @MainActor private static func grab<Value: Sendable>(
+        _ read: @MainActor (NSPasteboard) -> Value?
+    ) async -> Value? {
         // Skip synthesizing ⌘C while a screenshot tool's capture overlay is on screen —
         // it would swallow the keypress as its own shortcut and abort the capture. See issue #67.
         guard !ScreenshotOverlayDetector.isCapturingScreenshot() else { return nil }
@@ -49,7 +64,6 @@ enum ClipboardGrabber {
         }
         defer { if let keyMonitor { NSEvent.removeMonitor(keyMonitor) } }
 
-        // Simulate ⌘+C
         simulateCopy()
 
         // Wait for clipboard to update
@@ -74,7 +88,7 @@ enum ClipboardGrabber {
             options: [.urlReadingFileURLsOnly: true]
         )
 
-        let text = isFileSelection ? nil : pasteboard.string(forType: .string)
+        let value = isFileSelection ? nil : read(pasteboard)
 
         // 30ms grace period: if the user's real ⌘+C arrives slightly after our polling
         // finishes, the changeCount will bump again.
@@ -98,10 +112,7 @@ enum ClipboardGrabber {
         }
         // Otherwise skip restore — preserve the user's clipboard content
 
-        guard let text, !text.isEmpty else {
-            return nil
-        }
-        return text
+        return value
     }
 
     private static func simulateCopy() {

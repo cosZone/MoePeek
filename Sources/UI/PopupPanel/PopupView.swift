@@ -151,7 +151,8 @@ struct PopupView: View {
                     },
                     onContentHeightChange: { preferredHeight in
                         expandInputHeightIfNeeded(for: preferredHeight)
-                    }
+                    },
+                    attachments: coordinator.sourceAttachments
                 )
                 .frame(height: inputHeight)
                 .padding(.horizontal, contentHorizontalPadding)
@@ -228,7 +229,8 @@ struct PopupView: View {
                                     },
                                     onRetry: {
                                         coordinator.retryProvider(provider)
-                                    }
+                                    },
+                                    attachments: coordinator.sourceAttachments
                                 )
                             }
                         }

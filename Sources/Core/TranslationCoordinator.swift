@@ -23,6 +23,8 @@ final class TranslationCoordinator {
 
     private(set) var phase: Phase = .idle
     private(set) var sourceText: String = ""
+    /// Images captured with rich source text, keyed by placeholder id. Released with the request.
+    private(set) var sourceAttachments: [String: SourceImageAttachment] = [:]
     private(set) var detectedLanguage: String?
     private(set) var targetLanguage: String = ""
     private(set) var providerStates: [String: ProviderState] = [:]
@@ -67,14 +69,25 @@ final class TranslationCoordinator {
 
         phase = .grabbing
 
-        guard let text = await TextSelectionManager.grabSelectedText() else {
+        guard let document = await TextSelectionManager.grabSelectedDocument() else {
             phase = .active
             sourceText = ""
             globalError = String(localized: "No text selected. Select some text and try again.")
             return
         }
 
-        translate(text)
+        translate(document: document)
+    }
+
+    /// Triggered by the floating icon, which already holds the plain selection. With rich
+    /// capture on, re-copy the still-active selection to pick up formatting and images.
+    func translateTriggeredSelection(_ text: String) async {
+        if TextSelectionManager.isRichCaptureEnabled,
+           let document = await ClipboardGrabber.grabRichViaClipboard() {
+            translate(document: document)
+        } else {
+            translate(text)
+        }
     }
 
     /// Triggered by OCR shortcut: screen capture → OCR → translate.
@@ -102,7 +115,13 @@ final class TranslationCoordinator {
     }
 
     /// Read clipboard text and translate directly.
-    func translateClipboard() {
+    func translateClipboard() async {
+        if Defaults[.captureRichText],
+           let payload = RichTextImporter.payload(from: NSPasteboard.general),
+           let document = await RichTextImporter.document(from: payload) {
+            translate(document: document)
+            return
+        }
         guard let text = NSPasteboard.general.string(forType: .string),
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             phase = .active
@@ -119,6 +138,7 @@ final class TranslationCoordinator {
         clearCopyFeedback()
         globalError = nil
         sourceText = ""
+        sourceAttachments = [:]
         detectedLanguage = nil
         targetLanguage = Defaults[.targetLanguage]
         providerStates = [:]
@@ -129,7 +149,19 @@ final class TranslationCoordinator {
 
     /// Translate text with all enabled providers in parallel.
     /// Launches provider tasks in the background and returns immediately.
+    /// Attachments from the current session survive as long as the text still references them.
     func translate(_ text: String) {
+        startTranslation(
+            text,
+            attachments: SourceAttachmentReference.retainedAttachments(sourceAttachments, referencedIn: text)
+        )
+    }
+
+    func translate(document: RichSourceDocument) {
+        startTranslation(document.markdown, attachments: document.attachments)
+    }
+
+    private func startTranslation(_ text: String, attachments: [String: SourceImageAttachment]) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             phase = .active
@@ -143,6 +175,7 @@ final class TranslationCoordinator {
         globalError = nil
 
         sourceText = trimmed
+        sourceAttachments = attachments
 
         // Language detection: check sourceLanguage setting
         let forcedSource = Defaults[.sourceLanguage]
@@ -179,12 +212,8 @@ final class TranslationCoordinator {
             providerStates[provider.id] = .waiting
         }
 
-        // Launch parallel tasks
         for provider in providers {
-            let task = Task {
-                await runProvider(provider, text: trimmed, from: detectedLanguage, to: targetLanguage)
-            }
-            activeTasks[provider.id] = task
+            launchProvider(provider, text: trimmed, from: detectedLanguage, to: targetLanguage)
         }
     }
 
@@ -193,13 +222,7 @@ final class TranslationCoordinator {
         guard phase == .active, !sourceText.isEmpty else { return }
         activeTasks[provider.id]?.cancel()
         providerStates[provider.id] = .waiting
-        let text = sourceText
-        let target = targetLanguage
-        let source = detectedLanguage
-        let task = Task {
-            await runProvider(provider, text: text, from: source, to: target)
-        }
-        activeTasks[provider.id] = task
+        launchProvider(provider, text: sourceText, from: detectedLanguage, to: targetLanguage)
     }
 
     @discardableResult
@@ -225,6 +248,7 @@ final class TranslationCoordinator {
         clearCopyFeedback()
         phase = .idle
         sourceText = ""
+        sourceAttachments = [:]
         detectedLanguage = nil
         targetLanguage = ""
         providerStates = [:]
@@ -256,6 +280,25 @@ final class TranslationCoordinator {
     }
 
     // MARK: - Private
+
+    /// Markdown sources go to LLM providers verbatim with a preserve-formatting instruction;
+    /// machine translation APIs get plain text because they cannot honor either.
+    private func launchProvider(
+        _ provider: any TranslationProvider,
+        text: String,
+        from sourceLang: String?,
+        to targetLang: String
+    ) {
+        let isMarkdown = MarkdownSupport.looksLikeMarkdown(text)
+        let sendsMarkdown = isMarkdown && provider.acceptsMarkdownInput
+        let providerText = (isMarkdown && !provider.acceptsMarkdownInput) ? MarkdownSupport.plainText(from: text) : text
+        let task = Task {
+            await TranslationRequestContext.$sourceIsMarkdown.withValue(sendsMarkdown) {
+                await runProvider(provider, text: providerText, from: sourceLang, to: targetLang)
+            }
+        }
+        activeTasks[provider.id] = task
+    }
 
     private func runProvider(
         _ provider: any TranslationProvider,

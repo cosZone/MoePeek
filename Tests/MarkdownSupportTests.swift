@@ -62,6 +62,12 @@ import Testing
         #expect(placeholder.url.absoluteString == original)
     }
 
+    @Test func plainTextStripsSyntaxAndAttachmentPlaceholders() {
+        let markdown = "## 标题\n\n**加粗** 和 [链接](https://example.com) ![img-1](moepeek-attachment:img-1)\n\n- `代码`"
+        #expect(MarkdownSupport.plainText(from: markdown) == "标题\n\n加粗 和 链接\n\n- 代码")
+        #expect(MarkdownSupport.plainText(from: "纯文本") == "纯文本")
+    }
+
     @Test func hardensSingleLineBreaksBetweenPlainLines() {
         #expect(MarkdownSupport.hardenLineBreaks("第一行\n第二行\n\n第三行") == "第一行  \n第二行\n\n第三行")
     }

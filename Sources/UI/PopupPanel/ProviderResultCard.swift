@@ -11,6 +11,7 @@ struct ProviderResultCard: View {
     let copyFeedbackGeneration: Int
     var onCopy: (() -> Void)?
     var onRetry: (() -> Void)?
+    var attachments: [String: SourceImageAttachment] = [:]
     @State private var isCopyPulsing = false
     @State private var pulseTask: Task<Void, Never>?
     @Default(.popupFontSize) private var fontSize
@@ -160,11 +161,13 @@ struct ProviderResultCard: View {
     private func resultContent(_ text: String, isCompleted: Bool) -> some View {
         let canSpeak = isCompleted
         let offersMarkdown = isCompleted && renderMarkdownResults && MarkdownSupport.looksLikeMarkdown(text)
+        let hasAttachments = offersMarkdown && attachments.keys.contains { text.contains("\(SourceAttachmentReference.scheme):\($0)") }
+        let viewMode = (resultViewMode == .rich && !hasAttachments) ? .rendered : resultViewMode
         let font = Font.popup(name: fontName, size: CGFloat(fontSize))
 
         return VStack(alignment: .leading, spacing: 4) {
-            if offersMarkdown && resultViewMode == .rendered {
-                MarkdownResultView(text: text, font: font)
+            if offersMarkdown && viewMode != .source {
+                MarkdownResultView(text: text, font: font, attachments: attachments, showsAttachments: viewMode == .rich)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 Text(text)
@@ -179,18 +182,18 @@ struct ProviderResultCard: View {
                     Spacer()
 
                     if offersMarkdown {
-                        Button {
-                            resultViewMode = resultViewMode == .rendered ? .source : .rendered
-                        } label: {
-                            Label(
-                                resultViewMode == .rendered ? "Source" : "Markdown",
-                                systemImage: resultViewMode == .rendered ? "chevron.left.forwardslash.chevron.right" : "doc.richtext"
-                            )
-                            .font(.popup(name: fontName, size: CGFloat(fontSize - 2)))
+                        Picker("View", selection: Binding(get: { viewMode }, set: { resultViewMode = $0 })) {
+                            Text("Source").tag(ResultViewMode.source)
+                            Text("Markdown").tag(ResultViewMode.rendered)
+                            if hasAttachments {
+                                Text("Rich Text").tag(ResultViewMode.rich)
+                            }
                         }
-                        .buttonStyle(.bordered)
+                        .pickerStyle(.segmented)
                         .controlSize(.mini)
-                        .help(resultViewMode == .rendered ? "Show source text" : "Show rendered Markdown")
+                        .labelsHidden()
+                        .fixedSize()
+                        .help("Switch result view")
                     }
 
                     if canSpeak, let ttsCoordinator {

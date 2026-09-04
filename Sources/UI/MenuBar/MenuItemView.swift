@@ -55,8 +55,10 @@ struct MenuItemView: View {
         Button {
             guard let coordinator = appDelegate.coordinator,
                   let panelController = appDelegate.panelController else { return }
-            coordinator.translateClipboard()
-            panelController.showAtCursor()
+            Task {
+                await coordinator.translateClipboard()
+                panelController.showAtCursor()
+            }
         } label: {
             Label("Clipboard Translation", systemImage: "doc.on.clipboard")
         }

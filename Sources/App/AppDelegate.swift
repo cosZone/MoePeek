@@ -258,7 +258,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         KeyboardShortcuts.onKeyUp(for: .clipboardTranslation) { [weak self] in
             guard let self else { return }
             Task { @MainActor in
-                self.coordinator.translateClipboard()
+                await self.coordinator.translateClipboard()
                 self.panelController.showAtCursor()
             }
         }
@@ -280,7 +280,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         triggerIconController.onTranslateRequested = { [weak self] text in
             guard let self else { return }
             Task { @MainActor in
-                self.coordinator.translate(text)
+                await self.coordinator.translateTriggeredSelection(text)
                 if case .idle = self.coordinator.phase { return }
                 self.panelController.showAtCursor()
             }

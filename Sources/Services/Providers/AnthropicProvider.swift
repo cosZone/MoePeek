@@ -81,11 +81,7 @@ struct AnthropicProvider: ParallelModelProvider {
             throw TranslationError.missingAPIKey
         }
 
-        let promptTemplate = Defaults[systemPromptKey]
-        let systemPrompt = promptTemplate.replacingOccurrences(
-            of: "{targetLang}",
-            with: SupportedLanguages.englishName(for: targetLang)
-        )
+        let systemPrompt = resolveSystemPrompt(template: Defaults[systemPromptKey], targetLang: targetLang)
         let maxTokens = Defaults[maxTokensKey]
 
         let body: [String: Any] = [

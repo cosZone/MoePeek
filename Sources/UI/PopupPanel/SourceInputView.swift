@@ -11,7 +11,9 @@ struct SourceInputView: View {
     let onCopyAndClose: () -> Void
     let onSwapLanguages: () -> Void
     var onContentHeightChange: ((CGFloat) -> Void)?
+    var attachments: [String: SourceImageAttachment] = [:]
     @Default(.popupFontSize) private var fontSize
+    @Default(.sourceViewMode) private var sourceViewMode
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
     @Environment(\.ttsCoordinator) private var ttsCoordinator
@@ -20,24 +22,42 @@ struct SourceInputView: View {
     @State private var isWindowKey = false
     @State private var swapShortcut = SwapLanguagesShortcut.current
 
+    private var offersRichView: Bool {
+        MarkdownSupport.looksLikeMarkdown(text)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            SourceTextEditor(
-                text: $text,
-                fontSize: CGFloat(fontSize),
-                fontName: fontName,
-                onSubmit: onSubmit,
-                onCopyAndClose: onCopyAndClose,
-                onSwapLanguages: onSwapLanguages,
-                onWindowKeyChange: { isKey in
-                    isWindowKey = isKey
-                },
-                onContentHeightChange: { editorHeight in
-                    onContentHeightChange?(sourceInputHeight(forEditorHeight: editorHeight))
+            if offersRichView && sourceViewMode == .rich {
+                ScrollView {
+                    MarkdownResultView(
+                        text: text,
+                        font: .popup(name: fontName, size: CGFloat(fontSize)),
+                        attachments: attachments,
+                        showsAttachments: true
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            )
                 .frame(maxHeight: .infinity)
                 .background { InteractiveMarker() }
+            } else {
+                SourceTextEditor(
+                    text: $text,
+                    fontSize: CGFloat(fontSize),
+                    fontName: fontName,
+                    onSubmit: onSubmit,
+                    onCopyAndClose: onCopyAndClose,
+                    onSwapLanguages: onSwapLanguages,
+                    onWindowKeyChange: { isKey in
+                        isWindowKey = isKey
+                    },
+                    onContentHeightChange: { editorHeight in
+                        onContentHeightChange?(sourceInputHeight(forEditorHeight: editorHeight))
+                    }
+                )
+                .frame(maxHeight: .infinity)
+                .background { InteractiveMarker() }
+            }
 
             HStack(spacing: 4) {
                 if let ttsCoordinator {
@@ -63,6 +83,19 @@ struct SourceInputView: View {
                             .font(.popup(name: fontName, size: CGFloat(fontSize - 4)))
                             .foregroundStyle(.secondary)
                     }
+                }
+
+                if offersRichView {
+                    Picker("View", selection: $sourceViewMode) {
+                        Text("Edit").tag(SourceViewMode.editor)
+                        Text("Rich Text").tag(SourceViewMode.rich)
+                    }
+                    .pickerStyle(.segmented)
+                    .controlSize(.mini)
+                    .labelsHidden()
+                    .fixedSize()
+                    .help("Switch source view")
+                    .background { InteractiveMarker() }
                 }
 
                 Spacer()

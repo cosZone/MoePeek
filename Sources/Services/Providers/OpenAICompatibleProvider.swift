@@ -130,11 +130,7 @@ struct OpenAICompatibleProvider: ParallelModelProvider {
             throw TranslationError.missingAPIKey
         }
 
-        let promptTemplate = Defaults[systemPromptKey]
-        let systemPrompt = promptTemplate.replacingOccurrences(
-            of: "{targetLang}",
-            with: SupportedLanguages.englishName(for: targetLang)
-        )
+        let systemPrompt = resolveSystemPrompt(template: Defaults[systemPromptKey], targetLang: targetLang)
 
         let body: [String: Any] = [
             "model": model,

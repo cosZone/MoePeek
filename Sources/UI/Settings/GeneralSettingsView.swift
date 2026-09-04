@@ -16,6 +16,7 @@ struct GeneralSettingsView: View {
     @Default(.popupFontSize) private var popupFontSize
     @Default(.popupFontName) private var popupFontName
     @Default(.renderMarkdownResults) private var renderMarkdownResults
+    @Default(.captureRichText) private var captureRichText
     @Default(.popupRememberPosition) private var popupRememberPosition
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
@@ -138,6 +139,13 @@ struct GeneralSettingsView: View {
                     }
 
                     Text(textDetectionModeDescription)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if textDetectionMode == .full {
+                    Toggle("Capture rich text and images", isOn: $captureRichText)
+                    Text("Copies the selection with ⌘C to keep formatting and images from apps like Word. LLM providers translate it as Markdown; other providers receive plain text.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

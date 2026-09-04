@@ -82,6 +82,12 @@ enum TextDetectionMode: String, CaseIterable, Defaults.Serializable {
 enum ResultViewMode: String, Defaults.Serializable {
     case rendered
     case source
+    case rich
+}
+
+enum SourceViewMode: String, Defaults.Serializable {
+    case editor
+    case rich
 }
 
 // MARK: - Menu Bar Icon Style
@@ -311,6 +317,10 @@ extension Defaults.Keys {
     // Markdown rendering of translation results
     static let renderMarkdownResults = Key<Bool>("renderMarkdownResults", default: true)
     static let resultViewMode = Key<ResultViewMode>("resultViewMode", default: .rendered)
+    static let sourceViewMode = Key<SourceViewMode>("sourceViewMode", default: .rich)
+
+    // Rich text capture (⌘C simulation keeps formatting and images)
+    static let captureRichText = Key<Bool>("captureRichText", default: false)
 
     // Popup panel last dragged position (used when popupRememberPosition is enabled).
     // We persist the top-left corner so the visual position stays anchored even when the

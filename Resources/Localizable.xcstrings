@@ -1,6 +1,86 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "View" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视图"
+          }
+        }
+      }
+    },
+    "Rich Text" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "富文本"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Image omitted" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片已省略"
+          }
+        }
+      }
+    },
+    "Switch result view" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换结果视图"
+          }
+        }
+      }
+    },
+    "Switch source view" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换原文视图"
+          }
+        }
+      }
+    },
+    "Capture rich text and images" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "采集富文本和图片"
+          }
+        }
+      }
+    },
+    "Copies the selection with ⌘C to keep formatting and images from apps like Word. LLM providers translate it as Markdown; other providers receive plain text." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过 ⌘C 复制选区，以保留 Word 等应用中的格式和图片。LLM 服务会以 Markdown 形式翻译，其他服务只接收纯文本。"
+          }
+        }
+      }
+    },
     "Source" : {
       "localizations" : {
         "zh-Hans" : {
