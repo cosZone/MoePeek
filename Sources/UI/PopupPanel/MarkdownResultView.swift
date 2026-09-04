@@ -35,11 +35,11 @@ struct MarkdownResultView: View {
                     LocalAttachmentImageView(data: attachment.data, label: id)
                         .padding(.vertical, 2)
                 } else {
-                    Text("🖼 \(id)")
+                    Text(verbatim: "🖼 \(id)")
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Text("🖼 \(id) · \(String(localized: "Image omitted"))")
+                Text(verbatim: "🖼 \(id) · \(String(localized: "Image omitted"))")
                     .foregroundStyle(.secondary)
             }
         } else {

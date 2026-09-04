@@ -40,8 +40,9 @@ enum RichTextImporter {
             }
         }
 
-        // The HTML importer is main-thread only and may fetch subresources, hence the timeout.
-        if let html = payload.html,
+        // The HTML importer is main-thread only and fetches subresources such as <img>. Those tags
+        // are stripped first so nothing leaves the machine; RTFD is the only image source anyway.
+        if let html = payload.html.flatMap(Self.strippingRemoteResources),
            let attributed = try? NSAttributedString(
                data: html,
                options: [
@@ -61,5 +62,19 @@ enum RichTextImporter {
               !plain.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else { return nil }
         return .plain(plain)
+    }
+
+    private static let remoteResourceTagPattern = try! NSRegularExpression(
+        pattern: #"<(?:img|link|script)\b[^>]*>"#, options: [.caseInsensitive]
+    )
+
+    private static func strippingRemoteResources(_ html: Data) -> Data? {
+        guard let string = String(data: html, encoding: .utf8) ?? String(data: html, encoding: .utf16) else {
+            return nil
+        }
+        let stripped = remoteResourceTagPattern.stringByReplacingMatches(
+            in: string, range: NSRange(string.startIndex..., in: string), withTemplate: ""
+        )
+        return stripped.data(using: .utf8)
     }
 }

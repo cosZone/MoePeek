@@ -114,6 +114,19 @@ enum MarkdownSupport {
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    /// Removes captured-image placeholders, which mean nothing outside the app.
+    static func removingAttachmentPlaceholders(_ text: String) -> String {
+        let pattern = "[ \\t]?!\\[[^\\]\\n]*\\]\\(\(SourceAttachmentReference.scheme):[^)\\s]+\\)"
+        return text
+            .replacingOccurrences(of: pattern, with: "", options: .regularExpression)
+            .replacingOccurrences(of: #"(?m)[ \t]+$"#, with: "", options: .regularExpression)
+    }
+
+    /// Speech synthesis must not read Markdown markers or placeholders aloud.
+    static func speakableText(_ text: String) -> String {
+        looksLikeMarkdown(text) ? plainText(from: text) : text
+    }
+
     /// LLM output uses single newlines as visual line breaks, but CommonMark folds them into
     /// spaces. Appends a hard break to plain lines followed by another plain line. Fenced code
     /// blocks and block constructs (lists, headings, tables) are left untouched.

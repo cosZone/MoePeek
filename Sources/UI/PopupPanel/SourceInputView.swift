@@ -14,6 +14,7 @@ struct SourceInputView: View {
     var attachments: [String: SourceImageAttachment] = [:]
     @Default(.popupFontSize) private var fontSize
     @Default(.sourceViewMode) private var sourceViewMode
+    @Default(.captureRichText) private var captureRichText
     @Default(.popupFontName) private var fontName
     @Default(.ttsAccent) private var ttsAccent
     @Environment(\.ttsCoordinator) private var ttsCoordinator
@@ -22,8 +23,9 @@ struct SourceInputView: View {
     @State private var isWindowKey = false
     @State private var swapShortcut = SwapLanguagesShortcut.current
 
+    /// Plain selections keep the editor; the read-only rich view only appears for rich captures.
     private var offersRichView: Bool {
-        MarkdownSupport.looksLikeMarkdown(text)
+        (captureRichText || !attachments.isEmpty) && MarkdownSupport.looksLikeMarkdown(text)
     }
 
     var body: some View {
@@ -61,12 +63,13 @@ struct SourceInputView: View {
 
             HStack(spacing: 4) {
                 if let ttsCoordinator {
-                    let speaking = ttsCoordinator.isPlaying(text)
+                    let spokenText = MarkdownSupport.speakableText(text)
+                    let speaking = ttsCoordinator.isPlaying(spokenText)
                     Button {
                         if speaking {
                             ttsCoordinator.stop()
                         } else {
-                            ttsCoordinator.speak(text, language: sourceLanguage)
+                            ttsCoordinator.speak(spokenText, language: sourceLanguage)
                         }
                     } label: {
                         Image(systemName: speaking ? "speaker.wave.3.fill" : "speaker.wave.2")

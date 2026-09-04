@@ -143,11 +143,14 @@ struct GeneralSettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if textDetectionMode == .full {
-                    Toggle("Capture rich text and images", isOn: $captureRichText)
-                    Text("Copies the selection with ⌘C to keep formatting and images from apps like Word. LLM providers translate it as Markdown; other providers receive plain text.")
+                Toggle("Capture rich text and images", isOn: $captureRichText)
+                Text("Copies the selection with ⌘C to keep formatting and images from apps like Word. LLM providers translate it as Markdown; other providers receive plain text.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if captureRichText, textDetectionMode != .full {
+                    Text("Selection capture needs the Full text detection mode. Clipboard translation is not affected.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.orange)
                 }
             }
 

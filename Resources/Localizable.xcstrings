@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Selection capture needs the Full text detection mode. Clipboard translation is not affected." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "划词采集需要“完整”文本检测模式。剪贴板翻译不受影响。"
+          }
+        }
+      }
+    },
     "View" : {
       "localizations" : {
         "zh-Hans" : {

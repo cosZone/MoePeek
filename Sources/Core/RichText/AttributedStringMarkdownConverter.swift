@@ -43,13 +43,17 @@ struct AttributedStringMarkdownConverter {
         var link: URL?
         var isImage = false
 
-        var hasSameStyle: (InlineToken) -> Bool {
-            { $0.bold == bold && $0.italic == italic && $0.code == code && $0.link == link }
+        func hasSameStyle(as other: InlineToken) -> Bool {
+            bold == other.bold && italic == other.italic && code == other.code && link == other.link
         }
     }
 
-    private static let listMarkerPattern = try! NSRegularExpression(
-        pattern: #"^(?:[•◦▪▫‣●○■□\-–—*]|\d{1,3}[.)]|[a-zA-Z][.)])[ \t\x{00A0}]*"#
+    private static let bulletMarkerPattern = try! NSRegularExpression(
+        pattern: #"^(?:[•◦▪▫‣●○■□\-–—*]|\d{1,3}[.)])[ \t\x{00A0}]*"#
+    )
+    // Letter markers ("a.", "B)") are only stripped from ordered lists; in bullets they are text.
+    private static let orderedMarkerPattern = try! NSRegularExpression(
+        pattern: #"^(?:\d{1,3}[.)]|[a-zA-Z][.)])[ \t\x{00A0}]*"#
     )
     private static let bulletGlyphStartPattern = try! NSRegularExpression(
         pattern: #"^[•◦▪▫‣●○■□][ \t\x{00A0}]"#
@@ -100,7 +104,7 @@ struct AttributedStringMarkdownConverter {
 
         if listDepth > 0 || startsWithBullet {
             let ordered = style?.textLists.last?.isOrdered ?? false
-            text = stripListMarker(from: text)
+            text = stripListMarker(from: text, ordered: ordered)
             guard !text.isEmpty else { return }
             let indent = String(repeating: "  ", count: max(listDepth - 1, 0))
             state.blocks.append(Block(text: indent + (ordered ? "1. " : "- ") + text, isListItem: true))
@@ -113,9 +117,10 @@ struct AttributedStringMarkdownConverter {
         }
     }
 
-    private func stripListMarker(from text: String) -> String {
+    private func stripListMarker(from text: String, ordered: Bool) -> String {
         let range = NSRange(text.startIndex..., in: text)
-        guard let match = Self.listMarkerPattern.firstMatch(in: text, range: range),
+        let pattern = ordered ? Self.orderedMarkerPattern : Self.bulletMarkerPattern
+        guard let match = pattern.firstMatch(in: text, range: range),
               let swiftRange = Range(match.range, in: text)
         else { return text }
         return String(text[swiftRange.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -175,7 +180,7 @@ struct AttributedStringMarkdownConverter {
             if let link = attributes[.link] {
                 token.link = (link as? URL) ?? (link as? String).flatMap(URL.init(string:))
             }
-            if let last = tokens.last, last.hasSameStyle(token), last.link == token.link {
+            if let last = tokens.last, last.hasSameStyle(as: token) {
                 tokens[tokens.count - 1].text += token.text
             } else {
                 tokens.append(token)

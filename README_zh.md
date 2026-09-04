@@ -52,6 +52,7 @@
 - 翻译结果文本朗读，基于 Apple 内置语音合成
 - 非激活浮窗，永远不会抢走当前应用焦点
 - 三层文本抓取：Accessibility API → AppleScript → 剪贴板逐级回退
+- LLM 结果 Markdown 渲染，并可选采集富文本，保留 Word 等应用中的格式和图片
 - 所有快捷键均可自定义
 - 内置 Sparkle 自动更新
 

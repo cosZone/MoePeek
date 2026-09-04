@@ -72,6 +72,18 @@ import Testing
         #expect(output.isRich)
     }
 
+    @Test func keepsLetterPeriodTextInBulletItems() {
+        let bullet = NSMutableParagraphStyle()
+        bullet.textLists = [NSTextList(markerFormat: .disc, options: 0)]
+        let ordered = NSMutableParagraphStyle()
+        ordered.textLists = [NSTextList(markerFormat: .lowercaseAlpha, options: 0)]
+        let output = AttributedStringMarkdownConverter().convert(join([
+            run("•\tE. coli\n", [.paragraphStyle: bullet]),
+            run("a.\t第一\n", [.paragraphStyle: ordered]),
+        ]))
+        #expect(output.markdown == "- E. coli\n1. 第一")
+    }
+
     @Test func detectsHeadingsByRelativeFontSize() {
         let output = AttributedStringMarkdownConverter().convert(join([
             run("标题\n", [.font: NSFont.boldSystemFont(ofSize: 24)]),
@@ -167,6 +179,16 @@ import Testing
         let document = await RichTextImporter.document(from: .init(html: html, plain: "Bold text\nitem one\nitem two"))
 
         #expect(document?.markdown == "**Bold** text\n\n- item one\n- item two")
+        #expect(document?.attachments.isEmpty == true)
+    }
+
+    @MainActor
+    @Test func stripsRemoteImagesFromHTMLBeforeImport() async {
+        let html = Data("<p><b>Bold</b> <img src=\"https://example.com/track.png\"> text</p>".utf8)
+
+        let document = await RichTextImporter.document(from: .init(html: html, plain: "Bold text"))
+
+        #expect(document?.markdown == "**Bold** text")
         #expect(document?.attachments.isEmpty == true)
     }
 

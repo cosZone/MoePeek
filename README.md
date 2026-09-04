@@ -51,6 +51,7 @@
 - Text-to-speech playback for translated text using Apple's built-in speech synthesis
 - Non-activating floating panels that never steal focus from your current app
 - 3-tier text grabbing: Accessibility API → AppleScript → Clipboard fallback
+- Markdown rendering for LLM results, plus optional rich text capture that keeps formatting and images from apps like Word
 - Fully customizable keyboard shortcuts
 - Built-in auto-updater via Sparkle
 

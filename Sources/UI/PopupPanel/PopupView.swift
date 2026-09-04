@@ -76,7 +76,7 @@ struct PopupView: View {
                let tts = ttsCoordinator
             {
                 let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
-                tts.speak(newValue, language: lang)
+                tts.speak(MarkdownSupport.speakableText(newValue), language: lang)
             }
         }
         .onChange(of: coordinator.targetLanguage) { _, newValue in
@@ -94,7 +94,7 @@ struct PopupView: View {
                let tts = ttsCoordinator
             {
                 let lang = coordinator.detectedLanguage ?? Defaults[.sourceLanguage]
-                tts.speak(coordinator.sourceText, language: lang)
+                tts.speak(MarkdownSupport.speakableText(coordinator.sourceText), language: lang)
             }
         }
         .onChange(of: coordinator.translationGeneration) { _, _ in
@@ -286,7 +286,7 @@ struct PopupView: View {
     }
 
     private func copySourceAndClose() {
-        let source = editableText
+        let source = MarkdownSupport.removingAttachmentPlaceholders(editableText)
         guard !source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         NSPasteboard.general.clearContents()
         guard NSPasteboard.general.setString(source, forType: .string) else { return }
@@ -321,7 +321,7 @@ struct PopupView: View {
 
         if let text = completedText {
             autoPlayedGeneration = coordinator.translationGeneration
-            tts.speak(text, language: targetLang)
+            tts.speak(MarkdownSupport.speakableText(text), language: targetLang)
         }
     }
 }

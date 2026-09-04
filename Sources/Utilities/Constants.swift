@@ -317,7 +317,7 @@ extension Defaults.Keys {
     // Markdown rendering of translation results
     static let renderMarkdownResults = Key<Bool>("renderMarkdownResults", default: true)
     static let resultViewMode = Key<ResultViewMode>("resultViewMode", default: .rendered)
-    static let sourceViewMode = Key<SourceViewMode>("sourceViewMode", default: .rich)
+    static let sourceViewMode = Key<SourceViewMode>("sourceViewMode", default: .editor)
 
     // Rich text capture (⌘C simulation keeps formatting and images)
     static let captureRichText = Key<Bool>("captureRichText", default: false)

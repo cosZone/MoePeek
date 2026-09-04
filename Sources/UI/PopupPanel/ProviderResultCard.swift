@@ -164,6 +164,7 @@ struct ProviderResultCard: View {
         let hasAttachments = offersMarkdown && attachments.keys.contains { text.contains("\(SourceAttachmentReference.scheme):\($0)") }
         let viewMode = (resultViewMode == .rich && !hasAttachments) ? .rendered : resultViewMode
         let font = Font.popup(name: fontName, size: CGFloat(fontSize))
+        let spokenText = MarkdownSupport.speakableText(text)
 
         return VStack(alignment: .leading, spacing: 4) {
             if offersMarkdown && viewMode != .source {
@@ -198,14 +199,14 @@ struct ProviderResultCard: View {
 
                     if canSpeak, let ttsCoordinator {
                         Button {
-                            if isSpeaking(text) {
+                            if isSpeaking(spokenText) {
                                 ttsCoordinator.stop()
                             } else {
-                                ttsCoordinator.speak(text, language: targetLanguage)
+                                ttsCoordinator.speak(spokenText, language: targetLanguage)
                             }
                         } label: {
                             HStack(spacing: 2) {
-                                Image(systemName: isSpeaking(text) ? "speaker.wave.3.fill" : "speaker.wave.2")
+                                Image(systemName: isSpeaking(spokenText) ? "speaker.wave.3.fill" : "speaker.wave.2")
                                 if targetLanguage.hasPrefix("en") {
                                     Text(ttsAccent.shortLabel)
                                 }

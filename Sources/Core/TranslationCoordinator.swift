@@ -233,9 +233,9 @@ final class TranslationCoordinator {
 
     @discardableResult
     func copyResult(forProviderID providerID: String) -> Bool {
-        guard let resultText = providerStates[providerID]?.copyableText,
-              !resultText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        else { return false }
+        guard let rawText = providerStates[providerID]?.copyableText else { return false }
+        let resultText = MarkdownSupport.removingAttachmentPlaceholders(rawText)
+        guard !resultText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
 
         NSPasteboard.general.clearContents()
         guard NSPasteboard.general.setString(resultText, forType: .string) else { return false }
