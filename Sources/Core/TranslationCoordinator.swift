@@ -292,6 +292,10 @@ final class TranslationCoordinator {
         let isMarkdown = MarkdownSupport.looksLikeMarkdown(text)
         let sendsMarkdown = isMarkdown && provider.acceptsMarkdownInput
         let providerText = (isMarkdown && !provider.acceptsMarkdownInput) ? MarkdownSupport.plainText(from: text) : text
+        guard !providerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            providerStates[provider.id] = .error(message: String(localized: "Nothing to translate after removing images."))
+            return
+        }
         let task = Task {
             await TranslationRequestContext.$sourceIsMarkdown.withValue(sendsMarkdown) {
                 await runProvider(provider, text: providerText, from: sourceLang, to: targetLang)

@@ -40,8 +40,9 @@ enum RichTextImporter {
             }
         }
 
-        // The HTML importer is main-thread only and fetches subresources such as <img>. Those tags
-        // are stripped first so nothing leaves the machine; RTFD is the only image source anyway.
+        // The HTML importer is main-thread only and fetches subresources (<img>, CSS url(...),
+        // <iframe>...). Everything that can reference a resource is stripped first so nothing
+        // leaves the machine; RTFD is the only image source anyway.
         if let html = payload.html.flatMap(Self.strippingRemoteResources),
            let attributed = try? NSAttributedString(
                data: html,
@@ -64,17 +65,21 @@ enum RichTextImporter {
         return .plain(plain)
     }
 
-    private static let remoteResourceTagPattern = try! NSRegularExpression(
-        pattern: #"<(?:img|link|script)\b[^>]*>"#, options: [.caseInsensitive]
-    )
+    private static let remoteResourcePatterns: [NSRegularExpression] = [
+        #"<(script|style)\b[^>]*>[\s\S]*?</\1\s*>"#,
+        #"<(?:img|link|script|style|iframe|frame|video|audio|source|track|object|embed|base|meta)\b[^>]*>"#,
+        #"\sstyle\s*=\s*(?:"[^"]*url\([^"]*"|'[^']*url\([^']*')"#,
+    ].map { try! NSRegularExpression(pattern: $0, options: [.caseInsensitive]) }
 
     private static func strippingRemoteResources(_ html: Data) -> Data? {
-        guard let string = String(data: html, encoding: .utf8) ?? String(data: html, encoding: .utf16) else {
+        guard var string = String(data: html, encoding: .utf8) ?? String(data: html, encoding: .utf16) else {
             return nil
         }
-        let stripped = remoteResourceTagPattern.stringByReplacingMatches(
-            in: string, range: NSRange(string.startIndex..., in: string), withTemplate: ""
-        )
-        return stripped.data(using: .utf8)
+        for pattern in remoteResourcePatterns {
+            string = pattern.stringByReplacingMatches(
+                in: string, range: NSRange(string.startIndex..., in: string), withTemplate: ""
+            )
+        }
+        return string.data(using: .utf8)
     }
 }

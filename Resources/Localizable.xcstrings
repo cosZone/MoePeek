@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Nothing to translate after removing images." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去掉图片后没有可翻译的文本。"
+          }
+        }
+      }
+    },
     "Selection capture needs the Full text detection mode. Clipboard translation is not affected." : {
       "localizations" : {
         "zh-Hans" : {

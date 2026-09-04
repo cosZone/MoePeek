@@ -161,7 +161,7 @@ struct ProviderResultCard: View {
     private func resultContent(_ text: String, isCompleted: Bool) -> some View {
         let canSpeak = isCompleted
         let offersMarkdown = isCompleted && renderMarkdownResults && MarkdownSupport.looksLikeMarkdown(text)
-        let hasAttachments = offersMarkdown && attachments.keys.contains { text.contains("\(SourceAttachmentReference.scheme):\($0)") }
+        let hasAttachments = offersMarkdown && attachments.keys.contains { SourceAttachmentReference.references($0, in: text) }
         let viewMode = (resultViewMode == .rich && !hasAttachments) ? .rendered : resultViewMode
         let font = Font.popup(name: fontName, size: CGFloat(fontSize))
         let spokenText = MarkdownSupport.speakableText(text)

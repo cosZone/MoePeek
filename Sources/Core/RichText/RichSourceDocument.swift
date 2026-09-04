@@ -34,11 +34,16 @@ enum SourceAttachmentReference {
         return specifier.isEmpty ? nil : String(specifier)
     }
 
+    /// The closing parenthesis keeps `img-1` from matching `img-10`.
+    static func references(_ id: String, in markdown: String) -> Bool {
+        markdown.contains("\(scheme):\(id))")
+    }
+
     /// Keeps only the attachments `markdown` still references so edited-away images are released.
     static func retainedAttachments(
         _ attachments: [String: SourceImageAttachment],
         referencedIn markdown: String
     ) -> [String: SourceImageAttachment] {
-        attachments.filter { markdown.contains("\(scheme):\($0.key)") }
+        attachments.filter { references($0.key, in: markdown) }
     }
 }

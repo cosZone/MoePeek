@@ -140,11 +140,13 @@ import Testing
         let attachments = [
             "img-1": SourceImageAttachment(id: "img-1", data: Data([1])),
             "img-2": SourceImageAttachment(id: "img-2", data: Data([2])),
+            "img-10": SourceImageAttachment(id: "img-10", data: Data([10])),
         ]
         let retained = SourceAttachmentReference.retainedAttachments(
-            attachments, referencedIn: "text ![img-2](moepeek-attachment:img-2)"
+            attachments, referencedIn: "text ![img-10](moepeek-attachment:img-10) ![img-2](moepeek-attachment:img-2)"
         )
-        #expect(retained.keys.sorted() == ["img-2"])
+        #expect(retained.keys.sorted() == ["img-10", "img-2"])
+        #expect(!SourceAttachmentReference.references("img-1", in: "![img-10](moepeek-attachment:img-10)"))
     }
 }
 
@@ -184,7 +186,11 @@ import Testing
 
     @MainActor
     @Test func stripsRemoteImagesFromHTMLBeforeImport() async {
-        let html = Data("<p><b>Bold</b> <img src=\"https://example.com/track.png\"> text</p>".utf8)
+        let html = Data("""
+            <style>p{background:url(https://example.com/bg.png)}</style><script>alert(1)</script>\
+            <p style="background-image:url('https://example.com/px.gif')"><b>Bold</b> \
+            <img src="https://example.com/track.png"><iframe src="https://example.com"></iframe> text</p>
+            """.utf8)
 
         let document = await RichTextImporter.document(from: .init(html: html, plain: "Bold text"))
 
