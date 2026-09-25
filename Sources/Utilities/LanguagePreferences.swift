@@ -45,7 +45,8 @@ extension SupportedLanguages {
         let preferred = resolvedTarget(target, favoriteCodes: favoriteCodes)
         if let detectedLanguage,
            detectedLanguage.hasPrefix("zh"),
-           preferred.hasPrefix("zh") {
+           preferred.hasPrefix("zh"),
+           detectedLanguage != preferred {
             return preferred
         }
         guard let detectedLanguage,

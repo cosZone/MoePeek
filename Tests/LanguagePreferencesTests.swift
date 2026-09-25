@@ -82,13 +82,13 @@ import Testing
         ) == "pl")
     }
 
-    @Test func chineseTargetStaysSelectedWhenDetectedScriptMatches() {
+    @Test func sameScriptChineseStillAutoFlipsToEnglish() {
         for target in ["zh-Hans", "zh-Hant"] {
             #expect(SupportedLanguages.resolvedTarget(
                 target,
                 detectedLanguage: target,
                 favoriteCodes: SupportedLanguages.defaultTargetCodes
-            ) == target)
+            ) == "en")
         }
     }
 
