@@ -51,7 +51,7 @@ import Testing
             "zh-Hans",
             detectedLanguage: "zh-Hant",
             favoriteCodes: SupportedLanguages.defaultTargetCodes
-        ) == "en")
+        ) == "zh-Hans")
         #expect(SupportedLanguages.resolvedTarget(
             "pl",
             detectedLanguage: "pl",
@@ -74,12 +74,22 @@ import Testing
             "zh-Hant",
             detectedLanguage: "zh-Hans",
             favoriteCodes: SupportedLanguages.defaultTargetCodes
-        ) == "en")
+        ) == "zh-Hant")
         #expect(SupportedLanguages.resolvedTarget(
             "fr",
             detectedLanguage: "fr",
             favoriteCodes: ["pl", "es", "fr"]
         ) == "pl")
+    }
+
+    @Test func chineseTargetStaysSelectedWhenDetectedScriptMatches() {
+        for target in ["zh-Hans", "zh-Hant"] {
+            #expect(SupportedLanguages.resolvedTarget(
+                target,
+                detectedLanguage: target,
+                favoriteCodes: SupportedLanguages.defaultTargetCodes
+            ) == target)
+        }
     }
 
     @Test func explicitSwappedTargetOutsideFavoritesRemainsSelectableAndResolved() {
