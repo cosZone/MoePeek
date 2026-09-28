@@ -1,5 +1,11 @@
 import AppKit
 
+struct PopupResultLayout: Equatable {
+    var contentHeight: CGFloat?
+    var viewportHeight: CGFloat?
+    var containerHeight: CGFloat?
+}
+
 enum PopupPanelSizing {
     static func frameToFit(
         currentFrame: NSRect,

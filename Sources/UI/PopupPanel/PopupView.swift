@@ -17,10 +17,8 @@ struct PopupView: View {
         favoriteCodes: Defaults[.favoriteTargetLanguages]
     )
     @State private var inputHeight: CGFloat = CGFloat(Defaults[.popupInputHeight])
-    @State private var containerHeight: CGFloat = CGFloat(Defaults[.popupDefaultHeight])
-    @State private var resultContentHeight: CGFloat = 0
-    @State private var resultViewportHeight: CGFloat = 0
-    var onResultLayoutChange: ((CGFloat, CGFloat, CGFloat) -> Void)?
+    @State private var resultLayout = PopupResultLayout()
+    var onResultLayoutChange: ((PopupResultLayout) -> Void)?
     @Default(.popupFontSize) private var fontSize
     @Default(.popupFontName) private var fontName
 
@@ -35,6 +33,7 @@ struct PopupView: View {
 
     private var maxInputHeight: CGFloat {
         // Reserve 120pt for language bar + results, while capping the editor at six visible lines.
+        let containerHeight = resultLayout.containerHeight ?? CGFloat(Defaults[.popupDefaultHeight])
         let availableHeight = max(containerHeight - 120, inputMinHeight)
         return max(inputMinHeight, min(inputSixLineHeight, availableHeight))
     }
@@ -53,12 +52,16 @@ struct PopupView: View {
         .background(
             GeometryReader { geo in
                 Color.clear
-                    .onAppear { containerHeight = geo.size.height }
-                    .onChange(of: geo.size.height) { _, h in containerHeight = h }
+                    .preference(
+                        key: PopupResultLayoutPreferenceKey.self,
+                        value: PopupResultLayout(containerHeight: geo.size.height)
+                    )
             }
         )
-        .onChange(of: containerHeight) { _, _ in
+        .onPreferenceChange(PopupResultLayoutPreferenceKey.self) { layout in
+            resultLayout = layout
             clampInputHeightToAllowedRange()
+            onResultLayoutChange?(layout)
         }
         .overlay(alignment: .bottomTrailing) {
             ResizeGripView(
@@ -105,12 +108,6 @@ struct PopupView: View {
         }
         .onChange(of: coordinator.providerStates) { _, newStates in
             handleAutoPlay(states: newStates)
-        }
-        .onChange(of: resultContentHeight) { _, _ in
-            reportResultLayout()
-        }
-        .onChange(of: resultViewportHeight) { _, _ in
-            reportResultLayout()
         }
     }
 
@@ -248,20 +245,20 @@ struct PopupView: View {
                     .background {
                         GeometryReader { geometry in
                             Color.clear
-                                .onAppear { resultContentHeight = geometry.size.height }
-                                .onChange(of: geometry.size.height) { _, height in
-                                    resultContentHeight = height
-                                }
+                                .preference(
+                                    key: PopupResultLayoutPreferenceKey.self,
+                                    value: PopupResultLayout(contentHeight: geometry.size.height)
+                                )
                         }
                     }
                 }
                 .background {
                     GeometryReader { geometry in
                         Color.clear
-                            .onAppear { resultViewportHeight = geometry.size.height }
-                            .onChange(of: geometry.size.height) { _, height in
-                                resultViewportHeight = height
-                            }
+                            .preference(
+                                key: PopupResultLayoutPreferenceKey.self,
+                                value: PopupResultLayout(viewportHeight: geometry.size.height)
+                            )
                     }
                 }
             }
@@ -272,7 +269,7 @@ struct PopupView: View {
     // MARK: - Helpers
 
     private func reportResultLayout() {
-        onResultLayoutChange?(resultContentHeight, resultViewportHeight, containerHeight)
+        onResultLayoutChange?(resultLayout)
     }
 
     private func expandedBinding(for id: String) -> Binding<Bool> {
@@ -353,6 +350,19 @@ struct PopupView: View {
             autoPlayedGeneration = coordinator.translationGeneration
             tts.speak(MarkdownSupport.speakableText(text), language: targetLang)
         }
+    }
+}
+
+// Collect one layout pass before reporting sizes; separate state callbacks can mix
+// a new viewport height with the previous container height and keep resizing the panel.
+private struct PopupResultLayoutPreferenceKey: PreferenceKey {
+    static var defaultValue: PopupResultLayout { PopupResultLayout() }
+
+    static func reduce(value: inout PopupResultLayout, nextValue: () -> PopupResultLayout) {
+        let next = nextValue()
+        if let height = next.contentHeight { value.contentHeight = height }
+        if let height = next.viewportHeight { value.viewportHeight = height }
+        if let height = next.containerHeight { value.containerHeight = height }
     }
 }
 
