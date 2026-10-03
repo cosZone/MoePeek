@@ -189,6 +189,15 @@ final class TranslationProviderRegistry {
                     "X-Title": "MoePeek",
                 ]
             ),
+            OpenAICompatibleProvider(
+                id: "api-route",
+                displayName: "API Route",
+                iconSystemName: "network",
+                iconAssetName: "APIRoute",
+                defaultBaseURL: "https://global.api-route.com/v1",
+                defaultModel: "deepseek-v4.1-flash",
+                guideURL: "https://www.api-route.com"
+            ),
             AnthropicProvider(),
             OllamaProvider(),
             LMStudioProvider(),

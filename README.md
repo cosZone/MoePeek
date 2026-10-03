@@ -43,6 +43,7 @@
 | Youdao Translate | NiuTrans | DeepSeek | |
 | | Caiyun | OpenRouter | |
 | | DeepLX | Requesty | |
+| | | [API Route](https://www.api-route.com) | |
 | | | 智谱 GLM | |
 | | | Ollama (local) | |
 | | | LM Studio (local) | |
