@@ -3,6 +3,11 @@ import Vision
 import os
 
 enum ScreenCaptureOCR {
+    /// Vision internally upscales its working buffers, so feeding it a full 5K/6K retina
+    /// screenshot multiplies peak footprint for no accuracy gain. Anything at or above
+    /// this bound keeps small body text legible while capping the decoded bitmap.
+    private static let maxOCRDimension: CGFloat = 2048
+
     /// Atomically claim a one-shot flag. Returns `true` on first call, `false` thereafter.
     private static func claimOnce(_ lock: OSAllocatedUnfairLock<Bool>) -> Bool {
         lock.withLock { val in
@@ -47,18 +52,45 @@ enum ScreenCaptureOCR {
             throw OCRError.captureCancelled
         }
 
-        // Read image from temp file and perform OCR inside autoreleasepool
-        // to ensure large screenshot images are freed promptly.
+        // Read image from temp file inside autoreleasepool to ensure large screenshot
+        // images are freed promptly, then downscale oversized captures before OCR.
         let cgImage: CGImage = try autoreleasepool {
             guard let image = NSImage(contentsOf: tmpURL),
                   let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
             else {
                 throw OCRError.captureReadFailed
             }
-            return cg
+            return downscaledForOCR(cg) ?? cg
         }
 
         return try await recognizeText(in: cgImage)
+    }
+
+    /// Caps the longest edge at `maxOCRDimension`. Returns nil when no rescale is needed
+    /// or the context cannot be created, in which case the caller falls back to the original.
+    private static func downscaledForOCR(_ image: CGImage) -> CGImage? {
+        let longest = max(image.width, image.height)
+        guard longest > Int(maxOCRDimension) else { return nil }
+
+        let scale = maxOCRDimension / CGFloat(longest)
+        let width = max(1, Int((CGFloat(image.width) * scale).rounded(.down)))
+        let height = max(1, Int((CGFloat(image.height) * scale).rounded(.down)))
+
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: 0,
+            space: image.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return image
+        }
+
+        context.interpolationQuality = .medium
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        return context.makeImage()
     }
 
     private static func recognizeText(in image: CGImage) async throws -> String {
