@@ -189,6 +189,15 @@ final class TranslationProviderRegistry {
                     "X-Title": "MoePeek",
                 ]
             ),
+            OpenAICompatibleProvider(
+                id: "opper",
+                displayName: "Opper",
+                iconSystemName: "network",
+                iconAssetName: "Opper",
+                defaultBaseURL: "https://api.opper.ai/v3/compat",
+                defaultModel: "gemini-3.8-flash",
+                guideURL: "https://platform.opper.ai"
+            ),
             AnthropicProvider(),
             OllamaProvider(),
             LMStudioProvider(),
