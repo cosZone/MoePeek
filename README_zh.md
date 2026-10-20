@@ -44,6 +44,7 @@
 | 有道翻译 | 小牛翻译 | DeepSeek | |
 | | 彩云小译 | OpenRouter | |
 | | DeepLX | Requesty | |
+| | | [API Route](https://www.api-route.com) | |
 | | | 智谱 GLM | |
 | | | Ollama（本地） | |
 | | | LM Studio（本地） | |
