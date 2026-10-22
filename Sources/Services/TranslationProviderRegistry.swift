@@ -189,6 +189,15 @@ final class TranslationProviderRegistry {
                     "X-Title": "MoePeek",
                 ]
             ),
+            OpenAICompatibleProvider(
+                id: "cheaperinference",
+                displayName: "Cheaper Inference",
+                iconSystemName: "network",
+                iconAssetName: "CheaperInference",
+                defaultBaseURL: "https://api.cheaperinference.com/v1",
+                defaultModel: "gpt-5.4-mini",
+                guideURL: "https://cheaperinference.com/signup"
+            ),
             AnthropicProvider(),
             OllamaProvider(),
             LMStudioProvider(),
