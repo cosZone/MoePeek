@@ -33,10 +33,30 @@ struct BingTranslateProvider: TranslationProvider {
         let sl = LanguageCodeMapping.resolve(sourceLang, using: LanguageCodeMapping.bing) ?? "auto-detect"
         let tl = LanguageCodeMapping.resolveTarget(targetLang, using: LanguageCodeMapping.bing)
 
-        // Bing limits single requests to ~1000 characters
+        // Bing limits single requests to 1000 characters
         let isTruncated = text.count > 1000
         let truncated = String(text.prefix(1000))
 
+        let translated = try await requestTranslation(truncated, from: sl, to: tl)
+        if isTruncated {
+            return translated + "\n\n" + String(localized: "[Bing Translate: text truncated to 1000 characters]")
+        }
+        return translated
+    }
+
+    /// Bing reports a rejected session token as `statusCode` 205 inside a 200 response.
+    /// Refresh the cached credentials and retry once; a second rejection surfaces the
+    /// parser's session-expired message.
+    private func requestTranslation(_ text: String, from sl: String, to tl: String) async throws -> String {
+        do {
+            return try await sendRequest(text, from: sl, to: tl)
+        } catch TranslationError.apiError(let statusCode, _) where statusCode == 205 {
+            await BingTokenManager.shared.invalidate()
+            return try await sendRequest(text, from: sl, to: tl)
+        }
+    }
+
+    private func sendRequest(_ text: String, from sl: String, to tl: String) async throws -> String {
         let credentials = try await BingTokenManager.shared.getCredentials()
 
         guard var components = URLComponents(string: "https://www.bing.com/ttranslatev3") else {
@@ -55,7 +75,7 @@ struct BingTranslateProvider: TranslationProvider {
         let formBody = [
             "fromLang=\(URLFormEncoding.encode(sl))",
             "to=\(URLFormEncoding.encode(tl))",
-            "text=\(URLFormEncoding.encode(truncated))",
+            "text=\(URLFormEncoding.encode(text))",
             "token=\(URLFormEncoding.encode(credentials.token))",
             "key=\(URLFormEncoding.encode(credentials.key))",
         ].joined(separator: "&")
@@ -90,11 +110,7 @@ struct BingTranslateProvider: TranslationProvider {
             )
         }
 
-        let translated = try BingTranslateResponse.translatedText(from: data)
-        if isTruncated {
-            return translated + "\n\n" + String(localized: "[Bing Translate: text truncated to 1000 characters]")
-        }
-        return translated
+        return try BingTranslateResponse.translatedText(from: data)
     }
 }
 

@@ -31,9 +31,46 @@ import Testing
         }
     }
 
-    @Test func rejectsMalformedTranslation() {
-        #expect(throws: DecodingError.self) {
-            try BingTranslateResponse.translatedText(from: Data(#"[{"translations":[{"to":"en"}]}]"#.utf8))
+    @Test(arguments: [
+        #"[{"translations":[{"to":"en"}]}]"#,
+        "<!DOCTYPE html><html><body>Please verify you are human.</body></html>",
+    ])
+    func rejectsBodiesThatAreNotTranslations(body: String) {
+        do {
+            _ = try BingTranslateResponse.translatedText(from: Data(body.utf8))
+            Issue.record("A body without a translation must not decode")
+        } catch TranslationError.invalidResponse {
+            // Expected.
+        } catch {
+            Issue.record("Expected invalidResponse, received \(error)")
+        }
+    }
+
+    @Test func reportsRejectedRequestStatus() {
+        // Bing answers failures with HTTP 200 and this object, not a translation array.
+        let expired = reportedError(#"{"statusCode":205,"errorMessage":""}"#)
+        #expect(expired?.statusCode == 205)
+        #expect(expired?.message.isEmpty == false)
+
+        let rejected = reportedError(#"{"statusCode":400,"errorMessage":""}"#)
+        #expect(rejected?.statusCode == 400)
+        #expect(rejected?.message.isEmpty == false)
+        // An expired session must read differently from a generic rejection.
+        #expect(expired?.message != rejected?.message)
+
+        let passthrough = reportedError(#"{"statusCode":400,"errorMessage":"Invalid request"}"#)
+        #expect(passthrough?.statusCode == 400)
+        #expect(passthrough?.message == "Invalid request")
+    }
+
+    private func reportedError(_ json: String) -> (statusCode: Int, message: String)? {
+        do {
+            _ = try BingTranslateResponse.translatedText(from: Data(json.utf8))
+            return nil
+        } catch TranslationError.apiError(let statusCode, let message) {
+            return (statusCode, message)
+        } catch {
+            return nil
         }
     }
 }

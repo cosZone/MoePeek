@@ -667,6 +667,26 @@
         }
       }
     },
+    "Bing rejected the request" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bing 拒绝了该请求"
+          }
+        }
+      }
+    },
+    "Bing session expired. Please try again later." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bing 会话已过期，请稍后重试。"
+          }
+        }
+      }
+    },
     "Built-in system translation, no API Key needed (macOS 15+)" : {
       "extractionState" : "stale",
       "localizations" : {
