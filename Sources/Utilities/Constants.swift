@@ -16,7 +16,7 @@ enum SupportedLanguages {
 
     /// Complete catalog used by source selection and language detection.
     static let codes: [String] = defaultTargetCodes + [
-        "pl", "nl", "tr", "uk", "id", "sv",
+        "pl", "nl", "tr", "uk", "id", "sv", "he",
     ]
 
     /// All supported language codes and their localized display names.
@@ -56,6 +56,7 @@ enum SupportedLanguages {
         "uk": "Ukrainian",
         "id": "Indonesian",
         "sv": "Swedish",
+        "he": "Hebrew",
     ]
 
     /// Returns the English full name for a language code (e.g. `zh-Hans` → `Simplified Chinese`).

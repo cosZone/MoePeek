@@ -26,6 +26,7 @@ enum LanguageDetector {
         NLLanguage(rawValue: "uk"): 0.2,
         NLLanguage(rawValue: "id"): 0.2,
         NLLanguage(rawValue: "sv"): 0.2,
+        .hebrew: 0.2,
     ]
 
     /// Backward-compatible simple API.

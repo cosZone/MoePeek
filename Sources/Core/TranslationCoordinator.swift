@@ -554,7 +554,7 @@ final class TranslationCoordinator {
             hints["pt-BR", default: 0] += 0.05
         case "ru":
             hints["en", default: 0] += 0.2
-        case "ar":
+        case "ar", "he":
             hints["en", default: 0] += 0.2
         default:
             break

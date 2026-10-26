@@ -11,6 +11,13 @@ import Testing
         #expect(!SupportedLanguages.defaultTargetCodes.contains("pl"))
     }
 
+    @Test func includesHebrewInCatalogButNotLegacyDefaults() {
+        #expect(SupportedLanguages.codes.contains("he"))
+        #expect(!SupportedLanguages.defaultTargetCodes.contains("he"))
+        #expect(SupportedLanguages.englishName(for: "he") == "Hebrew")
+        #expect(SupportedLanguages.resolvedTarget("he", favoriteCodes: ["en", "he"]) == "he")
+    }
+
     @Test func normalizesPersistedFavoritesWithoutChangingOrder() {
         #expect(SupportedLanguages.normalizedTargetCodes([
             "es", "unknown", "pl", "es", "en",
