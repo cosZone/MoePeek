@@ -3,6 +3,12 @@
   "strings" : {
     "HTTP Proxy" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פרוקסי HTTP"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13,6 +19,12 @@
     },
     "Use a custom HTTP proxy" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שימוש בפרוקסי HTTP מותאם אישית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23,6 +35,12 @@
     },
     "Proxy Host" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כתובת הפרוקסי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33,6 +51,12 @@
     },
     "Proxy Port" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פורט הפרוקסי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43,6 +67,12 @@
     },
     "For a local proxy, use 127.0.0.1 and its HTTP or mixed port. Authentication is not supported." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לפרוקסי מקומי, יש להשתמש ב־127.0.0.1 ובפורט ה־HTTP או הפורט המשולב שלו. אימות אינו נתמך."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -53,6 +83,12 @@
     },
     "Applies only to Google Translate. When disabled, existing system and per-app proxy routing is used." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חל רק על Google Translate. כשהאפשרות כבויה, נעשה שימוש בניתוב הפרוקסי הקיים של המערכת ושל כל אפליקציה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -63,6 +99,12 @@
     },
     "Enter a proxy hostname or IP address without a scheme, path, or port." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יש להזין שם מארח או כתובת IP של הפרוקסי, ללא פרוטוקול, נתיב או פורט."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -73,6 +115,12 @@
     },
     "Enter a proxy port between 1 and 65535." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יש להזין פורט פרוקסי בין 1 ל־65535."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -83,6 +131,12 @@
     },
     "Connection successful" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החיבור הצליח"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -93,6 +147,12 @@
     },
     "Ready to translate." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מוכן לתרגום."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -103,6 +163,12 @@
     },
     "Starts this provider automatically for every new request. Turn it off to translate only from the result card." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מפעיל את הספק הזה אוטומטית בכל בקשה חדשה. כבו את האפשרות כדי לתרגם רק מכרטיס התוצאה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -113,6 +179,12 @@
     },
     "Translate" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -123,6 +195,12 @@
     },
     "Translate automatically" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום אוטומטי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -133,6 +211,12 @@
     },
     "Nothing to translate after removing images." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נותר מה לתרגם אחרי הסרת התמונות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -143,6 +227,12 @@
     },
     "Selection capture needs the Full text detection mode. Clipboard translation is not affected." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קליטת טקסט נבחר דורשת את מצב זיהוי הטקסט המלא. תרגום מהלוח אינו מושפע."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -153,6 +243,12 @@
     },
     "View" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תצוגה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -163,6 +259,12 @@
     },
     "Rich Text" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "טקסט עשיר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -173,6 +275,12 @@
     },
     "Edit" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עריכה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -183,6 +291,12 @@
     },
     "Image omitted" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "התמונה הושמטה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -193,6 +307,12 @@
     },
     "Switch result view" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החלפת תצוגת התוצאה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -203,6 +323,12 @@
     },
     "Switch source view" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החלפת תצוגת המקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -213,6 +339,12 @@
     },
     "Capture rich text and images" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קליטת טקסט עשיר ותמונות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -223,6 +355,12 @@
     },
     "Copies the selection with ⌘C to keep formatting and images from apps like Word. LLM providers translate it as Markdown; other providers receive plain text." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מעתיק את הבחירה עם ⌘C כדי לשמור על העיצוב והתמונות מאפליקציות כמו Word. ספקי LLM מתרגמים אותה כ־Markdown; ספקים אחרים מקבלים טקסט פשוט."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -233,6 +371,12 @@
     },
     "Source" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -243,6 +387,12 @@
     },
     "Markdown" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markdown"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -253,6 +403,12 @@
     },
     "Show source text" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הצגת טקסט המקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -263,6 +419,12 @@
     },
     "Show rendered Markdown" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הצגת Markdown מעובד"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -273,6 +435,12 @@
     },
     "Render Markdown in results" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עיבוד Markdown בתוצאות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -283,6 +451,12 @@
     },
     "Image" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תמונה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -294,6 +468,12 @@
     " · %@ Swap" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %@ החלפת שפות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -304,6 +484,12 @@
     },
     "(default)" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(ברירת מחדל)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -314,6 +500,12 @@
     },
     "(unknown)" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(לא ידוע)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -325,6 +517,12 @@
     "[Bing Translate: text truncated to 1000 characters]" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Bing Translate: הטקסט קוצר ל־1000 תווים]"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -339,6 +537,12 @@
     "%lld model(s) enabled — will run in parallel during translation." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld מודלים מופעלים — ירוצו במקביל בזמן התרגום."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -350,6 +554,12 @@
     "↵ Translate · ⇧↵ Newline" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↵ תרגום · ⇧↵ שורה חדשה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -361,6 +571,12 @@
     "↵ Translate · ⌘↵ Copy & Close · ⇧↵ Newline" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↵ תרגום · ⌘↵ העתקה וסגירה · ⇧↵ שורה חדשה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -372,6 +588,12 @@
     "About" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אודות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -382,6 +604,12 @@
     },
     "Access Token" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אסימון גישה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -393,6 +621,12 @@
     "Accessibility" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נגישות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -404,6 +638,12 @@
     "Accessibility Permission" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הרשאת נגישות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -415,6 +655,12 @@
     "Accessibility permission not granted. Open Settings to enable it." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ניתנה הרשאת נגישות. יש לפתוח את ההגדרות כדי להפעיל אותה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -425,6 +671,12 @@
     },
     "Add Custom Provider" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הוספת ספק מותאם אישית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -435,6 +687,12 @@
     },
     "Add Language" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הוספת שפה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -445,6 +703,12 @@
     },
     "After updating, macOS may revoke previously granted permissions. Please re-authorize below." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לאחר עדכון, ייתכן ש־macOS יבטל הרשאות שניתנו בעבר. יש לאשר אותן מחדש למטה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -455,6 +719,12 @@
     },
     "All Models" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כל המודלים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -469,6 +739,12 @@
     "API Configuration" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדרות API"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -480,6 +756,12 @@
     "API error (%lld): %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שגיאת API ‏(%lld): %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -494,6 +776,12 @@
     "API key not configured. Go to Settings to set it up." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מפתח ה־API לא הוגדר. יש לעבור להגדרות כדי להגדיר אותו."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -508,6 +796,12 @@
     "App Language" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת האפליקציה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -519,6 +813,12 @@
     "App Language:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת האפליקציה:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -529,6 +829,12 @@
     },
     "Apple Translation Language Packs" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חבילות שפה של Apple Translation"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -539,6 +845,12 @@
     },
     "Apple Translation requires language packs for offline translation.\nSelect a language pair and download, or do it later in Settings." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Translation דורש חבילות שפה לתרגום לא מקוון.\nבחרו צמד שפות והורידו אותו, או עשו זאת מאוחר יותר בהגדרות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -549,6 +861,12 @@
     },
     "Apps in the blocklist will not trigger automatic text selection detection." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אפליקציות ברשימת החסימה לא יפעילו זיהוי אוטומטי של טקסט נבחר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -559,6 +877,12 @@
     },
     "Are you sure you want to delete \"%@\"? This will remove all its settings." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "למחוק את \"%@\"? כל ההגדרות שלו יוסרו."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -570,6 +894,12 @@
     "auto" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אוטומטי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -580,6 +910,12 @@
     },
     "Auto Detect" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זיהוי אוטומטי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -591,6 +927,12 @@
     "Auto-detect source language" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זיהוי אוטומטי של שפת המקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -602,6 +944,12 @@
     "Auto-play provider" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ספק להשמעה אוטומטית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -613,6 +961,12 @@
     "Auto-play source text" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "השמעה אוטומטית של טקסט המקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -624,6 +978,12 @@
     "Auto-play translation result" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "השמעה אוטומטית של תוצאת התרגום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -635,6 +995,12 @@
     "Automatically check for updates" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקת עדכונים אוטומטית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -646,6 +1012,12 @@
     "Available on this system (macOS 15+). No API key needed." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זמין במערכת זו (macOS 15 ואילך). אין צורך במפתח API."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -659,6 +1031,12 @@
     },
     "Begin Setup" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "התחלת ההגדרה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -670,6 +1048,12 @@
     "Built-in system translation, no API Key needed (macOS 15+)" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום מובנה של המערכת, ללא צורך במפתח API (macOS 15 ואילך)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -681,6 +1065,12 @@
     "Cancel" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ביטול"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -691,6 +1081,12 @@
     },
     "Capability data from" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נתוני היכולות מתוך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -702,6 +1098,12 @@
     "Capability info based on approximate match and may be inaccurate" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מידע היכולות מבוסס על התאמה משוערת ועשוי להיות לא מדויק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -712,6 +1114,12 @@
     },
     "Changing language requires restarting the app." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שינוי השפה מחייב הפעלה מחדש של האפליקציה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -723,6 +1131,12 @@
     "Check & Download" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקה והורדה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -734,6 +1148,12 @@
     "Check Connection" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקת חיבור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -745,6 +1165,12 @@
     "Check for Updates..." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקת עדכונים..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -756,6 +1182,12 @@
     "Checking…" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בודק…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -767,6 +1199,12 @@
     "Choose" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחירה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -777,6 +1215,12 @@
     },
     "Choose a provider from the list to configure it." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחרו ספק מהרשימה כדי להגדיר אותו."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -787,6 +1231,12 @@
     },
     "Choose and order the languages shown in target-language menus. Source detection still uses the full language catalog." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחרו וסדרו את השפות שיוצגו בתפריטי שפת היעד. זיהוי שפת המקור עדיין משתמש ברשימת השפות המלאה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -798,6 +1248,12 @@
     "Choose Image…" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחירת תמונה…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -809,6 +1265,12 @@
     "Clear All" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ניקוי הכול"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -819,6 +1281,12 @@
     },
     "Click" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לחיצה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -829,6 +1297,12 @@
     },
     "Click the refresh button above to fetch available models, or add a custom model below." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לחצו על כפתור הרענון למעלה כדי לטעון את המודלים הזמינים, או הוסיפו מודל מותאם אישית למטה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -840,6 +1314,12 @@
     "Click the refresh button above to fetch available models." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לחצו על כפתור הרענון למעלה כדי לטעון את המודלים הזמינים."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -851,6 +1331,12 @@
     "Clipboard is empty. Copy some text first." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הלוח ריק. העתיקו טקסט כלשהו קודם."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -862,6 +1348,12 @@
     "Clipboard Translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום מהלוח"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -873,6 +1365,12 @@
     "Clipboard Translation:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום מהלוח:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -884,6 +1382,12 @@
     "Community Discussions" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דיונים בקהילה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -894,6 +1398,12 @@
     },
     "Configure OpenAI API" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדרת OpenAI API"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -905,6 +1415,12 @@
     "Connection successful (%lldms)" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החיבור הצליח (%lldms)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -915,6 +1431,12 @@
     },
     "Conservative" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שמרני"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -925,6 +1447,12 @@
     },
     "Copied" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הועתק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -936,6 +1464,12 @@
     "Copy" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העתקה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -950,6 +1484,12 @@
     "Could not decode image." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ניתן לפענח את התמונה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -961,6 +1501,12 @@
     "Could not load icon" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ניתן לטעון את הסמל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -971,6 +1517,12 @@
     },
     "Custom" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מותאם אישית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -982,6 +1534,12 @@
     "Default Height: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "גובה ברירת מחדל: %lld"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -992,6 +1550,12 @@
     },
     "Default Model" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מודל ברירת מחדל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1002,6 +1566,12 @@
     },
     "Default Speech Rate" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קצב דיבור ברירת מחדל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1013,6 +1583,12 @@
     "Default Width: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רוחב ברירת מחדל: %lld"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1024,6 +1600,12 @@
     "Delete" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מחיקה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1035,6 +1617,12 @@
     "Delete Provider" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מחיקת ספק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1046,6 +1634,12 @@
     "Detection Sensitivity: %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רגישות הזיהוי: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1057,6 +1651,12 @@
     "Download Ollama" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הורדת Ollama"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1067,6 +1667,12 @@
     },
     "Drag to reorder. This controls the display order of translation results." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "גררו כדי לשנות את הסדר. הסדר קובע את סדר הצגת תוצאות התרגום."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1078,6 +1684,12 @@
     "Empty text" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "טקסט ריק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1088,6 +1700,12 @@
     },
     "Enable at least one provider in the Services tab to configure display order." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעילו לפחות ספק אחד בכרטיסייה 'שירותים' כדי להגדיר את סדר התצוגה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1098,6 +1716,12 @@
     },
     "Enable at least one translation service.\nYou can enable multiple services for comparison." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעילו לפחות שירות תרגום אחד.\nאפשר להפעיל כמה שירותים כדי להשוות ביניהם."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1108,6 +1732,12 @@
     },
     "Endpoint" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נקודת קצה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1118,6 +1748,12 @@
     },
     "Enter your API configuration to use the OpenAI translation service.\nYou can also configure this later in Settings." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הזינו את הגדרות ה־API כדי להשתמש בשירות התרגום של OpenAI.\nאפשר גם להגדיר זאת מאוחר יותר בהגדרות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1129,6 +1765,12 @@
     "Excluded Apps" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אפליקציות מוחרגות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1140,6 +1782,12 @@
     "Failed to save image: %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שמירת התמונה נכשלה: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1150,6 +1798,12 @@
     },
     "Favorite Target Languages" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפות יעד מועדפות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1161,6 +1815,12 @@
     "Fetch available models" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "טעינת המודלים הזמינים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1171,6 +1831,12 @@
     },
     "Filled" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מלא"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1181,6 +1847,12 @@
     },
     "First completed" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הראשון שהסתיים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1192,6 +1864,12 @@
     "Floating Icon Activation:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעלת הסמל הצף:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1203,6 +1881,12 @@
     "Font Size: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "גודל גופן: %lld"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1213,6 +1897,12 @@
     },
     "For api.deeplx.org, include your API key in the URL.\nFor self-hosted: `http://localhost:1188`\nDo not include /translate path suffix." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עבור api.deeplx.org, יש לכלול את מפתח ה־API בכתובת.\nלשרת עצמאי: `http://localhost:1188`\nאין להוסיף את הסיומת /translate לנתיב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1224,6 +1914,12 @@
     "Free" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חינמי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1235,6 +1931,12 @@
     "Free Translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום חינמי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1246,6 +1948,12 @@
     "Free, no API key needed." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חינמי, ללא צורך במפתח API."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1257,6 +1965,12 @@
     "From:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מ־:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1267,6 +1981,12 @@
     },
     "Full" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מלא"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1278,6 +1998,12 @@
     "General" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כללי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1289,6 +2015,12 @@
     "Get a free API key at deepl.com" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קבלו מפתח API חינמי ב־deepl.com"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1300,6 +2032,12 @@
     "Get a token at platform.caiyunapp.com" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קבלו אסימון ב־platform.caiyunapp.com"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1311,6 +2049,12 @@
     "Get an API key at niutrans.com" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קבלו מפתח API ב־niutrans.com"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1322,6 +2066,12 @@
     "Get API Key from %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קבלת מפתח API מ־%@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1333,6 +2083,12 @@
     "Get credentials at api.fanyi.baidu.com" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קבלו פרטי גישה ב־api.fanyi.baidu.com"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1344,6 +2100,12 @@
     "Get Started" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בואו נתחיל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1354,6 +2116,12 @@
     },
     "Grabbing text…" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קולט טקסט…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1364,6 +2132,12 @@
     },
     "Granted" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ניתנה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1374,6 +2148,12 @@
     },
     "Hover" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ריחוף"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1385,6 +2165,12 @@
     "Image file too large. Maximum 2 MB." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קובץ התמונה גדול מדי. הגודל המרבי הוא 2 MB."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1396,6 +2182,12 @@
     "Image:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תמונה:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1407,6 +2199,12 @@
     "Installed" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מותקן"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1418,6 +2216,12 @@
     "Invalid API URL" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כתובת API לא תקינה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1429,6 +2233,12 @@
     "Invalid response" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תגובה לא תקינה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1440,6 +2250,12 @@
     "Invalid response format" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פורמט התגובה לא תקין"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1451,6 +2267,12 @@
     "Invalid response from server" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תגובה לא תקינה מהשרת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1462,6 +2284,12 @@
     "Issue Feedback" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משוב ודיווח על תקלות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1473,6 +2301,12 @@
     "Keyboard Shortcuts" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קיצורי מקלדת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1484,6 +2318,12 @@
     "Language Detection" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זיהוי שפה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1495,6 +2335,12 @@
     "Language pack not downloaded (%@ → %@). Download it in Settings or try another provider." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חבילת השפה לא הורדה (%1$@ ← %2$@). הורידו אותה בהגדרות או נסו ספק אחר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1506,6 +2352,12 @@
     "Language Packs" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חבילות שפה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1517,6 +2369,12 @@
     "Language pair not supported (%@ → %@). Try another provider." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "צמד השפות אינו נתמך (%1$@ ← %2$@). נסו ספק אחר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1528,6 +2386,12 @@
     "Later" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אחר כך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1539,6 +2403,12 @@
     "Launch at Login" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעלה בעת הכניסה למערכת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1550,6 +2420,12 @@
     "Learn more about DeepLX" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מידע נוסף על DeepLX"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1564,6 +2440,12 @@
     "LLM Services" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שירותי LLM"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1574,6 +2456,12 @@
     },
     "Lower = more aggressive detection (may be inaccurate); Higher = more conservative (may return unknown)" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נמוך יותר = זיהוי אגרסיבי יותר (עלול להיות לא מדויק); גבוה יותר = שמרני יותר (עלול להחזיר 'לא ידוע')"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1585,6 +2473,12 @@
     "Manual Translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום ידני"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1596,6 +2490,12 @@
     "Manual Translation:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום ידני:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1610,6 +2510,12 @@
     "Menu Bar Icon" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "סמל בשורת התפריטים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1620,6 +2526,12 @@
     },
     "Menu Bar Translation Tool" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כלי תרגום בשורת התפריטים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1631,6 +2543,12 @@
     "Model name" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שם המודל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1641,6 +2559,12 @@
     },
     "Move Down" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הזזה למטה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1651,6 +2575,12 @@
     },
     "Move Up" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הזזה למעלה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1667,6 +2597,12 @@
     },
     "MoePeek is now listed in Screen Recording settings" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MoePeek מופיע כעת בהגדרות הקלטת המסך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1678,6 +2614,12 @@
     "MoePeek needs accessibility permission to read your selected text. This is essential for text selection translation." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MoePeek צריך הרשאת נגישות כדי לקרוא את הטקסט שבחרתם. ההרשאה הכרחית לתרגום טקסט נבחר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1688,6 +2630,12 @@
     },
     "MoePeek needs screen recording permission for OCR screenshot translation to recognize text on screen." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MoePeek צריך הרשאת הקלטת מסך כדי שתרגום צילומי מסך עם OCR יוכל לזהות טקסט על המסך."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1698,6 +2646,12 @@
     },
     "More translation services available in Settings" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שירותי תרגום נוספים זמינים בהגדרות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1708,6 +2662,12 @@
     },
     "Need inspiration? Browse free icons on [Iconify](https://icon-sets.iconify.design/?query=translate) — download an SVG or PNG and upload it here." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מחפשים השראה? עיינו בסמלים חינמיים ב־[Iconify](https://icon-sets.iconify.design/?query=translate) — הורידו קובץ SVG או PNG והעלו אותו כאן."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1719,6 +2679,12 @@
     "Needs download" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נדרשת הורדה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1730,6 +2696,12 @@
     "Network error: %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שגיאת רשת: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1741,6 +2713,12 @@
     "Next" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הבא"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1752,6 +2730,12 @@
     "No image found in clipboard after capture" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נמצאה תמונה בלוח לאחר הצילום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1763,6 +2747,12 @@
     "No model selected. Please select a model in Settings." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נבחר מודל. יש לבחור מודל בהגדרות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1773,6 +2763,12 @@
     },
     "No models match your search." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אין מודלים שתואמים לחיפוש."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1784,6 +2780,12 @@
     "No Preference" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ללא העדפה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1795,6 +2797,12 @@
     "No Providers Enabled" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אין ספקים מופעלים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1806,6 +2814,12 @@
     "No providers enabled. Enable at least one in Settings." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אין ספקים מופעלים. הפעילו לפחות אחד בהגדרות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1817,6 +2831,12 @@
     "No text selected. Select some text and try again." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נבחר טקסט. בחרו טקסט ונסו שוב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1828,6 +2848,12 @@
     "No text was recognized in the captured image" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא זוהה טקסט בתמונה שצולמה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1839,6 +2865,12 @@
     "Not checked" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נבדק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1850,6 +2882,12 @@
     "Not detected" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא זוהה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1861,6 +2899,12 @@
     "OCR failed: %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR נכשל: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1872,6 +2916,12 @@
     "Official" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רשמי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1883,6 +2933,12 @@
     "OK" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אישור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1894,6 +2950,12 @@
     "Ollama server not running at %@" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שרת Ollama אינו פועל בכתובת %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1905,6 +2967,12 @@
     "Onboarding Guide..." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מדריך ההתחלה..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1916,6 +2984,12 @@
     "Open Settings" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פתיחת ההגדרות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1927,6 +3001,12 @@
     "Open System Settings" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פתיחת הגדרות המערכת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1938,6 +3018,12 @@
     "OpenAI-compatible API, requires API Key" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API תואם OpenAI, נדרש מפתח API"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1949,6 +3035,12 @@
     "Optional" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אופציונלי"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1960,6 +3052,12 @@
     "Order" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "סדר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1971,6 +3069,12 @@
     "Outline" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קו מתאר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1982,6 +3086,12 @@
     "Parallel Models" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מודלים במקביל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1992,6 +3102,12 @@
     },
     "Per-Language Rate" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "קצב לפי שפה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2002,6 +3118,12 @@
     },
     "Permissions Need Re-Authorization" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נדרש אישור מחדש של הרשאות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2013,6 +3135,12 @@
     "Pin Popup" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נעיצת החלונית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2024,6 +3152,12 @@
     "Please enter a valid Base URL (starting with http:// or https://) and API Key" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יש להזין כתובת בסיס תקינה (שמתחילה ב־http:// או https://) ומפתח API"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2035,6 +3169,12 @@
     "Please fill in the complete configuration (URL must start with http:// or https://)" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יש למלא את כל ההגדרות (הכתובת חייבת להתחיל ב־http:// או https://)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2045,6 +3185,12 @@
     },
     "Please select at least one translation service" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יש לבחור לפחות שירות תרגום אחד"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2056,6 +3202,12 @@
     "Popup Panel" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חלונית קופצת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2066,6 +3218,12 @@
     },
     "Preferences" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העדפות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2077,6 +3235,12 @@
     "Preferred Source Language:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת מקור מועדפת:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2087,6 +3251,12 @@
     },
     "Presets" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדרות מוכנות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2098,6 +3268,12 @@
     "Presets:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדרות מוכנות:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2109,6 +3285,12 @@
     "Preview:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תצוגה מקדימה:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2120,6 +3302,12 @@
     "Previous" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הקודם"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2131,6 +3319,12 @@
     "Pro" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2141,6 +3335,12 @@
     },
     "Protects your self-hosted DeepLX server. Set via `--token` flag or `TOKEN` environment variable." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מגן על שרת DeepLX העצמאי שלכם. מוגדר באמצעות הדגל `--token` או משתנה הסביבה `TOKEN`."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2151,6 +3351,12 @@
     },
     "Provider Display Order" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "סדר הצגת הספקים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2161,6 +3367,12 @@
     },
     "Providers" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ספקים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2172,6 +3384,12 @@
     "Quit MoePeek" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "יציאה מ־MoePeek"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2183,6 +3401,12 @@
     "Rate limited by Bing. Please try again later." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bing הגביל את קצב הבקשות. נסו שוב מאוחר יותר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2194,6 +3418,12 @@
     "Rate limited by Youdao. Please try again later." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Youdao הגביל את קצב הבקשות. נסו שוב מאוחר יותר."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2205,6 +3435,12 @@
     "Remember Last Popup Position" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "זכירת מיקום החלונית האחרון"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2216,6 +3452,12 @@
     "Remove" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הסרה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2227,6 +3469,12 @@
     "Remove custom menu bar icon?" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "להסיר את הסמל המותאם אישית בשורת התפריטים?"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2238,6 +3486,12 @@
     "Render as template (monochrome)" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עיבוד כתבנית (מונוכרום)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2249,6 +3503,12 @@
     "Request build failed" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בניית הבקשה נכשלה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2260,6 +3520,12 @@
     "Request failed (%lld)" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הבקשה נכשלה (%lld)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2271,6 +3537,12 @@
     "Request Permission" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בקשת הרשאה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2282,6 +3554,12 @@
     "Required for OCR screenshot translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נדרש לתרגום צילומי מסך עם OCR"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2293,6 +3571,12 @@
     "Required for reading selected text" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נדרש לקריאת טקסט נבחר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2303,6 +3587,12 @@
     },
     "Requirements: PNG, JPG, SVG, PDF, TIFF, or ICNS, up to 2 MB. Recommended 36×36 px (18 pt @2x) with transparent background. For template mode, ship a monochrome image — black on transparent, alpha controls visibility." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דרישות: PNG,‏ JPG,‏ SVG,‏ PDF,‏ TIFF או ICNS, עד 2 MB. מומלץ 36×36 פיקסלים (18 pt @2x) עם רקע שקוף. במצב תבנית, השתמשו בתמונה מונוכרומטית — שחור על רקע שקוף, ושקיפות האלפא קובעת מה נראה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2314,6 +3604,12 @@
     "Reset" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "איפוס"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2325,6 +3621,12 @@
     "Reset to default rate" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "איפוס לקצב ברירת המחדל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2336,6 +3638,12 @@
     "Restart Now" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הפעלה מחדש עכשיו"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2347,6 +3655,12 @@
     "Retry" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ניסיון חוזר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2358,6 +3672,12 @@
     "Running" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פועל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2368,6 +3688,12 @@
     },
     "Running multiple local models in parallel requires sufficient VRAM. %@ may swap models causing increased latency." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הרצת כמה מודלים מקומיים במקביל דורשת מספיק VRAM. ‏%@ עלול להחליף מודלים בזיכרון, מה שיגדיל את זמן התגובה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2379,6 +3705,12 @@
     "Running multiple local models in parallel requires sufficient VRAM. LM Studio may swap models causing increased latency." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הרצת כמה מודלים מקומיים במקביל דורשת מספיק VRAM. ‏LM Studio עלול להחליף מודלים בזיכרון, מה שיגדיל את זמן התגובה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2390,6 +3722,12 @@
     "Running multiple local models in parallel requires sufficient VRAM. Ollama may swap models causing increased latency." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הרצת כמה מודלים מקומיים במקביל דורשת מספיק VRAM. ‏Ollama עלול להחליף מודלים בזיכרון, מה שיגדיל את זמן התגובה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2401,6 +3739,12 @@
     "Screen capture was cancelled" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "צילום המסך בוטל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2412,6 +3756,12 @@
     "Screen Recording" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הקלטת מסך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2422,6 +3772,12 @@
     },
     "Screen Recording Permission" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הרשאת הקלטת מסך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2433,6 +3789,12 @@
     "Screen recording permission not granted. Open Settings to enable it." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ניתנה הרשאת הקלטת מסך. יש לפתוח את ההגדרות כדי להפעיל אותה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2444,6 +3806,12 @@
     "Screenshot OCR" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR מצילום מסך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2455,6 +3823,12 @@
     "Screenshot OCR:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR מצילום מסך:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2466,6 +3840,12 @@
     "Search models…" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "חיפוש מודלים…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2480,6 +3860,12 @@
     "Select a model" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחירת מודל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2491,6 +3877,12 @@
     "Select a provider" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחירת ספק"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2502,6 +3894,12 @@
     "Select models to run in parallel during translation (max %lld)." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחרו מודלים שירוצו במקביל בזמן התרגום (עד %lld)."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2512,6 +3910,12 @@
     },
     "Select models to run in parallel during translation." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחרו מודלים שירוצו במקביל בזמן התרגום."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2522,6 +3926,12 @@
     },
     "Select Translation Service" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בחירת שירות תרגום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2532,6 +3942,12 @@
     },
     "Selected" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נבחר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2543,6 +3959,12 @@
     "Selection Translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום טקסט נבחר"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2554,6 +3976,12 @@
     "Selection Translation:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום טקסט נבחר:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2565,6 +3993,12 @@
     "Server" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שרת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2575,6 +4009,12 @@
     },
     "Server URL" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "כתובת השרת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2585,6 +4025,12 @@
     },
     "Service" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שירות"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2596,6 +4042,12 @@
     "Services" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שירותים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2607,6 +4059,12 @@
     "Settings..." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הגדרות..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2617,6 +4075,12 @@
     },
     "SF Symbol" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF Symbol"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2628,6 +4092,12 @@
     "Show Dock icon" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הצגת סמל ב־Dock"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2639,6 +4109,12 @@
     "Show floating icon on text selection" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הצגת סמל צף בעת בחירת טקסט"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2649,6 +4125,12 @@
     },
     "Simulates DeepL iOS client. No authentication required. Rate limits (HTTP 429) may apply." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מדמה את לקוח DeepL ל־iOS. אין צורך באימות. ייתכנו הגבלות קצב (HTTP 429)."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2659,6 +4141,12 @@
     },
     "Silent OCR" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR שקט"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2669,6 +4157,12 @@
     },
     "Silent OCR:" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR שקט:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2680,6 +4174,12 @@
     "Skip" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "דילוג"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2690,6 +4190,12 @@
     },
     "Smart Translation" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום חכם"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2700,6 +4206,12 @@
     },
     "Smart Translation:" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום חכם:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2710,6 +4222,12 @@
     },
     "Smart Translation has no default shortcut. It uses selected content first, then the clipboard snapshot captured before selection lookup, and opens manual input when both are empty." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לתרגום חכם אין קיצור מקלדת ברירת מחדל. הוא משתמש קודם בתוכן הנבחר, אחר כך בתמונת הלוח שנשמרה לפני חיפוש הבחירה, ופותח הזנה ידנית כששניהם ריקים."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2721,6 +4239,12 @@
     "Source Language" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת המקור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2732,6 +4256,12 @@
     "Source Language:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת המקור:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2743,6 +4273,12 @@
     "Source:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מקור:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2753,6 +4289,12 @@
     },
     "Standard" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "רגיל"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2764,6 +4306,12 @@
     "Status" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מצב"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2774,6 +4322,12 @@
     },
     "Status updates automatically after granting" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "המצב מתעדכן אוטומטית לאחר מתן ההרשאה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2785,6 +4339,12 @@
     "Style:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "סגנון:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2796,6 +4356,12 @@
     "Supports reasoning / chain-of-thought" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תומך בהסקה / שרשרת מחשבה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2807,6 +4373,12 @@
     "Supports tool calling" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תומך בקריאה לכלים"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2818,6 +4390,12 @@
     "Swap Languages:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "החלפת שפות:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2829,6 +4407,12 @@
     "Symbol exists on this system." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הסמל קיים במערכת זו."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2840,6 +4424,12 @@
     "Symbol name:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שם הסמל:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2851,6 +4441,12 @@
     "Symbol not found. Falling back to default." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הסמל לא נמצא. חוזר לברירת המחדל."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2862,6 +4458,12 @@
     "System" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מערכת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2872,6 +4474,12 @@
     },
     "System Default" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ברירת המחדל של המערכת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2883,6 +4491,12 @@
     "System Prompt" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "הנחיית מערכת"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2894,6 +4508,12 @@
     "Target Language" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת היעד"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2905,6 +4525,12 @@
     "Target Language:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שפת היעד:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2915,6 +4541,12 @@
     },
     "Template mode masks the image to the menu bar tint — recommended for monochrome icons so they adapt to light and dark menu bars. Turn it off only for full-color logos." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מצב תבנית צובע את התמונה בגוון שורת התפריטים — מומלץ לסמלים מונוכרומטיים כדי שיתאימו לשורת תפריטים בהירה וכהה. כבו אותו רק עבור לוגואים צבעוניים."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2925,6 +4557,12 @@
     },
     "Test" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2936,6 +4574,12 @@
     "Test Connection" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "בדיקת חיבור"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2947,6 +4591,12 @@
     "Text Detection Mode:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מצב זיהוי טקסט:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2957,6 +4607,12 @@
     },
     "The following permissions are required.\nWe'll guide you through the setup." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "נדרשות ההרשאות הבאות.\nנדריך אתכם בתהליך ההגדרה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2967,6 +4623,12 @@
     },
     "The uploaded image will be deleted. You can choose another image any time." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "התמונה שהועלתה תימחק. אפשר לבחור תמונה אחרת בכל עת."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2977,6 +4639,12 @@
     },
     "Tip: open the SF Symbols app from Apple to browse all available names, then paste one above. Names are case-sensitive." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "טיפ: פתחו את אפליקציית SF Symbols של Apple כדי לעיין בכל השמות הזמינים, ואז הדביקו אחד למעלה. השמות רגישים לאותיות גדולות וקטנות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2988,6 +4656,12 @@
     "To:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אל:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2998,6 +4672,12 @@
     },
     "Token" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "אסימון"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3009,6 +4689,12 @@
     "Translate to:" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום ל־:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3019,6 +4705,12 @@
     },
     "Translating…" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מתרגם…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3030,6 +4722,12 @@
     "Translation" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "תרגום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3041,6 +4739,12 @@
     "Translation APIs" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ממשקי API לתרגום"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3052,6 +4756,12 @@
     "Translation returned empty result" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "התרגום החזיר תוצאה ריקה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3063,6 +4773,12 @@
     "Translation session ended unexpectedly. Please try again." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "סשן התרגום הסתיים באופן בלתי צפוי. נסו שוב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3074,6 +4790,12 @@
     "Unified API for 200+ models, requires API Key" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API מאוחד ליותר מ־200 מודלים, נדרש מפתח API"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3085,6 +4807,12 @@
     "Unknown" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא ידוע"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3096,6 +4824,12 @@
     "Unknown DeepLX error" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "שגיאת DeepLX לא ידועה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3107,6 +4841,12 @@
     "Unpin Popup" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ביטול נעיצת החלונית"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3118,6 +4858,12 @@
     "Unsupported" : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא נתמך"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3129,6 +4875,12 @@
     "Unsupported image format. Use PNG, JPG, SVG, PDF, TIFF, or ICNS." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פורמט התמונה אינו נתמך. השתמשו ב־PNG,‏ JPG,‏ SVG,‏ PDF,‏ TIFF או ICNS."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3139,6 +4891,12 @@
     },
     "Upload" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "העלאה"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3149,6 +4907,12 @@
     },
     "Use {targetLang} as a placeholder for the target language." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "השתמשו ב־{targetLang} כמציין מיקום לשפת היעד."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3159,6 +4923,12 @@
     },
     "Used when no models are selected below." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משמש כשלא נבחרו מודלים למטה."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3170,6 +4940,12 @@
     "Uses Accessibility API + AppleScript (Safari). Covers most apps without simulating keystrokes." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־Accessibility API וב־AppleScript (ב־Safari). מכסה את רוב האפליקציות בלי לדמות הקשות מקלדת."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3181,6 +4957,12 @@
     "Uses Accessibility API only. Most compatible with remote desktops and virtual machines, but may not detect text in some apps." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־Accessibility API בלבד. התאימות הטובה ביותר לשולחן עבודה מרוחק ולמכונות וירטואליות, אך ייתכן שלא יזהה טקסט באפליקציות מסוימות."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3192,6 +4974,12 @@
     "Uses all detection methods including ⌘C simulation. Best coverage, but may interfere with remote desktop apps and keyboard shortcut recording." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש בכל שיטות הזיהוי, כולל הדמיית ⌘C. הכיסוי הטוב ביותר, אך עלול להפריע לאפליקציות שולחן עבודה מרוחק ולהקלטת קיצורי מקלדת."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3202,6 +4990,12 @@
     },
     "Uses Bing Translator, may be rate-limited." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־Bing Translator, ייתכנו הגבלות קצב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3212,6 +5006,12 @@
     },
     "Uses DeepL official API (`/v2`). Requires `authKey` configured on the DeepLX server." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־API הרשמי של DeepL ‏(`/v2`). נדרש `authKey` שמוגדר בשרת DeepLX."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3222,6 +5022,12 @@
     },
     "Uses DeepL Pro session. Requires `dl_session` cookie configured on the DeepLX server." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש בסשן DeepL Pro. נדרשת עוגייה `dl_session` שמוגדרת בשרת DeepLX."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3232,6 +5038,12 @@
     },
     "Uses unofficial Google Translate API, may be rate-limited." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־API לא רשמי של Google Translate, ייתכנו הגבלות קצב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3242,6 +5054,12 @@
     },
     "Uses Youdao Translate, may be rate-limited." : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "משתמש ב־Youdao Translate, ייתכנו הגבלות קצב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3262,6 +5080,12 @@
     },
     "Waiting…" : {
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ממתין…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3276,6 +5100,12 @@
     "Youdao decryption failed. Please try again." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "פענוח התגובה של Youdao נכשל. נסו שוב."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3287,6 +5117,12 @@
     "Youdao response parsing failed. The service may be temporarily unavailable." : {
       "extractionState" : "stale",
       "localizations" : {
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "עיבוד התגובה של Youdao נכשל. ייתכן שהשירות אינו זמין זמנית."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",

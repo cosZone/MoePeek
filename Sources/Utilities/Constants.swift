@@ -72,12 +72,14 @@ enum AppLanguage: String, CaseIterable, Defaults.Serializable {
     case system = ""
     case english = "en"
     case simplifiedChinese = "zh-Hans"
+    case hebrew = "he"
 
     var displayName: String {
         switch self {
         case .system: String(localized: "System Default")
         case .english: "English"
         case .simplifiedChinese: "简体中文"
+        case .hebrew: "עברית"
         }
     }
 }

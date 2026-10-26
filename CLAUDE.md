@@ -73,9 +73,9 @@ User Action (shortcut / mouse selection / OCR)
 
 ### Internationalization (i18n)
 
-The app supports **English** (development language) and **Simplified Chinese** (zh-Hans) via Xcode String Catalogs.
+The app supports **English** (development language), **Simplified Chinese** (zh-Hans) and **Hebrew** (he) via Xcode String Catalogs.
 
-- **`Resources/Localizable.xcstrings`** — Single String Catalog containing all localized strings with en keys and zh-Hans translations.
+- **`Resources/Localizable.xcstrings`** — Single String Catalog containing all localized strings with en keys and zh-Hans / he translations.
 - **SwiftUI views** use string literals as `LocalizedStringKey` (automatic lookup).
 - **Non-UI code** (errors, coordinators) uses `String(localized:)` for runtime localization.
 - **`SupportedLanguages`** in `Constants.swift` uses `Locale.current.localizedString(forIdentifier:)` for dynamic language names.
