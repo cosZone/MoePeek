@@ -177,7 +177,8 @@ extension TranslationProvider {
 
 extension TranslationProvider {
     /// Stream an OpenAI-compatible SSE response, validating the HTTP status
-    /// and yielding content deltas to the continuation.
+    /// and yielding content deltas to the continuation. Leading reasoning blocks
+    /// (`<thought>`, `<think>`) are stripped via `ReasoningTagFilter`.
     func streamOpenAISSE(
         _ bytes: URLSession.AsyncBytes,
         response: URLResponse,
@@ -194,6 +195,7 @@ extension TranslationProvider {
             throw TranslationError.apiError(statusCode: httpResponse.statusCode, message: errorBody)
         }
 
+        var filter = ReasoningTagFilter()
         for try await line in bytes.lines {
             guard !Task.isCancelled else { break }
 
@@ -207,8 +209,12 @@ extension TranslationProvider {
                   let content = json.choices.first?.delta.content
             else { continue }
 
-            continuation.yield(content)
+            let visible = filter.process(content)
+            if !visible.isEmpty { continuation.yield(visible) }
         }
+
+        let remainder = filter.finish()
+        if !remainder.isEmpty { continuation.yield(remainder) }
     }
 }
 
