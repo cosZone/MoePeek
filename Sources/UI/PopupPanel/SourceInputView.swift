@@ -39,6 +39,7 @@ struct SourceInputView: View {
                         showsAttachments: true
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .environment(\.layoutDirection, SupportedLanguages.isRightToLeft(sourceLanguage) ? .rightToLeft : .leftToRight)
                 }
                 .frame(maxHeight: .infinity)
                 .background { InteractiveMarker() }
@@ -47,6 +48,7 @@ struct SourceInputView: View {
                     text: $text,
                     fontSize: CGFloat(fontSize),
                     fontName: fontName,
+                    writingDirection: SupportedLanguages.isRightToLeft(sourceLanguage) ? .rightToLeft : .natural,
                     onSubmit: onSubmit,
                     onCopyAndClose: onCopyAndClose,
                     onSwapLanguages: onSwapLanguages,
@@ -136,6 +138,7 @@ private struct SourceTextEditor: NSViewRepresentable {
     @Binding var text: String
     let fontSize: CGFloat
     let fontName: String
+    let writingDirection: NSWritingDirection
     let onSubmit: () -> Void
     let onCopyAndClose: () -> Void
     let onSwapLanguages: () -> Void
@@ -192,7 +195,7 @@ private struct SourceTextEditor: NSViewRepresentable {
         )
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.lineFragmentPadding = 0
-        textView.applyDisplayAttributes(font: resolvedFont)
+        textView.applyDisplayAttributes(font: resolvedFont, writingDirection: writingDirection)
         textView.setExternalText(text)
 
         scrollView.documentView = textView
@@ -214,7 +217,7 @@ private struct SourceTextEditor: NSViewRepresentable {
 
         let coordinator = context.coordinator
         coordinator.onContentHeightChange = onContentHeightChange
-        textView.applyDisplayAttributes(font: resolvedFont)
+        textView.applyDisplayAttributes(font: resolvedFont, writingDirection: writingDirection)
         textView.updateLayout(for: nsView.contentSize)
 
         if textView.string != text {
@@ -266,9 +269,22 @@ private final class SubmitAwareTextView: NSTextView {
     var onSwapLanguages: (() -> Void)?
     var onWindowKeyChange: ((Bool) -> Void)?
     private var displayFont: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
+    private var displayParagraphStyle: NSParagraphStyle = .default
 
-    func applyDisplayAttributes(font: NSFont) {
+    /// Right-to-left source languages get an explicit RTL base direction (right-aligned);
+    /// everything else keeps natural, per-paragraph direction.
+    private static func paragraphStyle(for direction: NSWritingDirection) -> NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        style.baseWritingDirection = direction
+        style.alignment = .natural
+        return style
+    }
+
+    func applyDisplayAttributes(font: NSFont, writingDirection: NSWritingDirection? = nil) {
         displayFont = font
+        if let writingDirection {
+            displayParagraphStyle = Self.paragraphStyle(for: writingDirection)
+        }
         self.font = displayFont
         textColor = .labelColor
         insertionPointColor = .labelColor
@@ -385,6 +401,7 @@ private final class SubmitAwareTextView: NSTextView {
         var attributes = typingAttributes
         attributes[.font] = displayFont
         attributes[.foregroundColor] = NSColor.labelColor
+        attributes[.paragraphStyle] = displayParagraphStyle
         return attributes
     }
 
@@ -397,6 +414,7 @@ private final class SubmitAwareTextView: NSTextView {
                 [
                     .font: displayFont,
                     .foregroundColor: NSColor.labelColor,
+                    .paragraphStyle: displayParagraphStyle,
                 ],
                 range: range
             )

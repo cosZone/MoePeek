@@ -122,3 +122,17 @@ import Testing
         #expect(result.language == "pl")
     }
 }
+
+@Suite struct TextDirectionTests {
+    @Test func detectsRightToLeftLanguages() {
+        #expect(SupportedLanguages.isRightToLeft("ar"))
+        #expect(SupportedLanguages.isRightToLeft("he"))
+        #expect(SupportedLanguages.isRightToLeft("fa"))
+    }
+
+    @Test func treatsOtherLanguagesAndAutoAsLeftToRight() {
+        for code in ["en", "zh-Hans", "ja", "ru", "pt-BR", "auto", ""] {
+            #expect(!SupportedLanguages.isRightToLeft(code), "\(code)")
+        }
+    }
+}

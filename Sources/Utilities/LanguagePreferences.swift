@@ -66,3 +66,12 @@ extension SupportedLanguages {
         return lhs == rhs
     }
 }
+
+extension SupportedLanguages {
+    /// Whether text in this language is written right-to-left (e.g. Arabic, Hebrew).
+    /// `auto` and unknown identifiers fall back to left-to-right.
+    static func isRightToLeft(_ code: String) -> Bool {
+        guard code != "auto", !code.isEmpty else { return false }
+        return Locale.Language(identifier: code).characterDirection == .rightToLeft
+    }
+}
