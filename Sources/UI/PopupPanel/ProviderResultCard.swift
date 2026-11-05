@@ -189,17 +189,23 @@ struct ProviderResultCard: View {
         let font = Font.popup(name: fontName, size: CGFloat(fontSize))
         let spokenText = MarkdownSupport.speakableText(text)
 
+        let textDirection: LayoutDirection = SupportedLanguages.isRightToLeft(targetLanguage) ? .rightToLeft : .leftToRight
+
         return VStack(alignment: .leading, spacing: 4) {
-            if offersMarkdown && viewMode != .source {
-                MarkdownResultView(text: text, font: font, attachments: attachments, showsAttachments: viewMode == .rich)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            } else {
-                Text(text)
-                    .font(font)
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            Group {
+                if offersMarkdown && viewMode != .source {
+                    MarkdownResultView(text: text, font: font, attachments: attachments, showsAttachments: viewMode == .rich)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text(text)
+                        .font(font)
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
+            // Only the result text follows the target language's direction; the action row stays put.
+            .environment(\.layoutDirection, textDirection)
 
             if offersMarkdown || (canSpeak && ttsCoordinator != nil) || onCopy != nil {
                 HStack {
