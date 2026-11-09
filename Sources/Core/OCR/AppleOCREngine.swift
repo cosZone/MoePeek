@@ -14,8 +14,6 @@ public enum AppleOCREngine: Sendable {
     ///
     /// The first system Vision load can exceed this deadline. The timeout still keeps requests
     /// bounded, prevents work from piling up, and mirrors Easydict's production behavior.
-    private static let recognitionTimeout: TimeInterval = 5
-
     /// Easydict uses a lock rather than an actor here so slot ownership survives caller
     /// cancellation and cannot be starved by actor-isolated work.
     private static let accurateRecognitionLock = NSLock()
@@ -51,9 +49,12 @@ public enum AppleOCREngine: Sendable {
         }
     }()
 
-    public static func recognizeText(in image: CGImage) async throws -> String {
+    public static func recognizeText(
+        in image: CGImage,
+        recognitionTimeout: TimeInterval = 5
+    ) async throws -> String {
         logger.info("Starting Apple OCR (\(image.width)x\(image.height) px)")
-        let observations = try await performVisionOCR(on: image)
+        let observations = try await performVisionOCR(on: image, timeout: recognitionTimeout)
         let text = observations
             .map(\.text)
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
@@ -62,10 +63,13 @@ public enum AppleOCREngine: Sendable {
         return text
     }
 
-    private static func performVisionOCR(on cgImage: CGImage) async throws -> [RecognizedLine] {
+    private static func performVisionOCR(
+        on cgImage: CGImage,
+        timeout: TimeInterval
+    ) async throws -> [RecognizedLine] {
         // Easydict found the modern request unstable on macOS 15 and enables it only on 26+.
         if #available(macOS 26.0, *) {
-            return try await performModernVisionOCRWithFallback(on: cgImage)
+            return try await performModernVisionOCRWithFallback(on: cgImage, timeout: timeout)
         }
         return try await performLegacyVisionOCR(on: cgImage)
     }
@@ -127,9 +131,12 @@ public enum AppleOCREngine: Sendable {
     // MARK: - Modern API
 
     @available(macOS 26.0, *)
-    private static func performModernVisionOCRWithFallback(on cgImage: CGImage) async throws -> [RecognizedLine] {
+    private static func performModernVisionOCRWithFallback(
+        on cgImage: CGImage,
+        timeout: TimeInterval
+    ) async throws -> [RecognizedLine] {
         do {
-            return try await TaskTimeout.withTimeout(seconds: recognitionTimeout) {
+            return try await TaskTimeout.withTimeout(seconds: timeout) {
                 while !claimAccurateRecognition() {
                     try await Task.sleep(for: .milliseconds(50))
                 }
@@ -145,20 +152,20 @@ public enum AppleOCREngine: Sendable {
         } catch {
             try Task.checkCancellation()
             if error is TaskTimeoutError {
-                logger.error("Accurate Vision OCR timed out after \(recognitionTimeout, privacy: .public) seconds; retrying with fast recognition")
+                logger.error("Accurate Vision OCR timed out after \(timeout, privacy: .public) seconds; retrying with fast recognition")
             } else {
                 logger.error("Accurate Vision OCR failed: \(String(describing: error), privacy: .public); retrying with fast recognition")
             }
         }
 
         do {
-            return try await TaskTimeout.withTimeout(seconds: recognitionTimeout) {
+            return try await TaskTimeout.withTimeout(seconds: timeout) {
                 try await performModernVisionOCR(on: cgImage, recognitionLevel: .fast)
             }
         } catch is CancellationError {
             throw CancellationError()
         } catch is TaskTimeoutError {
-            logger.error("Fast Vision OCR timed out after \(recognitionTimeout, privacy: .public) seconds")
+            logger.error("Fast Vision OCR timed out after \(timeout, privacy: .public) seconds")
             throw RecognitionError.timeout
         } catch {
             logger.error("Fast Vision OCR failed: \(String(describing: error), privacy: .public)")

@@ -38,8 +38,7 @@ enum ScreenCaptureOCR {
             throw OCRError.captureCancelled
         }
 
-        // Read image from temp file and perform OCR inside autoreleasepool
-        // to ensure large screenshot images are freed promptly.
+        // Validate the capture before handing its file path to the helper process.
         try autoreleasepool {
             guard let image = NSImage(contentsOf: tmpURL),
                   let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)

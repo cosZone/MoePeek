@@ -2,7 +2,7 @@ import Foundation
 import os
 
 /// Runs OCR in a one-shot helper process so Vision state is not resident in MoePeek.
-enum OCRWorkerClient: Sendable {
+enum OCRWorkerClient {
     private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCRWorker")
 
     struct Output: Codable, Sendable {
@@ -10,13 +10,17 @@ enum OCRWorkerClient: Sendable {
         let duration: TimeInterval
     }
 
-    static func recognizeText(at imageURL: URL) async throws -> String {
+    static func recognizeText(
+        at imageURL: URL,
+        timeout: TimeInterval = 45,
+        warmup: Bool = false
+    ) async throws -> String {
         try await withThrowingTaskGroup(of: Output.self) { group in
             group.addTask {
-                try await runWorker(imageURL: imageURL)
+                try await runWorker(imageURL: imageURL, warmup: warmup)
             }
             group.addTask {
-                try await Task.sleep(for: .seconds(45))
+                try await Task.sleep(for: .seconds(timeout))
                 throw OCRError.timeout
             }
 
@@ -26,7 +30,7 @@ enum OCRWorkerClient: Sendable {
         }
     }
 
-    private static func runWorker(imageURL: URL) async throws -> Output {
+    private static func runWorker(imageURL: URL, warmup: Bool) async throws -> Output {
         let executableURL = Bundle.main.url(
             forResource: "MoePeekOCRWorker",
             withExtension: nil,
@@ -41,6 +45,11 @@ enum OCRWorkerClient: Sendable {
         let process = Process()
         process.executableURL = executableURL
         process.arguments = [imageURL.path]
+        if warmup {
+            process.environment = ProcessInfo.processInfo.environment.merging(
+                ["MOEPEEK_OCR_WARMUP": "1"]
+            ) { _, newValue in newValue }
+        }
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = Pipe()

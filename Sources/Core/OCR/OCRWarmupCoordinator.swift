@@ -4,7 +4,7 @@ import AppKit
 import os
 
 /// Warms macOS' system Vision cache once per boot without keeping Vision loaded in MoePeek.
-enum OCRWarmupCoordinator: Sendable {
+enum OCRWarmupCoordinator {
     private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCRWarmup")
     private static let warmupVersion = 1
 
@@ -25,7 +25,7 @@ enum OCRWarmupCoordinator: Sendable {
                 let started = Date()
                 let url = try writeWarmupImage()
                 defer { try? FileManager.default.removeItem(at: url) }
-                _ = try await OCRWorkerClient.recognizeText(at: url)
+                _ = try await OCRWorkerClient.recognizeText(at: url, timeout: 90, warmup: true)
                 logger.info("OCR warmup completed in \(Date().timeIntervalSince(started), privacy: .public) seconds")
             } catch is CancellationError {
                 // A later app run or real OCR request can warm Vision again.

@@ -7,9 +7,17 @@ struct WorkerResponse: Codable {
     var duration: TimeInterval
 }
 
+private enum Environment {
+    static var keys: Set<String> {
+        Set(ProcessInfo.processInfo.environment.keys)
+    }
+}
+
 @main
 enum OCRWorkerMain {
     static func main() async {
+        let warmup = Environment.keys.contains("MOEPEEK_OCR_WARMUP")
+        let recognitionTimeout: TimeInterval = warmup ? 40 : 5
         let arguments = CommandLine.arguments
         guard arguments.count == 2 else {
             FileHandle.standardError.write("usage: MoePeekOCRWorker <image-path>\n".data(using: .utf8)!)
@@ -25,7 +33,10 @@ enum OCRWorkerMain {
 
         let started = Date()
         do {
-            let text = try await AppleOCREngine.recognizeText(in: cgImage)
+            let text = try await AppleOCREngine.recognizeText(
+                in: cgImage,
+                recognitionTimeout: recognitionTimeout
+            )
             let response = WorkerResponse(text: text, duration: Date().timeIntervalSince(started))
             let encoded = try JSONEncoder().encode(response)
             FileHandle.standardOutput.write(encoded)
