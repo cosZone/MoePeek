@@ -1,6 +1,6 @@
 import Foundation
 
-private struct TaskTimeoutError: Error, Sendable {}
+struct TaskTimeoutError: Error, Sendable {}
 
 enum TaskTimeout {
     /// Races an operation against a deadline without blocking a caller actor.

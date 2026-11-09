@@ -1,4 +1,5 @@
 import Foundation
+import os
 @preconcurrency import Vision
 
 /// A process-wide Vision OCR engine modeled after Easydict's mature implementation.
@@ -7,6 +8,8 @@ import Foundation
 /// coordinator or SwiftUI task may time out, while the underlying Vision request keeps
 /// ownership of the single accurate-recognition slot until it exits.
 enum AppleOCREngine: Sendable {
+    private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCR")
+
     /// A timed-out accurate attempt gets one bounded fast fallback, matching Easydict.
     ///
     /// The first system Vision load can exceed this deadline. The timeout still keeps requests
@@ -18,12 +21,32 @@ enum AppleOCREngine: Sendable {
     private static let accurateRecognitionLock = NSLock()
     private nonisolated(unsafe) static var hasAccurateRecognitionInFlight = false
 
+    private static let preferredModernRecognitionLanguages = [
+        Locale.Language(identifier: "zh-Hans"),
+        Locale.Language(identifier: "zh-Hant"),
+        Locale.Language(identifier: "en-US"),
+        Locale.Language(identifier: "ja-JP"),
+        Locale.Language(identifier: "ko-KR"),
+    ]
+
+    /// Match preferred languages to this system's actual modern Vision support.
+    private static let supportedModernRecognitionLanguages: [Locale.Language] = {
+        let request = RecognizeTextRequest()
+        let supported = request.supportedRecognitionLanguages
+        return preferredModernRecognitionLanguages.compactMap { preferred in
+            supported.first { $0.isEquivalent(to: preferred) }
+        }
+    }()
+
     static func recognizeText(in image: CGImage) async throws -> String {
+        logger.info("Starting Apple OCR (\(image.width)x\(image.height) px)")
         let observations = try await performVisionOCR(on: image)
-        return observations
+        let text = observations
             .map(\.text)
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .joined(separator: "\n")
+        logger.info("Apple OCR finished with \(observations.count, privacy: .public) observations")
+        return text
     }
 
     private static func performVisionOCR(on cgImage: CGImage) async throws -> [RecognizedLine] {
@@ -108,6 +131,11 @@ enum AppleOCREngine: Sendable {
             throw CancellationError()
         } catch {
             try Task.checkCancellation()
+            if error is TaskTimeoutError {
+                logger.error("Accurate Vision OCR timed out after \(recognitionTimeout, privacy: .public) seconds; retrying with fast recognition")
+            } else {
+                logger.error("Accurate Vision OCR failed: \(String(describing: error), privacy: .public); retrying with fast recognition")
+            }
         }
 
         do {
@@ -116,7 +144,13 @@ enum AppleOCREngine: Sendable {
             }
         } catch is CancellationError {
             throw CancellationError()
+        } catch is TaskTimeoutError {
+            logger.error("Fast Vision OCR timed out after \(recognitionTimeout, privacy: .public) seconds")
+            throw OCRError.timeout
+        } catch let error as OCRError {
+            throw error
         } catch {
+            logger.error("Fast Vision OCR failed: \(String(describing: error), privacy: .public)")
             throw OCRError.timeout
         }
     }
@@ -126,22 +160,54 @@ enum AppleOCREngine: Sendable {
         on cgImage: CGImage,
         recognitionLevel: RecognizeTextRequest.RecognitionLevel
     ) async throws -> [RecognizedLine] {
+        let observations = try await performSingleModernVisionOCR(
+            on: cgImage,
+            recognitionLanguages: Self.supportedModernRecognitionLanguages,
+            automaticallyDetectsLanguage: true,
+            recognitionLevel: recognitionLevel
+        )
+
+        guard observations.isEmpty, recognitionLevel == .accurate else { return observations }
+
+        // Easydict found Japanese samples that automatic language detection misses entirely.
+        logger.info("No text recognized with automatic languages; retrying with Japanese")
+        return try await performSingleModernVisionOCR(
+            on: cgImage,
+            recognitionLanguages: [.init(identifier: "ja-JP")],
+            automaticallyDetectsLanguage: false,
+            recognitionLevel: recognitionLevel
+        )
+    }
+
+    private static func performSingleModernVisionOCR(
+        on cgImage: CGImage,
+        recognitionLanguages: [Locale.Language],
+        automaticallyDetectsLanguage: Bool,
+        recognitionLevel: RecognizeTextRequest.RecognitionLevel
+    ) async throws -> [RecognizedLine] {
         var request = RecognizeTextRequest()
         request.recognitionLevel = recognitionLevel
-        request.recognitionLanguages = [
-            Locale.Language(identifier: "zh-Hans"),
-            Locale.Language(identifier: "zh-Hant"),
-            Locale.Language(identifier: "en-US"),
-            Locale.Language(identifier: "ja-JP"),
-            Locale.Language(identifier: "ko-KR"),
-        ]
+        let supportedLanguages = request.supportedRecognitionLanguages
+        request.recognitionLanguages = recognitionLanguages.compactMap { preferred in
+            supportedLanguages.first { supported in
+                supported.isEquivalent(to: preferred)
+            }
+        }
         request.usesLanguageCorrection = recognitionLevel == .accurate
-        request.automaticallyDetectsLanguage = true
+        request.automaticallyDetectsLanguage = automaticallyDetectsLanguage
 
-        let observations = try await request.perform(on: cgImage)
-        return observations.compactMap { observation in
-            guard let candidate = observation.topCandidates(1).first else { return nil }
-            return RecognizedLine(text: candidate.string)
+        logger.info(
+            "Performing modern Vision OCR with level: \(recognitionLevel == .fast ? "fast" : "accurate", privacy: .public), languages: \(request.recognitionLanguages.map(\.minimalIdentifier), privacy: .public), auto detect: \(request.automaticallyDetectsLanguage, privacy: .public)"
+        )
+
+        do {
+            let observations = try await request.perform(on: cgImage)
+            return observations.compactMap { observation in
+                guard let candidate = observation.topCandidates(1).first else { return nil }
+                return RecognizedLine(text: candidate.string)
+            }
+        } catch {
+            throw OCRError.recognitionFailed(error)
         }
     }
 
