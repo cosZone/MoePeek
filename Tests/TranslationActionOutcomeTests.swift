@@ -373,7 +373,7 @@ import Testing
         accessibilityGranted: Bool = true,
         screenRecordingGranted: Bool = true,
         grabSelection: @escaping @MainActor () async -> RichSourceDocument? = { nil },
-        captureOCR: @escaping @MainActor () async throws -> String = { throw OCRError.captureCancelled },
+        captureOCR: @escaping @Sendable () async throws -> String = { throw OCRError.captureCancelled },
         resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { .cancelled },
         ocrPasteboard: NSPasteboard = .general
     ) -> TranslationCoordinator {
@@ -411,6 +411,20 @@ import Testing
             Issue.record("Expected an active coordinator phase")
             return
         }
+    }
+
+    @Test func ocrRunsOutsideMainActorSoVisionCannotBlockUI() async {
+        var ranOutsideMainActor = false
+        let coordinator = makeCoordinator(captureOCR: {
+            ranOutsideMainActor = !Thread.isMainThread
+            return "background recognized text"
+        })
+
+        let outcome = await coordinator.ocrAndTranslate()
+
+        #expect(outcome == .present)
+        #expect(coordinator.sourceText == "background recognized text")
+        #expect(ranOutsideMainActor)
     }
 }
 

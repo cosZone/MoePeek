@@ -59,7 +59,7 @@ final class TranslationCoordinator {
     let registry: TranslationProviderRegistry
     private let permissionManager: any PermissionChecking
     private let grabSelection: @MainActor () async -> RichSourceDocument?
-    private let captureOCR: @MainActor () async throws -> String
+    private let captureOCR: @Sendable () async throws -> String
     private let resolveSmart: @MainActor () async -> SmartTranslationResult
     private let ocrPasteboard: NSPasteboard
     /// Invalidates capture actions that are still awaiting a result when a newer session starts.
@@ -71,7 +71,7 @@ final class TranslationCoordinator {
         permissionManager: any PermissionChecking,
         registry: TranslationProviderRegistry,
         grabSelection: @escaping @MainActor () async -> RichSourceDocument? = TextSelectionManager.grabSelectedDocument,
-        captureOCR: @escaping @MainActor () async throws -> String = ScreenCaptureOCR.captureAndRecognize,
+        captureOCR: @escaping @Sendable () async throws -> String = ScreenCaptureOCR.captureAndRecognize,
         resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { await SmartTranslationResolver.resolve() },
         ocrPasteboard: NSPasteboard = .general
     ) {
