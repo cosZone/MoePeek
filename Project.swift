@@ -36,14 +36,32 @@ let project = Project(
                     ],
                 ],
             ]),
-            sources: ["Sources/**"],
+            sources: [
+                "Sources/App/**",
+                "Sources/Core/**",
+                "Sources/Services/**",
+                "Sources/UI/**",
+                "Sources/Utilities/**",
+                "!Sources/Core/OCR/AppleOCREngine.swift",
+                "!Sources/Core/OCR/TaskTimeout.swift",
+            ],
             resources: ["Resources/**"],
             entitlements: .file(path: "Entitlements/MoePeek.entitlements"),
+            scripts: [
+                .post(
+                    script: """
+                    mkdir -p "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS"
+                    cp "$BUILT_PRODUCTS_DIR/MoePeekOCRWorker" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/MoePeekOCRWorker"
+                    """,
+                    name: "Embed OCR Worker"
+                ),
+            ],
             dependencies: [
                 .external(name: "KeyboardShortcuts"),
                 .external(name: "Defaults"),
                 .external(name: "Sparkle"),
                 .external(name: "Textual"),
+                .target(name: "MoePeekOCRWorker"),
             ],
             settings: .settings(
                 base: [
@@ -56,6 +74,37 @@ let project = Project(
                 configurations: [
                     .debug(name: "Debug", xcconfig: "Configurations/Signing.xcconfig"),
                     .release(name: "Release", xcconfig: "Configurations/Signing.xcconfig"),
+                ]
+            )
+        ),
+        .target(
+            name: "MoePeekOCRCore",
+            destinations: .macOS,
+            product: .staticFramework,
+            bundleId: "com.nahida.MoePeek.OCRCore",
+            deploymentTargets: .macOS("15.0"),
+            sources: [
+                "Sources/Core/OCR/AppleOCREngine.swift",
+                "Sources/Core/OCR/TaskTimeout.swift",
+            ]
+        ),
+        .target(
+            name: "MoePeekOCRWorker",
+            destinations: .macOS,
+            product: .commandLineTool,
+            bundleId: "com.nahida.MoePeek.OCRWorker",
+            deploymentTargets: .macOS("15.0"),
+            sources: ["Sources/OCRWorkerSources/**"],
+            dependencies: [
+                .target(name: "MoePeekOCRCore"),
+            ],
+            settings: .settings(
+                base: [
+                    "LD_RUNPATH_SEARCH_PATHS": [
+                        "$(inherited)",
+                        "@executable_path",
+                        "@executable_path/../Frameworks",
+                    ],
                 ]
             )
         ),

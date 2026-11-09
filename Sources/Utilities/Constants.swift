@@ -319,6 +319,7 @@ extension Defaults.Keys {
 
     // Auto-detect text selection
     static let isAutoDetectEnabled = Key<Bool>("isAutoDetectEnabled", default: true)
+    static let ocrWarmupEnabled = Key<Bool>("ocrWarmupEnabled", default: true)
     static let textDetectionMode = Key<TextDetectionMode>("textDetectionMode", default: .full)
     static let triggerActivationMode = Key<TriggerActivationMode>("triggerActivationMode", default: .hover)
     static let excludedAppBundleIDs = Key<Set<String>>("excludedAppBundleIDs", default: [])

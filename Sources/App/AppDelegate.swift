@@ -66,6 +66,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if !permissionManager.allPermissionsGranted {
             permissionManager.startPolling()
         }
+        if Defaults[.ocrWarmupEnabled] {
+            OCRWarmupCoordinator.warmUpIfNeeded()
+        }
     }
 
     // MARK: - URL Scheme Handler

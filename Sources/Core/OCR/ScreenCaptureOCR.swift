@@ -40,16 +40,15 @@ enum ScreenCaptureOCR {
 
         // Read image from temp file and perform OCR inside autoreleasepool
         // to ensure large screenshot images are freed promptly.
-        let cgImage: CGImage = try autoreleasepool {
+        try autoreleasepool {
             guard let image = NSImage(contentsOf: tmpURL),
                   let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
             else {
                 throw OCRError.captureReadFailed
             }
-            return cg
         }
 
-        let text = try await AppleOCREngine.recognizeText(in: cgImage)
+        let text = try await OCRWorkerClient.recognizeText(at: tmpURL)
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw OCRError.noTextRecognized
         }
@@ -63,6 +62,10 @@ enum OCRError: LocalizedError {
     case noTextRecognized
     case timeout
     case recognitionFailed(any Error)
+    case workerUnavailable
+    case workerFailed(Int32)
+    case workerResponseInvalid
+    case warmupImageCreationFailed
 
     var errorDescription: String? {
         switch self {
@@ -72,6 +75,13 @@ enum OCRError: LocalizedError {
         case .timeout:           String(localized: "Text recognition timed out")
         case .recognitionFailed(let error):
             String(localized: "Vision recognition failed: \(error.localizedDescription)")
+        case .workerUnavailable: String(localized: "OCR helper is unavailable")
+        case .workerFailed(let status):
+            String(localized: "OCR helper exited with status \(status)")
+        case .workerResponseInvalid:
+            String(localized: "OCR helper returned an invalid response")
+        case .warmupImageCreationFailed:
+            String(localized: "Could not create the OCR warmup image")
         }
     }
 }

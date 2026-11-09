@@ -7,7 +7,7 @@ import os
 /// The engine deliberately keeps its serialization state outside the caller's actor: a
 /// coordinator or SwiftUI task may time out, while the underlying Vision request keeps
 /// ownership of the single accurate-recognition slot until it exits.
-enum AppleOCREngine: Sendable {
+public enum AppleOCREngine: Sendable {
     private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCR")
 
     /// A timed-out accurate attempt gets one bounded fast fallback, matching Easydict.
@@ -20,6 +20,19 @@ enum AppleOCREngine: Sendable {
     /// cancellation and cannot be starved by actor-isolated work.
     private static let accurateRecognitionLock = NSLock()
     private nonisolated(unsafe) static var hasAccurateRecognitionInFlight = false
+
+    public enum RecognitionError: LocalizedError, Sendable {
+        case timeout
+        case failed(any Error)
+
+        public var errorDescription: String? {
+            switch self {
+            case .timeout: String(localized: "Text recognition timed out")
+            case .failed(let error):
+                String(localized: "Vision recognition failed: \(error.localizedDescription)")
+            }
+        }
+    }
 
     private static let preferredModernRecognitionLanguages = [
         Locale.Language(identifier: "zh-Hans"),
@@ -38,7 +51,7 @@ enum AppleOCREngine: Sendable {
         }
     }()
 
-    static func recognizeText(in image: CGImage) async throws -> String {
+    public static func recognizeText(in image: CGImage) async throws -> String {
         logger.info("Starting Apple OCR (\(image.width)x\(image.height) px)")
         let observations = try await performVisionOCR(on: image)
         let text = observations
@@ -82,7 +95,7 @@ enum AppleOCREngine: Sendable {
             let continuationGate = ContinuationGate(continuation: continuation)
             let request = VNRecognizeTextRequest { request, error in
                 if let error {
-                    continuationGate.resume(throwing: OCRError.recognitionFailed(error))
+                    continuationGate.resume(throwing: RecognitionError.failed(error))
                     return
                 }
 
@@ -105,7 +118,7 @@ enum AppleOCREngine: Sendable {
                 do {
                     try handler.perform([request])
                 } catch {
-                    continuationGate.resume(throwing: OCRError.recognitionFailed(error))
+                    continuationGate.resume(throwing: RecognitionError.failed(error))
                 }
             }
         }
@@ -146,12 +159,10 @@ enum AppleOCREngine: Sendable {
             throw CancellationError()
         } catch is TaskTimeoutError {
             logger.error("Fast Vision OCR timed out after \(recognitionTimeout, privacy: .public) seconds")
-            throw OCRError.timeout
-        } catch let error as OCRError {
-            throw error
+            throw RecognitionError.timeout
         } catch {
             logger.error("Fast Vision OCR failed: \(String(describing: error), privacy: .public)")
-            throw OCRError.timeout
+            throw RecognitionError.timeout
         }
     }
 
@@ -207,7 +218,7 @@ enum AppleOCREngine: Sendable {
                 return RecognizedLine(text: candidate.string)
             }
         } catch {
-            throw OCRError.recognitionFailed(error)
+            throw RecognitionError.failed(error)
         }
     }
 
