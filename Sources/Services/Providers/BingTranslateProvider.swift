@@ -90,25 +90,11 @@ struct BingTranslateProvider: TranslationProvider {
             )
         }
 
-        let decoded = try JSONDecoder().decode([BingTranslateResponse].self, from: data)
-        guard let translated = decoded.first?.translations.first?.text, !translated.isEmpty else {
-            throw TranslationError.emptyResult
-        }
+        let translated = try BingTranslateResponse.translatedText(from: data)
         if isTruncated {
             return translated + "\n\n" + String(localized: "[Bing Translate: text truncated to 1000 characters]")
         }
         return translated
-    }
-}
-
-// MARK: - Response Model
-
-private struct BingTranslateResponse: Decodable {
-    let translations: [Translation]
-
-    struct Translation: Decodable {
-        let text: String
-        let to: String
     }
 }
 

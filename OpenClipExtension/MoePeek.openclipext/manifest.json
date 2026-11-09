@@ -1,0 +1,18 @@
+{
+  "identifier": "com.nahida.openclip.extension.moepeek",
+  "name": "MoePeek",
+  "description": {
+    "en": "Translate selected text with MoePeek.",
+    "zh-Hans": "使用 MoePeek 翻译选中的文字。"
+  },
+  "version": "1.0.0",
+  "actions": [
+    {
+      "id": "com.nahida.openclip.extension.moepeek.translate",
+      "title": "MoePeek",
+      "icon": "symbol(character.bubble)",
+      "type": "url",
+      "url": "mopeek://translate?text={query}"
+    }
+  ]
+}

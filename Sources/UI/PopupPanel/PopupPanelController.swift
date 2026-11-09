@@ -11,6 +11,8 @@ final class PopupPanelController {
     private var dismissMonitor: PopupDismissMonitor?
     private var copyShortcutDismissTask: Task<Void, Never>?
     private var panelMoveObserver: NSObjectProtocol?
+    private var resultLayout = PopupResultLayout()
+    private var resizeTask: Task<Void, Never>?
 
     private let coordinator: TranslationCoordinator
     private let ttsCoordinator: TTSCoordinator?
@@ -30,6 +32,7 @@ final class PopupPanelController {
     }
 
     deinit {
+        resizeTask?.cancel()
         if let observer = panelMoveObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -67,6 +70,7 @@ final class PopupPanelController {
         // The panel will accept key events (and ⌘1...⌘9 copy shortcuts) once the user clicks
         // into it, since PopupPanel.canBecomeKey is true.
         panel.orderFront(nil)
+        scheduleResultResize()
 
         startDismissMonitor()
     }
@@ -99,12 +103,15 @@ final class PopupPanelController {
         previouslyActiveApp = NSWorkspace.shared.frontmostApplication
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+        scheduleResultResize()
         panel.focusSourceInput()
 
         startDismissMonitor()
     }
 
     func dismiss() {
+        resizeTask?.cancel()
+        resizeTask = nil
         copyShortcutDismissTask?.cancel()
         copyShortcutDismissTask = nil
         dismissMonitor?.stop()
@@ -119,6 +126,7 @@ final class PopupPanelController {
         // Recreate panel on next show to ensure a fresh SwiftUI view tree,
         // avoiding stale @Observable state from previous translation sessions.
         panel = nil
+        resultLayout = PopupResultLayout()
         coordinator.dismiss()
         onDismiss?()
 
@@ -155,6 +163,10 @@ final class PopupPanelController {
                 onOpenSettings: { [weak self] in
                     self?.dismiss()
                     self?.settingsController?.showWindow()
+                },
+                onResultLayoutChange: { [weak self] layout in
+                    self?.resultLayout = layout
+                    self?.scheduleResultResize()
                 }
             )
             .environment(\.popupPanel, newPanel)
@@ -190,6 +202,45 @@ final class PopupPanelController {
         Defaults[.popupLastTopLeftX] = Double(f.origin.x)
         Defaults[.popupLastTopLeftY] = Double(f.origin.y + f.height)
         Defaults[.popupHasSavedPosition] = true
+    }
+
+    private func scheduleResultResize() {
+        guard resizeTask == nil else { return }
+        // Leave SwiftUI's update transaction before setFrame can trigger another layout.
+        // Coalesce pending measurements and read the latest snapshot when the task runs.
+        resizeTask = Task { @MainActor [weak self] in
+            guard !Task.isCancelled, let self else { return }
+            self.resizeTask = nil
+            self.resizeForResultContent()
+        }
+    }
+
+    private func resizeForResultContent() {
+        guard let panel, panel.isVisible, !panel.isUserResizing,
+              panel.manualResizeGeneration != coordinator.translationGeneration,
+              let resultContentHeight = resultLayout.contentHeight,
+              let resultViewportHeight = resultLayout.viewportHeight,
+              let measuredContainerHeight = resultLayout.containerHeight,
+              resultViewportHeight > 0,
+              let screen = panel.screen ?? NSScreen.screens.first(where: { $0.frame.intersects(panel.frame) })
+        else { return }
+
+        let frame = PopupPanelSizing.frameToFit(
+            currentFrame: panel.frame,
+            contentHeight: resultContentHeight,
+            viewportHeight: resultViewportHeight,
+            measuredContainerHeight: measuredContainerHeight,
+            baselineHeight: CGFloat(Defaults[.popupDefaultHeight]),
+            maximumHeight: panel.maxSize.height,
+            visibleFrame: screen.visibleFrame
+        )
+        guard abs(frame.height - panel.frame.height) > 0.5
+            || abs(frame.origin.y - panel.frame.origin.y) > 0.5
+        else { return }
+        if abs(frame.origin.y - panel.frame.origin.y) > 0.5 {
+            panel.suppressNextMoveSave += 1
+        }
+        panel.setFrame(frame, display: true)
     }
 
     private func copyResultFromShortcut(atDisplayIndex index: Int) -> Bool {

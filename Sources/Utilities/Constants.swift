@@ -162,6 +162,7 @@ extension KeyboardShortcuts.Name {
     static let smartTranslation = Self("smartTranslation")
     static let translateSelection = Self("translateSelection", default: .init(.d, modifiers: .option))
     static let ocrScreenshot = Self("ocrScreenshot", default: .init(.s, modifiers: .option))
+    static let silentOCR = Self("silentOCR")
     static let inputTranslation = Self("inputTranslation", default: .init(.a, modifiers: .option))
     static let clipboardTranslation = Self("clipboardTranslation", default: .init(.v, modifiers: .option))
     static let swapLanguages: Self = {
@@ -231,6 +232,7 @@ enum SwapLanguagesShortcut {
         .smartTranslation,
         .translateSelection,
         .ocrScreenshot,
+        .silentOCR,
         .inputTranslation,
         .clipboardTranslation,
     ]
@@ -287,6 +289,11 @@ enum SwapLanguagesShortcut {
 // MARK: - User Defaults Keys
 
 extension Defaults.Keys {
+    // Optional HTTP CONNECT proxy for Google Translate.
+    static let googleProxyEnabled = Key<Bool>("provider_google_proxyEnabled", default: false)
+    static let googleProxyHost = Key<String>("provider_google_proxyHost", default: "127.0.0.1")
+    static let googleProxyPort = Key<String>("provider_google_proxyPort", default: "7890")
+
     static let targetLanguage = Key<String>("targetLanguage", default: "zh-Hans")
     static let favoriteTargetLanguages = Key<[String]>(
         "favoriteTargetLanguages",

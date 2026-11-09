@@ -51,7 +51,8 @@ enum RichTextImporter {
                options: [
                    .documentType: NSAttributedString.DocumentType.html,
                    .characterEncoding: String.Encoding.utf8.rawValue,
-                   .timeout: 2.0,
+                   // Allow WebKit to start on a cold system before falling back to plain text.
+                   .timeout: 5.0,
                ],
                documentAttributes: nil
            ) {

@@ -51,6 +51,13 @@ struct MenuItemView: View {
         .globalKeyboardShortcut(.ocrScreenshot)
 
         Button {
+            appDelegate.performSilentOCR()
+        } label: {
+            Label("Silent OCR", systemImage: "doc.text.viewfinder")
+        }
+        .globalKeyboardShortcut(.silentOCR)
+
+        Button {
             guard let coordinator = appDelegate.coordinator,
                   let panelController = appDelegate.panelController else { return }
             Task { @MainActor in

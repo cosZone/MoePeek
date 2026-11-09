@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import SwiftUI
 import Testing
@@ -270,12 +271,121 @@ import Testing
         #expect(recognitionFailureCoordinator.globalError != nil)
     }
 
+    @Test func silentOCRCopiesTextToClipboardWithoutPresenting() async {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        pasteboard.setString("sentinel", forType: .string)
+        let coordinator = makeCoordinator(captureOCR: { "  recognized text  " }, ocrPasteboard: pasteboard)
+
+        let outcome = await coordinator.ocrToClipboard()
+
+        #expect(outcome == .copied)
+        expectIdle(coordinator)
+        #expect(coordinator.globalError == nil)
+        #expect(coordinator.sourceText.isEmpty)
+        #expect(pasteboard.string(forType: .string) == "recognized text")
+    }
+
+    @Test func silentOCRCancellationPreservesIdleWithoutTouchingClipboard() async {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        pasteboard.setString("sentinel", forType: .string)
+        let coordinator = makeCoordinator(captureOCR: { throw OCRError.captureCancelled }, ocrPasteboard: pasteboard)
+
+        let outcome = await coordinator.ocrToClipboard()
+
+        #expect(outcome == .cancelled)
+        expectIdle(coordinator)
+        #expect(coordinator.globalError == nil)
+        #expect(pasteboard.string(forType: .string) == "sentinel")
+    }
+
+    enum SilentOCRClipboardInterruption: CaseIterable, Sendable {
+        case none
+        case cancellation
+        case newerAction
+    }
+
+    @Test(arguments: SilentOCRClipboardInterruption.allCases)
+    func silentOCRWaitsForCancelledCaptureRestoration(_ interruption: SilentOCRClipboardInterruption) async {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        pasteboard.setString("original clipboard", forType: .string)
+
+        var finishRestoration: CheckedContinuation<Void, Never>?
+        let captureTask = Task { @MainActor in
+            await ClipboardGrabber.withStableAccess(to: pasteboard) { clipboard -> Bool? in
+                await withCheckedContinuation { finishRestoration = $0 }
+                // A simulated copy completes its restoration even after cancellation.
+                clipboard.clearContents()
+                return clipboard.setString("original clipboard", forType: .string)
+            }
+        }
+        while finishRestoration == nil { await Task.yield() }
+        captureTask.cancel()
+
+        var captureFinished = false
+        let coordinator = makeCoordinator(captureOCR: {
+            captureFinished = true
+            return "recognized text"
+        }, ocrPasteboard: pasteboard)
+        let ocrTask = Task { await coordinator.ocrToClipboard() }
+        while !captureFinished { await Task.yield() }
+
+        switch interruption {
+        case .none:
+            break
+        case .cancellation:
+            ocrTask.cancel()
+        case .newerAction:
+            coordinator.prepareInputMode()
+        }
+
+        finishRestoration?.resume()
+        #expect(await captureTask.value == true)
+        let outcome = await ocrTask.value
+        if interruption == .none {
+            #expect(outcome == .copied)
+            #expect(pasteboard.string(forType: .string) == "recognized text")
+        } else {
+            #expect(outcome == .cancelled)
+            #expect(pasteboard.string(forType: .string) == "original clipboard")
+        }
+    }
+
+    @Test func silentOCRErrorsUseTransientToast() async {
+        let permissionCoordinator = makeCoordinator(screenRecordingGranted: false)
+        let permissionOutcome = await permissionCoordinator.ocrToClipboard()
+
+        guard case let .failed(permissionMessage) = permissionOutcome else {
+            Issue.record("Expected a silent-OCR failure, got \(permissionOutcome)")
+            return
+        }
+        #expect(!permissionMessage.isEmpty)
+        expectIdle(permissionCoordinator)
+        #expect(permissionCoordinator.globalError == nil)
+        #expect(permissionCoordinator.sourceText.isEmpty)
+
+        let failureCoordinator = makeCoordinator(captureOCR: { throw OCRError.noTextRecognized })
+        let failureOutcome = await failureCoordinator.ocrToClipboard()
+
+        guard case let .failed(failureMessage) = failureOutcome else {
+            Issue.record("Expected a silent-OCR failure, got \(failureOutcome)")
+            return
+        }
+        #expect(failureMessage == String(localized: "OCR failed: \(OCRError.noTextRecognized.localizedDescription)"))
+        expectIdle(failureCoordinator)
+        #expect(failureCoordinator.globalError == nil)
+        #expect(failureCoordinator.sourceText.isEmpty)
+    }
+
     private func makeCoordinator(
         accessibilityGranted: Bool = true,
         screenRecordingGranted: Bool = true,
         grabSelection: @escaping @MainActor () async -> RichSourceDocument? = { nil },
         captureOCR: @escaping @MainActor () async throws -> String = { throw OCRError.captureCancelled },
-        resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { .cancelled }
+        resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { .cancelled },
+        ocrPasteboard: NSPasteboard = .general
     ) -> TranslationCoordinator {
         let provider = TestTranslationProvider()
         let registry = TranslationProviderRegistry(
@@ -294,7 +404,8 @@ import Testing
             registry: registry,
             grabSelection: grabSelection,
             captureOCR: captureOCR,
-            resolveSmart: resolveSmart
+            resolveSmart: resolveSmart,
+            ocrPasteboard: ocrPasteboard
         )
     }
 

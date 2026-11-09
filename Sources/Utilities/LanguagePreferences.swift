@@ -43,6 +43,12 @@ extension SupportedLanguages {
     ) -> String {
         let available = effectiveTargetCodes(favoriteCodes)
         let preferred = resolvedTarget(target, favoriteCodes: favoriteCodes)
+        if let detectedLanguage,
+           detectedLanguage.hasPrefix("zh"),
+           preferred.hasPrefix("zh"),
+           detectedLanguage != preferred {
+            return preferred
+        }
         guard let detectedLanguage,
               sameLanguage(detectedLanguage, preferred)
         else { return preferred }

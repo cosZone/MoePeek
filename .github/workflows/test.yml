@@ -1,0 +1,53 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Tuist via mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: Resolve dependencies and generate project
+        run: |
+          cp Configurations/Signing.xcconfig.example Configurations/Signing.xcconfig
+          tuist install && tuist generate --no-open
+
+      - name: Run tests
+        run: |
+          # RFC 8032 public test vector for Sparkle's test-host initialization.
+          xcodebuild test \
+            -workspace MoePeek.xcworkspace \
+            -scheme MoePeek \
+            -destination 'platform=macOS' \
+            -resultBundlePath build/Tests.xcresult \
+            MACOSX_DEPLOYMENT_TARGET=15.0 \
+            SPARKLE_ED_PUBLIC_KEY=11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo= \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-test-results
+          path: build/Tests.xcresult
+          if-no-files-found: ignore
+          retention-days: 14

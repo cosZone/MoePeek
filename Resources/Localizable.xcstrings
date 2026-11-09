@@ -1,6 +1,96 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "HTTP Proxy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTTP 代理"
+          }
+        }
+      }
+    },
+    "Use a custom HTTP proxy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用自定义 HTTP 代理"
+          }
+        }
+      }
+    },
+    "Proxy Host" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代理地址"
+          }
+        }
+      }
+    },
+    "Proxy Port" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代理端口"
+          }
+        }
+      }
+    },
+    "For a local proxy, use 127.0.0.1 and its HTTP or mixed port. Authentication is not supported." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用本地代理时，填写 127.0.0.1 及其 HTTP 或混合端口。暂不支持代理身份验证。"
+          }
+        }
+      }
+    },
+    "Applies only to Google Translate. When disabled, existing system and per-app proxy routing is used." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅用于谷歌翻译。关闭时沿用系统及按应用代理的网络设置。"
+          }
+        }
+      }
+    },
+    "Enter a proxy hostname or IP address without a scheme, path, or port." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入代理主机名或 IP 地址，不要包含协议、路径或端口。"
+          }
+        }
+      }
+    },
+    "Enter a proxy port between 1 and 65535." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入 1 至 65535 之间的代理端口。"
+          }
+        }
+      }
+    },
+    "Connection successful" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接成功"
+          }
+        }
+      }
+    },
     "Ready to translate." : {
       "localizations" : {
         "zh-Hans" : {
@@ -829,6 +919,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保守"
+          }
+        }
+      }
+    },
+    "Copied" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
           }
         }
       }
@@ -2553,6 +2653,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模拟 DeepL iOS 客户端。无需身份验证，但可能遭遇速率限制（HTTP 429）。"
+          }
+        }
+      }
+    },
+    "Silent OCR" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "静默 OCR"
+          }
+        }
+      }
+    },
+    "Silent OCR:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "静默 OCR："
           }
         }
       }

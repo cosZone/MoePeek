@@ -53,6 +53,7 @@ struct GeneralSettingsView: View {
                     .foregroundStyle(.secondary)
                 GlobalShortcutRecorder("Selection Translation:", name: .translateSelection)
                 GlobalShortcutRecorder("Screenshot OCR:", name: .ocrScreenshot)
+                GlobalShortcutRecorder("Silent OCR:", name: .silentOCR)
                 GlobalShortcutRecorder("Manual Translation:", name: .inputTranslation)
                 GlobalShortcutRecorder("Clipboard Translation:", name: .clipboardTranslation)
 

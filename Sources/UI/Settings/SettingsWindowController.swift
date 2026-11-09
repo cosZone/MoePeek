@@ -27,7 +27,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     func showWindow() {
         if let window, window.isVisible {
-            NSApp.activate()
+            NSApp.activate(ignoringOtherApps: true)
             window.makeKeyAndOrderFront(nil)
             return
         }
@@ -54,7 +54,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.delegate = self
         self.window = window
 
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
     }
 

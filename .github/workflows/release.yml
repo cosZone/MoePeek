@@ -91,6 +91,25 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Run tests
+        timeout-minutes: 15
+        run: |
+          xcodebuild test \
+            -workspace MoePeek.xcworkspace \
+            -scheme MoePeek \
+            -destination 'platform=macOS' \
+            -resultBundlePath build/Tests.xcresult \
+            MACOSX_DEPLOYMENT_TARGET=15.0
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-test-results
+          path: build/Tests.xcresult
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Archive
         run: |
           xcodebuild archive \
@@ -130,6 +149,12 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent \
             PopClipExtension/MoePeek.popclipext \
             "MoePeek.popclipext.zip"
+
+      - name: Package OpenClip Extension
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            OpenClipExtension/MoePeek.openclipext \
+            "MoePeek.openclipext.zip"
 
       - name: Check Sparkle signing key
         id: sparkle
@@ -192,4 +217,5 @@ jobs:
             MoePeek-v${{ steps.version.outputs.version }}-macOS.zip
             MoePeek-v${{ steps.version.outputs.version }}-macOS.dmg
             MoePeek.popclipext.zip
+            MoePeek.openclipext.zip
             appcast.xml

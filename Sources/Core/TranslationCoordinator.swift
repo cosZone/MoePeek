@@ -61,6 +61,7 @@ final class TranslationCoordinator {
     private let grabSelection: @MainActor () async -> RichSourceDocument?
     private let captureOCR: @MainActor () async throws -> String
     private let resolveSmart: @MainActor () async -> SmartTranslationResult
+    private let ocrPasteboard: NSPasteboard
     /// Invalidates capture actions that are still awaiting a result when a newer session starts.
     private var actionToken = 0
     private var activeTasks: [String: Task<Void, Never>] = [:]
@@ -71,13 +72,15 @@ final class TranslationCoordinator {
         registry: TranslationProviderRegistry,
         grabSelection: @escaping @MainActor () async -> RichSourceDocument? = TextSelectionManager.grabSelectedDocument,
         captureOCR: @escaping @MainActor () async throws -> String = ScreenCaptureOCR.captureAndRecognize,
-        resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { await SmartTranslationResolver.resolve() }
+        resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { await SmartTranslationResolver.resolve() },
+        ocrPasteboard: NSPasteboard = .general
     ) {
         self.permissionManager = permissionManager
         self.registry = registry
         self.grabSelection = grabSelection
         self.captureOCR = captureOCR
         self.resolveSmart = resolveSmart
+        self.ocrPasteboard = ocrPasteboard
     }
 
     // MARK: - Public Actions
@@ -164,6 +167,48 @@ final class TranslationCoordinator {
             sourceText = ""
             globalError = String(localized: "OCR failed: \(error.localizedDescription)")
             return .present
+        }
+    }
+
+    /// How a silent-OCR attempt ended: success/failure carries a toast message, nothing on cancel.
+    enum SilentOCROutcome: Sendable, Equatable {
+        case copied
+        case cancelled
+        case failed(message: String)
+    }
+
+    /// Triggered by the silent-OCR shortcut: screen capture → OCR → clipboard. No popup.
+    /// The caller presents both success and failure as a transient toast.
+    @discardableResult
+    func ocrToClipboard() async -> SilentOCROutcome {
+        let requestToken = beginAction()
+        guard permissionManager.isScreenRecordingGranted else {
+            return .failed(
+                message: String(localized: "Screen recording permission not granted. Open Settings to enable it.")
+            )
+        }
+
+        do {
+            let text = try await captureOCR()
+            guard !Task.isCancelled, requestToken == actionToken else {
+                return .cancelled
+            }
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { return .cancelled }
+            return await ClipboardGrabber.withStableAccess(to: ocrPasteboard) { pasteboard -> SilentOCROutcome? in
+                // A pending restoration may finish after this action is cancelled or superseded.
+                guard !Task.isCancelled, requestToken == self.actionToken else { return .cancelled }
+                pasteboard.clearContents()
+                guard pasteboard.setString(trimmed, forType: .string) else { return .cancelled }
+                return .copied
+            } ?? .cancelled
+        } catch OCRError.captureCancelled {
+            return .cancelled
+        } catch is CancellationError {
+            return .cancelled
+        } catch {
+            guard requestToken == actionToken else { return .cancelled }
+            return .failed(message: String(localized: "OCR failed: \(error.localizedDescription)"))
         }
     }
 

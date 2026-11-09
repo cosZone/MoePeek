@@ -27,9 +27,17 @@ enum ClipboardGrabber {
     @MainActor static func readStable<Value: Sendable>(
         _ read: @MainActor (NSPasteboard) -> Value?
     ) async -> Value? {
+        await withStableAccess { read($0) }
+    }
+
+    /// Keep clipboard operations exclusive until a pending simulated copy has been restored.
+    @MainActor static func withStableAccess<Value: Sendable>(
+        to pasteboard: NSPasteboard = .general,
+        _ access: @MainActor (NSPasteboard) async -> Value?
+    ) async -> Value? {
         guard await accessGate.acquire() else { return nil }
         defer { accessGate.release() }
-        return read(NSPasteboard.general)
+        return await access(pasteboard)
     }
 
     /// Simulates ⌘+C, hands the updated pasteboard to `read`, then restores the previous
@@ -157,7 +165,7 @@ enum ClipboardGrabber {
     }
 }
 
-/// Keeps capture and snapshot reads exclusive across suspension points.
+/// Keeps capture, snapshot reads, and writes exclusive across suspension points.
 @MainActor
 final class ClipboardAccessGate {
     private var isLocked = false

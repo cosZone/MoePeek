@@ -4,6 +4,11 @@ import Foundation
 /// Pure value-in, value-out — no dependency on Defaults or Keychain.
 @MainActor @Observable
 final class OpenAIConnectionManager {
+    private let session: URLSession
+
+    init(session: URLSession = translationURLSession) {
+        self.session = session
+    }
 
     // MARK: - Model Fetching State
 
@@ -44,7 +49,7 @@ final class OpenAIConnectionManager {
         }
 
         do {
-            let (data, response) = try await translationURLSession.data(for: request)
+            let (data, response) = try await session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 if !silent { modelFetchError = String(localized: "Invalid response") }
                 return
@@ -76,7 +81,8 @@ final class OpenAIConnectionManager {
 
         let body: [String: Any] = [
             "model": model,
-            "max_tokens": 1,
+            // Requesty requires at least 16 tokens for some OpenAI models.
+            "max_tokens": 16,
             "stream": false,
             "messages": [
                 ["role": "user", "content": "Hi"],
@@ -101,7 +107,7 @@ final class OpenAIConnectionManager {
 
         let start = ContinuousClock.now
         do {
-            let (data, response) = try await translationURLSession.data(for: request)
+            let (data, response) = try await session.data(for: request)
             let ms = Int((ContinuousClock.now - start) / .milliseconds(1))
 
             guard let httpResponse = response as? HTTPURLResponse else {

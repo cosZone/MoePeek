@@ -31,6 +31,8 @@ final class PopupPanel: NSPanel {
     /// position-saving observer. The controller bumps this before each programmatic `setFrame`
     /// so we don't overwrite the saved drag position with a freshly-computed show location.
     var suppressNextMoveSave: Int = 0
+    var isUserResizing = false
+    var manualResizeGeneration: Int?
 
     init(contentRect: NSRect) {
         super.init(

@@ -1,3 +1,4 @@
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -27,9 +28,9 @@ struct GoogleTranslateProvider: TranslationProvider {
         AnyView(GoogleTranslateSettingsView())
     }
 
-    // MARK: - Private
+    // MARK: - Translation
 
-    private func translate(_ text: String, from sourceLang: String?, to targetLang: String) async throws -> String {
+    func translate(_ text: String, from sourceLang: String?, to targetLang: String) async throws -> String {
         let sl = LanguageCodeMapping.resolve(sourceLang, using: LanguageCodeMapping.google) ?? "auto"
         let tl = LanguageCodeMapping.resolveTarget(targetLang, using: LanguageCodeMapping.google)
 
@@ -57,7 +58,9 @@ struct GoogleTranslateProvider: TranslationProvider {
             forHTTPHeaderField: "User-Agent"
         )
 
-        let (data, response) = try await translationURLSession.data(for: request)
+        let session = try await GoogleTranslateProxySession.shared.session(for: Self.proxySettings)
+            ?? translationURLSession
+        let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw TranslationError.invalidResponse
@@ -74,6 +77,15 @@ struct GoogleTranslateProvider: TranslationProvider {
         }
         return translated
     }
+
+    @MainActor
+    static var proxySettings: GoogleTranslateProxySettings {
+        GoogleTranslateProxySettings(
+            enabled: Defaults[.googleProxyEnabled],
+            host: Defaults[.googleProxyHost],
+            port: Defaults[.googleProxyPort]
+        )
+    }
 }
 
 // MARK: - Response Model
@@ -89,6 +101,23 @@ private struct GTXResponse: Decodable {
 // MARK: - Settings View
 
 private struct GoogleTranslateSettingsView: View {
+    @Default(.googleProxyEnabled) private var proxyEnabled
+    @Default(.googleProxyHost) private var proxyHost
+    @Default(.googleProxyPort) private var proxyPort
+
+    @State private var testID: UUID?
+    @State private var testMessage: String?
+    @State private var testSucceeded = false
+
+    private var proxyError: String? {
+        do {
+            _ = try GoogleTranslateProvider.proxySettings.configuration()
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
     var body: some View {
         Form {
             Section("Status") {
@@ -99,7 +128,68 @@ private struct GoogleTranslateSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section("HTTP Proxy") {
+                Toggle("Use a custom HTTP proxy", isOn: $proxyEnabled)
+                if proxyEnabled {
+                    TextField("Proxy Host", text: $proxyHost)
+                    TextField("Proxy Port", text: $proxyPort)
+                    Text("For a local proxy, use 127.0.0.1 and its HTTP or mixed port. Authentication is not supported.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if let proxyError {
+                        Label(proxyError, systemImage: "exclamationmark.circle")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+                Text("Applies only to Google Translate. When disabled, existing system and per-app proxy routing is used.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Section {
+                HStack {
+                    Button {
+                        testMessage = nil
+                        testID = UUID()
+                    } label: {
+                        Label("Test Connection", systemImage: "bolt.horizontal")
+                    }
+                    .disabled(testID != nil || proxyError != nil)
+                    if testID != nil {
+                        ProgressView().controlSize(.small)
+                    }
+                }
+                if let testMessage {
+                    Label(testMessage, systemImage: testSucceeded ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundStyle(testSucceeded ? .green : .red)
+                        .font(.caption)
+                        .textSelection(.enabled)
+                }
+            }
         }
         .formStyle(.grouped)
+        .task(id: testID) {
+            guard let currentTestID = testID else { return }
+            do {
+                _ = try await GoogleTranslateProvider().translate("Hello", from: "en", to: "zh-Hans")
+                guard !Task.isCancelled, testID == currentTestID else { return }
+                testSucceeded = true
+                testMessage = String(localized: "Connection successful")
+            } catch {
+                guard !Task.isCancelled, testID == currentTestID else { return }
+                testSucceeded = false
+                testMessage = error.localizedDescription
+            }
+            testID = nil
+        }
+        .onChange(of: proxyEnabled) { resetTest() }
+        .onChange(of: proxyHost) { resetTest() }
+        .onChange(of: proxyPort) { resetTest() }
+        .onDisappear { resetTest() }
+    }
+
+    private func resetTest() {
+        testID = nil
+        testMessage = nil
     }
 }

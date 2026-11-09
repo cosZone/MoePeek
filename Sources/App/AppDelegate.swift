@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var onboardingController: OnboardingWindowController!
     var selectionMonitor: SelectionMonitor!
     var triggerIconController: TriggerIconController!
+    lazy var copyToastController = CopyToastController()
     lazy var updaterController = UpdaterController()
     var settingsController: SettingsWindowController!
     private var smartTranslationTask: Task<Void, Never>?
@@ -270,6 +271,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         smartTranslationTask?.cancel()
     }
 
+    /// Silent OCR: copy recognized text to the clipboard; confirm with a small toast.
+    func performSilentOCR() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            await self.cancelSmartTranslationAndWait()
+            guard !Task.isCancelled else { return }
+            switch await self.coordinator.ocrToClipboard() {
+            case .copied:
+                self.copyToastController.show(message: String(localized: "Copied"))
+            case let .failed(message):
+                self.copyToastController.show(message: message, isError: true)
+            case .cancelled:
+                break
+            }
+        }
+    }
+
     @discardableResult
     func cancelSmartTranslationAndWait() async -> Bool {
         await SmartTranslationTaskCleanup.cancelAndWait(smartTranslationTask)
@@ -300,6 +318,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self.panelController.showAtCursor()
                 }
             }
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .silentOCR) { [weak self] in
+            self?.performSilentOCR()
         }
 
         KeyboardShortcuts.onKeyUp(for: .inputTranslation) { [weak self] in

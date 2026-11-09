@@ -46,6 +46,12 @@ security find-identity -v -p codesigning
 ./bin/generate_keys
 ```
 
+## 合并前验证
+
+`Tests` workflow 在 PR 和 main 分支推送时运行完整 `MoePeekTests`，也支持手动触发。它使用示例签名配置并关闭代码签名，提供公开测试公钥供 Sparkle 测试宿主初始化，不读取 Prod secrets；xcresult 报告保留 14 天。
+
+合并前检查最新提交的测试结果。Release workflow 会在正式签名归档前再次运行完整测试，失败时停止发布。
+
 ## 通过 Git Tag 发版（推荐）
 
 推送 semver tag 即可触发 CI 自动构建、签名并发布。
@@ -60,12 +66,12 @@ git push origin v0.2.0
 ```
 
 CI 会自动完成以下步骤：
-1. 导入签名证书并构建 Release archive
-2. 验证代码签名（确保 Authority 和 TeamIdentifier 正确）
-3. 生成 ZIP 和 DMG
+1. 导入签名证书，运行完整 `MoePeekTests`；失败则停止发布，并保留 xcresult 报告
+2. 构建 Release archive，验证代码签名（确保 Authority 和 TeamIdentifier 正确）
+3. 生成 ZIP、DMG、PopClip 和 OpenClip 扩展包
 4. 下载 Sparkle CLI 工具（版本自动匹配 `Package.resolved`）
 5. 生成 `appcast.xml`（保留历史版本记录）
-6. 创建 **已发布** 的 GitHub Release，包含 ZIP、DMG 和 `appcast.xml`
+6. 创建 **已发布** 的 GitHub Release，包含应用、扩展包和 `appcast.xml`
 
 ## 手动触发（测试用）
 

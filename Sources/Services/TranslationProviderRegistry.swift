@@ -176,6 +176,19 @@ final class TranslationProviderRegistry {
                     "X-OpenRouter-Title": "MoePeek",
                 ]
             ),
+            OpenAICompatibleProvider(
+                id: "requesty",
+                displayName: "Requesty",
+                iconSystemName: "network",
+                iconAssetName: "Requesty",
+                defaultBaseURL: "https://router.requesty.ai/v1",
+                defaultModel: "deepseek/deepseek-chat",
+                guideURL: "https://app.requesty.ai/api-keys",
+                extraHeaders: [
+                    "HTTP-Referer": "https://github.com/cosZone/MoePeek",
+                    "X-Title": "MoePeek",
+                ]
+            ),
             AnthropicProvider(),
             OllamaProvider(),
             LMStudioProvider(),
