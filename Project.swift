@@ -53,7 +53,8 @@ let project = Project(
                     mkdir -p "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS"
                     cp "$BUILT_PRODUCTS_DIR/MoePeekOCRWorker" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/MoePeekOCRWorker"
                     """,
-                    name: "Embed OCR Worker"
+                    name: "Embed OCR Worker",
+                    basedOnDependencyAnalysis: false
                 ),
             ],
             dependencies: [

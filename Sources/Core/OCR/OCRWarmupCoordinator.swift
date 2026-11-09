@@ -1,6 +1,7 @@
+import CoreGraphics
 import Foundation
 import IOKit
-import AppKit
+import ImageIO
 import os
 
 /// Warms macOS' system Vision cache once per boot without keeping Vision loaded in MoePeek.
@@ -37,27 +38,59 @@ enum OCRWarmupCoordinator {
     }
 
     private static func writeWarmupImage() throws -> URL {
-        let size = NSSize(width: 128, height: 32)
-        let image = NSImage(size: size)
-        image.lockFocus()
-        NSColor.white.setFill()
-        NSRect(origin: .zero, size: size).fill()
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 18, weight: .semibold),
-            .foregroundColor: NSColor.black,
-        ]
-        "OCR 0".draw(at: NSPoint(x: 8, y: 7), withAttributes: attributes)
-        image.unlockFocus()
-
-        guard let tiff = image.tiffRepresentation,
-              let bitmap = NSBitmapImageRep(data: tiff),
-              let png = bitmap.representation(using: .png, properties: [:]) else {
+        let width = 128
+        let height = 32
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
             throw OCRError.warmupImageCreationFailed
         }
 
+        context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.setFillColor(CGColor(red: 0, green: 0, blue: 0, alpha: 1))
+        // Bold synthetic strokes exercise text detection without AppKit font rendering.
+        let strokes: [(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)] = [
+            (8, 7, 4, 18), (8, 7, 14, 4), (8, 14, 10, 4), (8, 21, 14, 4),
+            (30, 7, 4, 18), (34, 7, 12, 4), (30, 7, 4, 4),
+            (54, 7, 14, 4), (59, 7, 4, 18), (54, 21, 14, 4), (59, 13, 9, 4),
+            (78, 7, 14, 18),
+        ]
+        for stroke in strokes {
+            context.fill(
+                CGRect(
+                    x: stroke.x,
+                    y: stroke.y,
+                    width: stroke.width,
+                    height: stroke.height
+                )
+            )
+        }
+
+        guard let image = context.makeImage() else {
+            throw OCRError.warmupImageCreationFailed
+        }
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("moepeek_ocr_warmup_\(UUID().uuidString).png")
-        try png.write(to: url, options: .atomic)
+        guard let destination = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            "public.png" as CFString,
+            1,
+            nil
+        ) else {
+            throw OCRError.warmupImageCreationFailed
+        }
+        CGImageDestinationAddImage(destination, image, nil)
+        guard CGImageDestinationFinalize(destination) else {
+            try? FileManager.default.removeItem(at: url)
+            throw OCRError.warmupImageCreationFailed
+        }
         return url
     }
 

@@ -62,7 +62,7 @@ enum OCRError: LocalizedError {
     case timeout
     case recognitionFailed(any Error)
     case workerUnavailable
-    case workerFailed(Int32)
+    case workerFailed(Int32, reason: String = "")
     case workerResponseInvalid
     case warmupImageCreationFailed
 
@@ -75,8 +75,10 @@ enum OCRError: LocalizedError {
         case .recognitionFailed(let error):
             String(localized: "Vision recognition failed: \(error.localizedDescription)")
         case .workerUnavailable: String(localized: "OCR helper is unavailable")
-        case .workerFailed(let status):
-            String(localized: "OCR helper exited with status \(status)")
+        case let .workerFailed(status, reason):
+            reason.isEmpty
+                ? String(localized: "OCR helper exited with status \(status)")
+                : String(localized: "OCR helper exited with status \(status): \(reason)")
         case .workerResponseInvalid:
             String(localized: "OCR helper returned an invalid response")
         case .warmupImageCreationFailed:
