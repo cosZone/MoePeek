@@ -170,24 +170,22 @@ final class TranslationCoordinator {
         }
     }
 
-    /// How a silent-OCR attempt ended: toast on success, panel on failure, nothing on cancel.
+    /// How a silent-OCR attempt ended: success/failure carries a toast message, nothing on cancel.
     enum SilentOCROutcome: Sendable, Equatable {
         case copied
         case cancelled
-        case failed
+        case failed(message: String)
     }
 
     /// Triggered by the silent-OCR shortcut: screen capture → OCR → clipboard. No popup.
-    /// Success stays silent apart from the caller's toast; failures surface the panel with
-    /// the error so a dead-looking shortcut is never left unexplained.
+    /// The caller presents both success and failure as a transient toast.
     @discardableResult
     func ocrToClipboard() async -> SilentOCROutcome {
         let requestToken = beginAction()
         guard permissionManager.isScreenRecordingGranted else {
-            phase = .active
-            sourceText = ""
-            globalError = String(localized: "Screen recording permission not granted. Open Settings to enable it.")
-            return .failed
+            return .failed(
+                message: String(localized: "Screen recording permission not granted. Open Settings to enable it.")
+            )
         }
 
         do {
@@ -210,10 +208,7 @@ final class TranslationCoordinator {
             return .cancelled
         } catch {
             guard requestToken == actionToken else { return .cancelled }
-            phase = .active
-            sourceText = ""
-            globalError = String(localized: "OCR failed: \(error.localizedDescription)")
-            return .failed
+            return .failed(message: String(localized: "OCR failed: \(error.localizedDescription)"))
         }
     }
 

@@ -69,6 +69,11 @@ private extension NSWindow {
 /// the capsule read against any backdrop — the bare material alone renders near-invisible.
 private struct MessagePillView: View {
     let message: String
+    let isError: Bool
+
+    private var iconSystemName: String {
+        isError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"
+    }
 
     var body: some View {
         HStack(spacing: 8) {
@@ -76,10 +81,10 @@ private struct MessagePillView: View {
                 .font(.callout.weight(.medium))
                 .foregroundStyle(Color.primary)
                 .lineLimit(1)
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: iconSystemName)
                 .font(.body)
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.green)
+                .foregroundStyle(isError ? Color.red : Color.green)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -122,10 +127,10 @@ final class CopyToastController {
     private let edgeInset: CGFloat = 48
 
     /// Replaces whatever is up; the pill tracks its message via SwiftUI measurement.
-    func show(message: String) {
+    func show(message: String, isError: Bool = false) {
         let panel = self.panel ?? CopyToastPanel()
         self.panel = panel
-        let host = NSHostingView(rootView: MessagePillView(message: message))
+        let host = NSHostingView(rootView: MessagePillView(message: message, isError: isError))
         // Never size from `host.frame` after attaching: AppKit resets it to the window's
         // content rect, zero on a fresh panel, and a zero-width window "centers" with its
         // leading edge on the midline.

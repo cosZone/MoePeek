@@ -280,8 +280,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             switch await self.coordinator.ocrToClipboard() {
             case .copied:
                 self.copyToastController.show(message: String(localized: "Copied"))
-            case .failed:
-                self.panelController.showAtCursor()
+            case let .failed(message):
+                self.copyToastController.show(message: message, isError: true)
             case .cancelled:
                 break
             }
