@@ -1,4 +1,5 @@
-import AppKit
+import Foundation
+
 enum ScreenCaptureOCR {
     /// Launch interactive screen capture, OCR the captured image, and return recognized text.
     static func captureAndRecognize() async throws -> String {
@@ -38,13 +39,10 @@ enum ScreenCaptureOCR {
             throw OCRError.captureCancelled
         }
 
-        // Validate the capture before handing its file path to the helper process.
-        try autoreleasepool {
-            guard let image = NSImage(contentsOf: tmpURL),
-                  let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
-            else {
-                throw OCRError.captureReadFailed
-            }
+        // Esc may exit successfully without creating a file. Decode only in the worker:
+        // decoding here needlessly retains a full screenshot in the menu bar process.
+        guard FileManager.default.fileExists(atPath: tmpURL.path) else {
+            throw OCRError.captureCancelled
         }
 
         let text = try await OCRWorkerClient.recognizeText(at: tmpURL)

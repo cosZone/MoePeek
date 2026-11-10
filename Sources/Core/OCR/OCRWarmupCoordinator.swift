@@ -1,13 +1,16 @@
 import CoreGraphics
+import CoreText
 import Foundation
 import IOKit
 import ImageIO
 import os
 
-/// Warms macOS' system Vision cache once per boot without keeping Vision loaded in MoePeek.
+/// Best-effort warmup of OS caches. A fresh helper still has to initialize its own Vision runtime.
+@MainActor
 enum OCRWarmupCoordinator {
     private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCRWarmup")
-    private static let warmupVersion = 1
+    private static let warmupVersion = 2
+    private static var warmupTask: Task<Void, Never>?
 
     private static var warmupStateKey: String {
         let bootTime = systemBootTime()
@@ -17,29 +20,29 @@ enum OCRWarmupCoordinator {
     static func warmUpIfNeeded() {
         let key = warmupStateKey
         let defaults = UserDefaults.standard
-        guard !defaults.bool(forKey: key) else { return }
-        defaults.set(true, forKey: key)
-        cleanupOldWarmupKeys(currentKey: key)
+        guard warmupTask == nil, !defaults.bool(forKey: key) else { return }
 
-        Task.detached(priority: .utility) {
+        warmupTask = Task(priority: .utility) {
+            defer { warmupTask = nil }
             do {
                 let started = Date()
                 let url = try writeWarmupImage()
                 defer { try? FileManager.default.removeItem(at: url) }
-                _ = try await OCRWorkerClient.recognizeText(at: url, timeout: 90, warmup: true)
+                _ = try await OCRWorkerClient.recognizeText(at: url, warmup: true)
+                defaults.set(true, forKey: key)
+                cleanupOldWarmupKeys(currentKey: key)
                 logger.info("OCR warmup completed in \(Date().timeIntervalSince(started), privacy: .public) seconds")
             } catch is CancellationError {
                 // A later app run or real OCR request can warm Vision again.
             } catch {
                 logger.error("OCR warmup failed: \(String(describing: error), privacy: .public)")
-                UserDefaults.standard.set(false, forKey: key)
             }
         }
     }
 
     private static func writeWarmupImage() throws -> URL {
-        let width = 128
-        let height = 32
+        let width = 640
+        let height = 120
         guard let context = CGContext(
             data: nil,
             width: width,
@@ -54,23 +57,19 @@ enum OCRWarmupCoordinator {
 
         context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
-        context.setFillColor(CGColor(red: 0, green: 0, blue: 0, alpha: 1))
-        // Bold synthetic strokes exercise text detection without AppKit font rendering.
-        let strokes: [(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)] = [
-            (8, 7, 4, 18), (8, 7, 14, 4), (8, 14, 10, 4), (8, 21, 14, 4),
-            (30, 7, 4, 18), (34, 7, 12, 4), (30, 7, 4, 4),
-            (54, 7, 14, 4), (59, 7, 4, 18), (54, 21, 14, 4), (59, 13, 9, 4),
-            (78, 7, 14, 18),
+        // Exercise real scripts so warmup also initializes non-Latin recognizers.
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key(kCTFontAttributeName as String):
+                CTFontCreateWithName("Helvetica" as CFString, 28, nil),
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String):
+                CGColor(gray: 0, alpha: 1),
         ]
-        for stroke in strokes {
-            context.fill(
-                CGRect(
-                    x: stroke.x,
-                    y: stroke.y,
-                    width: stroke.width,
-                    height: stroke.height
-                )
+        for (index, text) in ["MoePeek OCR 123", "文字识别 日本語 한국어"].enumerated() {
+            let line = CTLineCreateWithAttributedString(
+                NSAttributedString(string: text, attributes: attributes)
             )
+            context.textPosition = CGPoint(x: 12, y: 76 - index * 48)
+            CTLineDraw(line, context)
         }
 
         guard let image = context.makeImage() else {

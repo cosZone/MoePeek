@@ -2,22 +2,10 @@ import Foundation
 import os
 @preconcurrency import Vision
 
-/// A process-wide Vision OCR engine modeled after Easydict's mature implementation.
-///
-/// The engine deliberately keeps its serialization state outside the caller's actor: a
-/// coordinator or SwiftUI task may time out, while the underlying Vision request keeps
-/// ownership of the single accurate-recognition slot until it exits.
+/// Accurate OCR for a one-shot worker. The parent owns serialization and the hard deadline.
+/// Do not race a second request against a model load or silently replace CJK with English-only fast OCR.
 public enum AppleOCREngine: Sendable {
     private static let logger = Logger(subsystem: "com.nahida.MoePeek", category: "OCR")
-
-    /// A timed-out accurate attempt gets one bounded fast fallback, matching Easydict.
-    ///
-    /// The first system Vision load can exceed this deadline. The timeout still keeps requests
-    /// bounded, prevents work from piling up, and mirrors Easydict's production behavior.
-    /// Easydict uses a lock rather than an actor here so slot ownership survives caller
-    /// cancellation and cannot be starved by actor-isolated work.
-    private static let accurateRecognitionLock = NSLock()
-    private nonisolated(unsafe) static var hasAccurateRecognitionInFlight = false
 
     public enum RecognitionError: LocalizedError, Sendable {
         case timeout
@@ -49,12 +37,9 @@ public enum AppleOCREngine: Sendable {
         }
     }()
 
-    public static func recognizeText(
-        in image: CGImage,
-        recognitionTimeout: TimeInterval = 5
-    ) async throws -> String {
+    public static func recognizeText(in image: CGImage) async throws -> String {
         logger.info("Starting Apple OCR (\(image.width)x\(image.height) px)")
-        let observations = try await performVisionOCR(on: image, timeout: recognitionTimeout)
+        let observations = try await performVisionOCR(on: image)
         let text = observations
             .map(\.text)
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
@@ -63,13 +48,15 @@ public enum AppleOCREngine: Sendable {
         return text
     }
 
-    private static func performVisionOCR(
-        on cgImage: CGImage,
-        timeout: TimeInterval
-    ) async throws -> [RecognizedLine] {
-        // Easydict found the modern request unstable on macOS 15 and enables it only on 26+.
+    private static func performVisionOCR(on cgImage: CGImage) async throws -> [RecognizedLine] {
         if #available(macOS 26.0, *) {
-            return try await performModernVisionOCRWithFallback(on: cgImage, timeout: timeout)
+            do {
+                return try await performModernVisionOCR(on: cgImage, recognitionLevel: .accurate)
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                logger.error("Modern Vision OCR failed: \(String(describing: error), privacy: .public); retrying with legacy accurate recognition")
+            }
         }
         return try await performLegacyVisionOCR(on: cgImage)
     }
@@ -131,49 +118,6 @@ public enum AppleOCREngine: Sendable {
     // MARK: - Modern API
 
     @available(macOS 26.0, *)
-    private static func performModernVisionOCRWithFallback(
-        on cgImage: CGImage,
-        timeout: TimeInterval
-    ) async throws -> [RecognizedLine] {
-        do {
-            return try await TaskTimeout.withTimeout(seconds: timeout) {
-                while !claimAccurateRecognition() {
-                    try await Task.sleep(for: .milliseconds(50))
-                }
-                defer { releaseAccurateRecognition() }
-                try Task.checkCancellation()
-                return try await performModernVisionOCR(
-                    on: cgImage,
-                    recognitionLevel: .accurate
-                )
-            }
-        } catch is CancellationError {
-            throw CancellationError()
-        } catch {
-            try Task.checkCancellation()
-            if error is TaskTimeoutError {
-                logger.error("Accurate Vision OCR timed out after \(timeout, privacy: .public) seconds; retrying with fast recognition")
-            } else {
-                logger.error("Accurate Vision OCR failed: \(String(describing: error), privacy: .public); retrying with fast recognition")
-            }
-        }
-
-        do {
-            return try await TaskTimeout.withTimeout(seconds: timeout) {
-                try await performModernVisionOCR(on: cgImage, recognitionLevel: .fast)
-            }
-        } catch is CancellationError {
-            throw CancellationError()
-        } catch is TaskTimeoutError {
-            logger.error("Fast Vision OCR timed out after \(timeout, privacy: .public) seconds")
-            throw RecognitionError.timeout
-        } catch {
-            logger.error("Fast Vision OCR failed: \(String(describing: error), privacy: .public)")
-            throw RecognitionError.timeout
-        }
-    }
-
-    @available(macOS 26.0, *)
     private static func performModernVisionOCR(
         on cgImage: CGImage,
         recognitionLevel: RecognizeTextRequest.RecognitionLevel
@@ -228,20 +172,6 @@ public enum AppleOCREngine: Sendable {
             throw RecognitionError.failed(error)
         }
     }
-
-    private static func claimAccurateRecognition() -> Bool {
-        accurateRecognitionLock.lock()
-        defer { accurateRecognitionLock.unlock() }
-        guard !hasAccurateRecognitionInFlight else { return false }
-        hasAccurateRecognitionInFlight = true
-        return true
-    }
-
-    private static func releaseAccurateRecognition() {
-        accurateRecognitionLock.lock()
-        hasAccurateRecognitionInFlight = false
-        accurateRecognitionLock.unlock()
-    }
 }
 
 private struct RecognizedLine: Sendable {
@@ -249,7 +179,7 @@ private struct RecognizedLine: Sendable {
 }
 
 /// Race-safe one-shot continuation wrapper for the legacy callback/perform API.
-private final class ContinuationGate<T, E: Error>: @unchecked Sendable {
+private final class ContinuationGate<T: Sendable, E: Error>: @unchecked Sendable {
     private let lock = NSLock()
     private var continuation: CheckedContinuation<T, E>?
 
