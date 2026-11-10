@@ -353,27 +353,37 @@ import Testing
         }
     }
 
-    @Test func silentOCRErrorsRemainPresentable() async {
+    @Test func silentOCRErrorsUseTransientToast() async {
         let permissionCoordinator = makeCoordinator(screenRecordingGranted: false)
         let permissionOutcome = await permissionCoordinator.ocrToClipboard()
 
-        #expect(permissionOutcome == .failed)
-        expectActive(permissionCoordinator)
-        #expect(permissionCoordinator.globalError != nil)
+        guard case let .failed(permissionMessage) = permissionOutcome else {
+            Issue.record("Expected a silent-OCR failure, got \(permissionOutcome)")
+            return
+        }
+        #expect(!permissionMessage.isEmpty)
+        expectIdle(permissionCoordinator)
+        #expect(permissionCoordinator.globalError == nil)
+        #expect(permissionCoordinator.sourceText.isEmpty)
 
-        let failureCoordinator = makeCoordinator(captureOCR: { throw OCRError.captureReadFailed })
+        let failureCoordinator = makeCoordinator(captureOCR: { throw OCRError.noTextRecognized })
         let failureOutcome = await failureCoordinator.ocrToClipboard()
 
-        #expect(failureOutcome == .failed)
-        expectActive(failureCoordinator)
-        #expect(failureCoordinator.globalError != nil)
+        guard case let .failed(failureMessage) = failureOutcome else {
+            Issue.record("Expected a silent-OCR failure, got \(failureOutcome)")
+            return
+        }
+        #expect(failureMessage == String(localized: "OCR failed: \(OCRError.noTextRecognized.localizedDescription)"))
+        expectIdle(failureCoordinator)
+        #expect(failureCoordinator.globalError == nil)
+        #expect(failureCoordinator.sourceText.isEmpty)
     }
 
     private func makeCoordinator(
         accessibilityGranted: Bool = true,
         screenRecordingGranted: Bool = true,
         grabSelection: @escaping @MainActor () async -> RichSourceDocument? = { nil },
-        captureOCR: @escaping @MainActor () async throws -> String = { throw OCRError.captureCancelled },
+        captureOCR: @escaping @Sendable () async throws -> String = { throw OCRError.captureCancelled },
         resolveSmart: @escaping @MainActor () async -> SmartTranslationResult = { .cancelled },
         ocrPasteboard: NSPasteboard = .general
     ) -> TranslationCoordinator {
@@ -411,6 +421,20 @@ import Testing
             Issue.record("Expected an active coordinator phase")
             return
         }
+    }
+
+    @Test func ocrRunsOutsideMainActorSoVisionCannotBlockUI() async {
+        var ranOutsideMainActor = false
+        let coordinator = makeCoordinator(captureOCR: {
+            ranOutsideMainActor = !Thread.isMainThread
+            return "background recognized text"
+        })
+
+        let outcome = await coordinator.ocrAndTranslate()
+
+        #expect(outcome == .present)
+        #expect(coordinator.sourceText == "background recognized text")
+        #expect(ranOutsideMainActor)
     }
 }
 

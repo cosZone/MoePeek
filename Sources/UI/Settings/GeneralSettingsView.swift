@@ -16,6 +16,7 @@ struct GeneralSettingsView: View {
     @Default(.popupFontName) private var popupFontName
     @Default(.renderMarkdownResults) private var renderMarkdownResults
     @Default(.captureRichText) private var captureRichText
+    @Default(.ocrWarmupEnabled) private var ocrWarmupEnabled
     @Default(.popupRememberPosition) private var popupRememberPosition
     @Default(.sourceLanguage) private var sourceLanguage
     @Default(.detectionConfidenceThreshold) private var confidenceThreshold
@@ -96,6 +97,9 @@ struct GeneralSettingsView: View {
                             NSApp.activate()
                         }
                     }
+
+                Toggle("Warm up OCR after launch", isOn: $ocrWarmupEnabled)
+                    .help("Runs one background recognition after each macOS startup. OCR memory stays in a short-lived helper process.")
             }
 
             Section("Menu Bar Icon") {
