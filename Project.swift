@@ -42,8 +42,6 @@ let project = Project(
                 "Sources/Services/**",
                 "Sources/UI/**",
                 "Sources/Utilities/**",
-                "!Sources/Core/OCR/AppleOCREngine.swift",
-                "!Sources/Core/OCR/TaskTimeout.swift",
             ],
             resources: ["Resources/**"],
             entitlements: .file(path: "Entitlements/MoePeek.entitlements"),
@@ -79,25 +77,14 @@ let project = Project(
             )
         ),
         .target(
-            name: "MoePeekOCRCore",
-            destinations: .macOS,
-            product: .staticFramework,
-            bundleId: "com.nahida.MoePeek.OCRCore",
-            deploymentTargets: .macOS("15.0"),
-            sources: [
-                "Sources/Core/OCR/AppleOCREngine.swift",
-                "Sources/Core/OCR/TaskTimeout.swift",
-            ]
-        ),
-        .target(
             name: "MoePeekOCRWorker",
             destinations: .macOS,
             product: .commandLineTool,
             bundleId: "com.nahida.MoePeek.OCRWorker",
             deploymentTargets: .macOS("15.0"),
-            sources: ["Sources/OCRWorkerSources/**"],
-            dependencies: [
-                .target(name: "MoePeekOCRCore"),
+            sources: [
+                "Sources/OCRShared/**",
+                "Sources/OCRWorkerSources/**",
             ],
             settings: .settings(
                 base: [

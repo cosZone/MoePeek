@@ -1,6 +1,5 @@
 import AppKit
 import Foundation
-import MoePeekOCRCore
 
 struct WorkerResponse: Codable {
     var text: String

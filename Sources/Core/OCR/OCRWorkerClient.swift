@@ -97,13 +97,10 @@ enum OCRWorkerClient {
     }
 
     private static func runWorker(imageURL: URL, warmup: Bool) async throws -> Output {
-        let executableURL = Bundle.main.url(
-            forResource: "MoePeekOCRWorker",
-            withExtension: nil,
-            subdirectory: "Contents/MacOS"
-        ) ?? Bundle.main.url(forResource: "MoePeekOCRWorker", withExtension: nil)
+        let executableURL = Bundle.main.bundleURL
+            .appendingPathComponent("Contents/MacOS/MoePeekOCRWorker")
 
-        guard let executableURL else {
+        guard FileManager.default.isExecutableFile(atPath: executableURL.path) else {
             logger.error("OCR worker executable is missing from the app bundle")
             throw OCRError.workerUnavailable
         }
